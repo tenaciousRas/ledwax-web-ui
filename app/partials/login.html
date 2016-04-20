@@ -1,0 +1,39 @@
+<div ng-controller="LoginCtrl">
+	<form name="loginForm" id="login_form" class="app-form" novalidate>
+		<fieldset class="">
+			<legend accesskey="l">LEDWax Login</legend>
+			<div id="" class="">
+				<button id="btn_clear" ng-click="forms.login.clear()">Clear</button>
+				<button id="btn_reset" ng-click="forms.login.reset()">Reset</button>
+			</div>
+			<div class="">
+				<div id="" class="">
+					<label for="userName">User&nbsp;Name:&nbsp;</label>
+				</div>
+				<div id="" class="">
+					<input type="text" name="userName" id="userName"
+						ng-model="userSession.username" required="required">
+				</div>
+			</div>
+			<div class="">
+				<div id="" class="">
+					<label for="userpass">Password:&nbsp;</label>
+				</div>
+				<div id="" class="">
+					<input type="password" name="userpass" id="userpass"
+						ng-model="userSession.password" required="required">
+				</div>
+			</div>
+			<div id="" class="">
+				<button id="btn_login" ng-click="forms.login.login(userSession)">Login</button>
+				<div id="" class="">
+					<label for="persist">Remember&nbsp;Me&nbsp;</label>
+				</div>
+				<div id="" class="">
+					<input type="checkbox" name="persist" id="persist"
+						ng-model="userSession.persist">
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>

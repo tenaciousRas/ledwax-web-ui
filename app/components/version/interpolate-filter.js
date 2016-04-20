@@ -1,9 +1,13 @@
 'use strict';
 
-angular.module('myApp.version.interpolate-filter', [])
+angular.module('LEDWAXW3.version.interpolate-filter', [])
 
-.filter('interpolate', ['version', function(version) {
+.filter('appVersion', ['version', function(version) {
   return function(text) {
     return String(text).replace(/\%VERSION\%/mg, version);
   };
-}]);
+}]).filter('appDescription', ['description', function(description) {
+	  return function(text) {
+		    return String(text).replace(/\%DESCRIPTION\%/mg, description);
+		  };
+		}]);

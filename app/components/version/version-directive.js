@@ -1,9 +1,13 @@
 'use strict';
 
-angular.module('myApp.version.version-directive', [])
+angular.module('LEDWAXW3.version.version-directive', [])
 
-.directive('appVersion', ['version', function(version) {
-  return function(scope, elm, attrs) {
-    elm.text(version);
-  };
-}]);
+.directive('appVersion', [ 'version', function(version) {
+	return function(scope, elm, attrs) {
+		elm.text(version);
+	};
+} ]).directive('appDescription', [ 'description', function(description) {
+	return function(scope, elm, attrs) {
+		elm.text(description);
+	};
+} ]);

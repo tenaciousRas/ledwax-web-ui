@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<testsuite name="Firefox 45.0.0 (Ubuntu 0.0.0)" package="unit" timestamp="2016-04-20T04:51:44" id="0" hostname="vm-linix-mint-17-3" tests="16" errors="0" failures="0" time="0.188">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0"/>
+  </properties>
+  <testcase name="LEDWAXW3.version module appVersion filter should replace VERSION" time="0.021" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.version module"/>
+  <testcase name="LEDWAXW3.version module appDescription filter should replace DESCRIPTION" time="0.007" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.version module"/>
+  <testcase name="LEDWAXW3.version module app-version directive should print current version" time="0.015" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.version module"/>
+  <testcase name="LEDWAXW3.version module app-description directive should print app description" time="0.01" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.version module"/>
+  <testcase name="LEDWAXW3.version module version service should return current version" time="0.006" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.version module"/>
+  <testcase name="LEDWAXW3.about module about controller should load ..." time="0.009" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.about module"/>
+  <testcase name="LEDWAXW3.LEDsCtrl module leds controller should ...." time="0.004" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.LEDsCtrl module"/>
+  <testcase name="LEDWAXW3.ledwaxapp module ledwaxapp controller should load controller..." time="0.027" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.ledwaxapp module"/>
+  <testcase name="LEDWAXW3.ledwaxapp module ledwaxapp controller updateNavState should set active nav state" time="0.016" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.ledwaxapp module"/>
+  <testcase name="LEDWAXW3.ledwaxapp module ledwaxapp controller cookies should not set user session authenticated if cookie present" time="0.01" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.ledwaxapp module"/>
+  <testcase name="LEDWAXW3.ledwaxapp module ledwaxapp controller cookies should set user session authenticated if cookie present" time="0.014" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.ledwaxapp module"/>
+  <testcase name="LEDWAXW3.login module login controller should load controller ..." time="0.013" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.login module"/>
+  <testcase name="LEDWAXW3.login module login controller should reset and clear scope and form cache vars" time="0.007" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.login module"/>
+  <testcase name="LEDWAXW3.login module with invalid login credentials should not set user session and clear cookies" time="0.007" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.login module"/>
+  <testcase name="LEDWAXW3.login module with valid login credentials should set user session and cookie" time="0.01" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.login module"/>
+  <testcase name="LEDWAXW3.setup module setup controller should load ..." time="0.012" classname="Firefox_45_0_0_(Ubuntu_0_0_0).unit.LEDWAXW3.setup module"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

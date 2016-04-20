@@ -2,14 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
+  <!-- build:css(.) css/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
+  <!-- endbower -->
+  <!-- endbuild -->
   <style>
     [ng-cloak] {
       display: none;
     }
   </style>
-  <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
+  <!-- build:js(.) js/vendor.js -->
+  <!-- bower:js -->
+  <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
   <script>
     // include angular loader, which allows the files to load in any order
     //@@NG_LOADER_START@@
@@ -28,17 +36,23 @@
 
     // load all of the dependencies asynchronously.
     $script([
+      <!-- build:js(.) js/vendor.js -->
+      <!-- bower:js -->
       'bower_components/angular/angular.js',
       'bower_components/angular-route/angular-route.js',
+      <!-- endbower -->
+      <!-- endbuild -->
+      <!-- build:js({.tmp,app}) js/app.js -->
       'app.js',
       'view1/view1.js',
       'view2/view2.js',
       'components/version/version.js',
       'components/version/version-directive.js',
       'components/version/interpolate-filter.js'
+      <!-- endbuild -->
     ], function() {
       // when all is done, execute bootstrap angular application
-      angular.bootstrap(document, ['myApp']);
+      angular.bootstrap(document, ['LEDWAXW3']);
     });
   </script>
   <title>My AngularJS App</title>

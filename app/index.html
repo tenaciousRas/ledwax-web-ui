@@ -1,43 +1,125 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<!--[if lt IE 7]>      <html lang="en" ng-app="LEDWAXW3" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="LEDWAXW3" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="LEDWAXW3" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="LEDWAXW3" class="no-js">
+<!--<![endif]-->
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
-  <link rel="stylesheet" href="app.css">
-  <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title translate>TITLE</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- build:css(.) css/vendor.css -->
+<!-- bower:css -->
+<link rel="stylesheet"
+	href="bower_components/html5-boilerplate/dist/css/normalize.css">
+<link rel="stylesheet"
+	href="bower_components/html5-boilerplate/dist/css/main.css">
+<link rel="stylesheet"
+	href="bower_components/bootstrap-css/css/bootstrap.css">
+<link rel="stylesheet"
+	href="bower_components/bootstrap-css/css/bootstrap-theme.css">
+<link rel="stylesheet"
+	href="bower_components/angular-bootstrap/ui-bootstrap-csp.css">
+<!-- endbower -->
+<!-- endbuild -->
+<!-- build:css(.tmp,app) css/main.css -->
+<link rel="stylesheet" href="app.css">
+<!-- endbuild -->
+<!-- build:js(.) js/vendor.js -->
+<!-- bower:js -->
+<script
+	src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
 </head>
 <body>
-  <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
-  </ul>
-
-  <!--[if lt IE 7]>
+	<div class="wrap_phantom" ng-controller="AppCtrl" data-status="">
+		<nav class="navbar navbar-default {{headerBgClass}}"
+			id="header_util_nav">
+			<div class="logo">
+				<a href="" ng-click="goToNav('/');"><img ng-src="{{logoSrc}}"></a>
+			</div>
+			<h1 class="app-title" translate>APP_TITLE</h1>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="wrap-navbar collapse navbar-collapse"
+				ng-class="langNavCollapsed && 'in'"
+				ng-click="langNavCollapsed = !langNavCollapsed">
+				<ul class="nav navbar-nav navbar-right utilnav">
+					<li class="dropdown"><a class="dropdown-toggle"><em
+							class="icon-align-justify"></em>&nbsp;<span translate>LANGUAGE</span></a>
+						<ul class="dropdown-menu">
+							<li><a ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
+						</ul></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</nav>
+		<nav class="navbar navbar-default" role="navigation">
+			<!-- toggle nav for mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle"
+					ng-init="navCollapsed = true"
+					ng-click="navCollapsed = !navCollapsed">
+					<span class="sr-only"></span><span class="icon-bar"></span><span
+						class="icon-bar"></span><span class="icon-bar"></span>
+				</button>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				ng-class="!navCollapsed && 'in'" ng-click="navCollapsed = true">
+				<ul class="nav navbar-nav navbar-right topnav">
+					<li ng-repeat="nav in topnav"
+						class="{{nav.active && 'active' || ''}}"><a
+						ng-click="goToNav(nav.path)" ng-bind="nav.label | translate"></a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</nav>
+		<!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
-
-  <div ng-view></div>
-
-  <div>Angular seed app: v<span app-version></span></div>
-
-  <!-- In production use:
+		<div ng-view></div>
+		<div>
+			LEDWax Web UI v<span app-version></span>
+		</div>
+		<!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
   -->
-  <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/angular-route/angular-route.js"></script>
-  <script src="app.js"></script>
-  <script src="view1/view1.js"></script>
-  <script src="view2/view2.js"></script>
-  <script src="components/version/version.js"></script>
-  <script src="components/version/version-directive.js"></script>
-  <script src="components/version/interpolate-filter.js"></script>
+		<!-- build:js(.) js/vendor.js -->
+		<!-- bower:js -->
+		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/angular-route/angular-route.js"></script>
+		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+		<script src="bower_components/angular-loader/angular-loader.js"></script>
+		<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+		<script src="bower_components/angular-animate/angular-animate.js"></script>
+		<script src="bower_components/angular-translate/angular-translate.js"></script>
+		<script
+			src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+		<script
+			src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+		<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+		<script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+		<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+		<script src="bower_components/html5-boilerplate/dist/js/main.js"></script>
+		<!-- endbower -->
+		<!-- endbuild -->
+		<!-- build:js({.tmp,app}) js/app.js -->
+		<script src="app.js"></script>
+		<script src="directives/directives.js"></script>
+		<script src="filters/filters.js"></script>
+		<script src="services/services.js"></script>
+		<script src="controllers/ledwaxapp.js"></script>
+		<script src="controllers/login.js"></script>
+		<script src="controllers/leds.js"></script>
+		<script src="controllers/setup.js"></script>
+		<script src="controllers/about.js"></script>
+		<script src="components/version/version.js"></script>
+		<script src="components/version/version-directive.js"></script>
+		<script src="components/version/interpolate-filter.js"></script>
+		<!-- endbuild -->
 </body>
 </html>
