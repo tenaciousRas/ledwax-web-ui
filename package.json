@@ -9,8 +9,25 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "boom": "^3.1.2",
+    "config": "^1.20.1",
+    "glob": "^7.0.3",
+    "glue": "^3.2.0",
+    "good": "^6.6.0",
+    "good-console": "^5.3.1",
+    "handlebars": "^4.0.5",
     "hapi": "^13.3.0",
-    "inert": "^3.2.0"
+    "hapi-swagger": "^5.0.1",
+    "hoek": "^3.0.4",
+    "inert": "^3.2.0",
+    "isarray": "^1.0.0",
+    "joi": "^8.0.5",
+    "lodash": "^4.11.1",
+    "moment": "^2.13.0",
+    "mongoose": "^4.4.12",
+    "path": "^0.12.7",
+    "vision": "^4.1.0",
+    "visionary": "^4.0.0"
   },
   "scripts": {
     "postinstall": "bower install",

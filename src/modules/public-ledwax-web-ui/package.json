@@ -1,0 +1,5 @@
+{
+  "name": "LEDWax Web UI",
+  "version": "0.0.1",
+  "dependencies": ["inert", "vision"]
+}

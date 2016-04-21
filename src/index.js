@@ -12,7 +12,8 @@ glue.compose(config.application, options, function(err, server) {
 		throw err;
 	}
 	server.start(function() {
-		console.log('[hapi] server running at:', server.info.uri);
+		console.log('[hapi] server v' + server.version + ' running at: ',
+				server.connections[0].info.uri);
 	});
 
 	// export the server for testing

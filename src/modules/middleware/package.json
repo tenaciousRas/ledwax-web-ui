@@ -1,0 +1,5 @@
+{
+  "name": "LEDWax Web UI Middleware",
+  "version": "0.0.1",
+  "dependencies": "mongoose-config"
+}
