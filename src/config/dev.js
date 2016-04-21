@@ -1,6 +1,6 @@
 var Path = require('path');
-var plugins = require('./plugins');
-var internals = plugins.internals;
+var hapiplugins = require('./plugins');
+var internals = hapiplugins.internals;
 
 // export server config settings
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
 		},
 		connections : [
 				{
-					port : process.env.LEDWAX_WEB_PORT || 3000,
+					port : process.env.LEDWAX_WEB_PORT || 8000,
 					labels : [ 'web' ],
 					routes : {
 						files : {
@@ -32,6 +32,6 @@ module.exports = {
 						}
 					}
 				} ],
-		registrations : plugins.plugins
+		registrations : hapiplugins.plugins
 	}
 };

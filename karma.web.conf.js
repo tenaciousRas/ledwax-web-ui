@@ -27,7 +27,7 @@ module.exports = function(config) {
 				plugins : [ 'karma-chrome-launcher', 'karma-firefox-launcher',
 						'karma-jasmine', 'karma-junit-reporter' ],
 				junitReporter : {
-					outputFile : 'test/out_unit.xml',
+					outputFile : 'test/out_web_unit.xml',
 					suite : 'unit'
 				},
 				reportSlowerThan : 500

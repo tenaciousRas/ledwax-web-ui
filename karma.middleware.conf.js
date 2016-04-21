@@ -1,7 +1,7 @@
 module.exports = function(config) {
 	config.set({
 		basePath : './',
-		files : [ 'src/modules/middleware/**/*.js' ],
+		files : [ 'src/modules/middleware/controllers/*.js' ],
 		autoWatch : true,
 		frameworks : [ 'jasmine' ],
 		browsers : [ 'Firefox' ],
@@ -14,7 +14,7 @@ module.exports = function(config) {
 		plugins : [ 'karma-chrome-launcher', 'karma-firefox-launcher',
 				'karma-jasmine', 'karma-junit-reporter' ],
 		junitReporter : {
-			outputFile : 'test/out_unit.xml',
+			outputFile : 'test/out_middleware_unit.xml',
 			suite : 'unit'
 		},
 		reportSlowerThan : 500
