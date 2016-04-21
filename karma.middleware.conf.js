@@ -1,7 +1,7 @@
 module.exports = function(config) {
 	config.set({
 		basePath : './',
-		files : [ 'src/modules/middleware/controllers/*.js' ],
+		files : [ 'test/middleware/**/*.js' ],
 		autoWatch : true,
 		frameworks : [ 'jasmine' ],
 		browsers : [ 'Firefox' ],
