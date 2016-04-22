@@ -9,7 +9,7 @@ var glob = require('glob'),
 
 var internals = {
 	defaults: {
-		database: 'mongodb://localhost/dev'
+		database: 'mongodb://localhost/ledwax-web-ui-dev'
 	}
 };
 

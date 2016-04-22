@@ -1,3 +1,8 @@
+# LEDWax Web UI
+A web-based controller for LEDWax IoT hardware.
+
+TODO:  replace angular seed documentation with new documentation
+
 # angular-seed — the seed for AngularJS apps
 
 This project is an application skeleton for a typical [AngularJS](http://angularjs.org/) web app.

@@ -2,7 +2,7 @@ var Path = require('path');
 
 var internals = {
 	debug : true,
-	dbconnection : 'mongodb://localhost/dev',
+	dbconnection : 'mongodb://localhost/ledwax-web-ui-dev',
 	staticContentPath : '../modules/public-ledwax-web-ui'
 };
 

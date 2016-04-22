@@ -5,7 +5,7 @@ var Hapi = require('hapi'),
 	api = require('../../src/modules/middleware/index.js');
 
 module.exports.createServer = function(done){
-	mongoose.connect('mongodb://localhost/dev');
+	mongoose.connect('mongodb://localhost/ledwax-web-ui-dev');
 
 	var server = new Hapi.Server();
 	server.connection({port: 8753});
