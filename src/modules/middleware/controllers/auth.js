@@ -13,28 +13,28 @@ function AuthController() {
 	};
 
 	/**
-	 * Returns an array of all widgets
+	 * Returns an array of all users
 	 */
 	function list(request, reply) {
-		var WidgetModel = mongoose.model('Widget');
-		WidgetModel.find({}, function(err, data) {
+		var UserModel = mongoose.model('User');
+		UserModel.find({}, function(err, data) {
 			return reply(data);
 		});
 	}
 
 	/**
-	 * Updates a single widget
+	 * Updates a single user
 	 */
 	function update(request, reply) {
-		var WidgetModel = mongoose.model('Widget');
-		var widget = new WidgetModel(request.payload);
-		widget.save(function(err) {
+		var UserModel = mongoose.model('User');
+		var user = new UserModel(request.payload);
+		user.save(function(err) {
 			if (err) {
 				return reply(Boom.badImplementation(
-						'There was an internal error.', err));
+						'There was an internal error', err));
 			}
 
-			return reply(widget);
+			return reply(user);
 		});
 	}
 

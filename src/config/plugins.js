@@ -57,17 +57,17 @@ module.exports = {
 		}
 	},
 	// Registers the database handler
-	// {
-	// plugin : {
-	// register : './modules/mongoose-config',
-	// options : {
-	// database : internals.dbconnection
-	// }
-	// },
-	// options : {
-	// select : [ 'api' ]
-	// }
-	// },
+	{
+		plugin : {
+			register : './modules/mongoose-config',
+			options : {
+				database : internals.dbconnection
+			}
+		},
+		options : {
+			select : [ 'api' ]
+		}
+	},
 	// Registers the UI content server
 	{
 		plugin : './modules/public-ledwax-web-ui',
