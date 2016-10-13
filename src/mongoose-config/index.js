@@ -19,7 +19,7 @@ exports.register = function(server, options, next){
 
 	// attempt reuse existing connection
 	if(mongoose.connection.readyState === mongoose.Connection.STATES.connected){
-		console.log('[mongodb] already connected');	
+		console.log('[mongodb] already connected');
 		db = mongoose.connection;
 		return exposePlugin();
 	}

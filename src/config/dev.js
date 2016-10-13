@@ -1,4 +1,4 @@
-var Path = require('path');
+const Path = require('path');
 var hapiplugins = require('./plugins');
 var internals = hapiplugins.internals;
 
@@ -13,6 +13,7 @@ module.exports = {
 					port : process.env.LEDWAX_WEB_PORT || 8000,
 					labels : [ 'web' ],
 					routes : {
+						log : true,
 						files : {
 							// serves static content files from this directory
 							relativeTo : Path.join(__dirname,
@@ -20,7 +21,7 @@ module.exports = {
 						}
 					}
 				}, {
-					port : process.env.API_PORT || 3001,
+					port : process.env.API_PORT || 3000,
 					labels : [ 'api' ],
 					routes : {
 						validate : {

@@ -1,8 +1,8 @@
-var hapi = require('hapi'), glue = require('glue'), inert = ('inert');
+const Hapi = require('hapi'), Glue = require('glue'), Inert = require('inert'), Path = require('path');
 
 rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev'
 
-config = require('./config/' + rt_ctx_env)
+config = require('./config/' + rt_ctx_env);
 
 // Configure the hapi server using a manifest(config) file
 var options = {
@@ -10,7 +10,7 @@ var options = {
 };
 
 // glue uses a manifest to configure and run hapi for us
-glue.compose(config.application, options, function(err, server) {
+Glue.compose(config.application, options, function(err, server) {
 
 	if (err) {
 		throw err;
