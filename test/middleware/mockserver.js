@@ -1,17 +1,34 @@
 'use strict';
 
-var Hapi = require('hapi'), mongoose = require('mongoose'), api = require('../../src/modules/middleware/index.js');
+const Hapi = require('hapi');
+const pg = require('pg');
+const	api = require('../../src/modules/middleware/index.js');
+const	routes = require('../../src/modules/middleware/routes/index.routes');
+
+var internals = {
+	defaults: {
+		database: 'postgres://postgres:password@localhost/ledwax_web_ui_dev_test'
+	}
+};
+
+var db;
 
 module.exports.createServer = function(done) {
-	mongoose.connect('mongodb://localhost/ledwax-web-ui-dev');
 
-	var server = new Hapi.Server();
+	var server = new Hapi.Server({debug: {request: ['debug'], log: ['debug']}});
 	server.connection({
 		port : 8753
 	});
-	server.register(api, function(err) {
-		done();
-	});
+	server.route(routes);
+	var pgClient = pg.Client;
+	var client = new pgClient({
+      user: 'postgres',
+      password: 'password',
+      database: 'ledwax_web_ui_dev_test',
+      host: 'localhost',
+      port: 5432
+    });
+	server.db = client;
 
 	return server;
 };

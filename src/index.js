@@ -1,6 +1,6 @@
 const Hapi = require('hapi'), Glue = require('glue'), Inert = require('inert'), Path = require('path');
 
-rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev'
+rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 
 config = require('./config/' + rt_ctx_env);
 

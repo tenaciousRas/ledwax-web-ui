@@ -11,7 +11,13 @@ var glob = require('glob'),
 
 var internals = {
 	defaults: {
-		database: 'postgres://postgres:password@localhost/ledwax_web_ui_dev'
+		database: {
+      user: 'postgres',
+      password: 'password',
+      database: 'ledwax_web_ui_dev_test',
+      host: 'localhost',
+      port: 5432
+    }
 	}
 };
 
@@ -19,7 +25,7 @@ var PG_CON = [];
 var run_once = false;
 
 function assign_connection(request, reply) { // DRY
-  request.pg = exports.getCon();
+  request.pg = getCon();
   reply.continue();
 }
 
@@ -36,11 +42,12 @@ exports.register = function(server, options, next) {
       run_once = true;
       server.log(['info', pkg.name], 'Connecting to DB');
       // connect once and expose the connection via PG_CON
-      pg.connect(internals.defaults.database, function(err, client, done) {
+    	var pgClient = pg.Client;
+    	var client = new pgClient(settings.database);
+    	client.connect(function(err, client, done) {
         assert(!err, pkg.name + ' :: ERROR Connecting during run-once to PostgreSQL!\n' + err);
         PG_CON.push({ client: client, done: done});
         server.log(['info', pkg.name], 'Connected to DB');
-        return;
       });
       server.on('stop', function () { // only one server.on('stop') listener
         PG_CON.forEach(function (con) { // close all the connections

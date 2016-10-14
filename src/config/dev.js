@@ -1,11 +1,15 @@
 const Path = require('path');
 var hapiplugins = require('./plugins');
-var internals = hapiplugins.internals;
+var internals = hapiplugins.internals
 
 // export server config settings
 module.exports = {
 	application : {
 		server : {
+			debug: {
+				log: ['error', 'debug', 'warn', 'info'],
+				request: ['error', 'debug', 'warn', 'info']
+			}
 		// TODO: cache, cors, etc
 		},
 		connections : [
@@ -21,9 +25,10 @@ module.exports = {
 						}
 					}
 				}, {
-					port : process.env.API_PORT || 3000,
+					port : process.env.LEDWAX_API_PORT || 3000,
 					labels : [ 'api' ],
 					routes : {
+						log : true,
 						validate : {
 							options : {
 								// ignores unknown json props and doesnt

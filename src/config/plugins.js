@@ -1,7 +1,6 @@
 var Path = require('path');
 
 var internals = {
-	debug : true,
 	dbconnection: 'postgres://postgres:password@localhost/ledwax_web_ui_dev',
 //	dbconnection : 'mongodb://localhost/ledwax-web-ui-dev',
 	staticContentPath : '../modules/public-ledwax-web-ui'
