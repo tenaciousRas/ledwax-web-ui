@@ -1,0 +1,53 @@
+{
+  "dev": {
+    "username": "postgres",
+    "password": "password",
+    "database": "ledwax_web_ui_dev",
+    "host": "127.0.0.1",
+    "port": 5432,
+		"connStr": "postgres://postgres:password@localhost/ledwax_web_ui_dev_test",
+		"sequelize": {
+			"host": "localhost",
+		  "dialect": "postgres",
+		  "pool": {
+		    "max": 5,
+		    "min": 0,
+		    "idle": 10000
+		  }
+		}
+  },
+  "test": {
+    "username": "postgres",
+    "password": "password",
+    "database": "ledwax_web_ui_dev_test",
+    "host": "127.0.0.1",
+    "port": 5432,
+		"connStr": "postgres://postgres:password@localhost/ledwax_web_ui_dev_test",
+		"sequelize": {
+			"host": "localhost",
+		  "dialect": "postgres",
+		  "pool": {
+		    "max": 5,
+		    "min": 0,
+		    "idle": 10000
+		  }
+		}
+  },
+  "production": {
+    "username": "postgres",
+    "password": "password",
+    "database": "ledwax_web_ui",
+    "host": "127.0.0.1",
+    "port": 5432,
+		"connStr": "postgres://postgres:password@localhost/ledwax_web_ui_dev_test",
+		"sequelize": {
+			"host": "localhost",
+		  "dialect": "postgres",
+		  "pool": {
+		    "max": 5,
+		    "min": 0,
+		    "idle": 10000
+		  }
+		}
+  }
+}

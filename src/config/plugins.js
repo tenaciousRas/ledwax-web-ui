@@ -5,23 +5,7 @@ const Path = require('path');
 const Sequelize = require('sequelize');
 
 let internals = {
-	db: {
-    user: 'postgres',
-    password: 'password',
-    database: 'ledwax_web_ui_dev',
-    host: 'localhost',
-    port: 5432,
-		connStr: 'postgres://postgres:password@localhost/ledwax_web_ui_dev',
-		sequelize: {
-			host: 'localhost',
-		  dialect: 'postgres',
-		  pool: {
-		    max: 5,
-		    min: 0,
-		    idle: 10000
-		  }
-		}
-	},
+	db: require('./sequelize.config.json')[rt_ctx_env],
 	staticContentPath : '../modules/public-ledwax-web-ui'
 };
 
@@ -102,7 +86,7 @@ module.exports = {
 					name: 'apidb', // identifier
 			    models: ['./src/modules/middleware/models/*.js'],  // relative to src/index.js
 			    sequelize: new Sequelize(internals.db.database,
-							internals.db.user,
+							internals.db.username,
 							internals.db.password,
 							internals.db.sequelize), // sequelize instance
 			    sync: true, // sync models - default false

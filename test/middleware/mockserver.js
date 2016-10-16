@@ -10,25 +10,8 @@ const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 const particleConfig = require('../../src/particle-config').attributes[rt_ctx_env];
 
 var internals = {
-	db: {
-    user: 'postgres',
-    password: 'password',
-    database: 'ledwax_web_ui_dev_test',
-    host: 'localhost',
-    port: 5432,
-		connStr: 'postgres://postgres:password@localhost/ledwax_web_ui_dev_test',
-		sequelize: {
-			host: 'localhost',
-		  dialect: 'postgres',
-		  pool: {
-		    max: 5,
-		    min: 0,
-		    idle: 10000
-		  }
-		}
-	}
+	dbConfig: require('../../src/config/sequelize.config.json')[rt_ctx_env]
 };
-
 var db;
 
 module.exports.createServer = (done) => {
@@ -45,10 +28,10 @@ module.exports.createServer = (done) => {
 		        {
 		          name: 'apidb', // identifier
 		          models: ['./src/modules/middleware/models/**/*.js'],  // relative to /webui -- where npm test is run
-					    sequelize: new Sequelize(internals.db.database,
-									internals.db.user,
-									internals.db.password,
-									internals.db.sequelize), // sequelize instance
+					    sequelize: new Sequelize(internals.dbConfig.database,
+									internals.dbConfig.username,
+									internals.dbConfig.password,
+									internals.dbConfig.sequelize), // sequelize instance
 					    sync: true, // sync models - default false
 					    forceSync: false // force sync (drops tables) - default false
 		        }
