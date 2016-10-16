@@ -24,16 +24,8 @@ const AuthController = () => {
 	 * Authenticate a user.
 	 */
 	const login = (request, reply) => {
-	  // request.server.log(['error', 'auth#login'], 'request.payload -- ' + request.payload);
-		// if (typeof request === 'undefined' || !request
-		// 		|| typeof request.payload === 'undefined' || !request.payload) {
-		// 	return reply(boom.badData('invalid request params'));
-		// }
 		let un = request.payload.username;
 		let pwd = request.payload.password;
-		// if (typeof un === 'undefined' || typeof pwd === 'undefined') {
-		// 	return reply(boom.badData('invalid request params'));
-		// }
 		let prom;
 		try {
 			let logger = (msg) => { request.server.log(['info', 'AuthController#loginToCloud'], msg); };
