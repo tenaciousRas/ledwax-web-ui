@@ -28,13 +28,16 @@ const AuthController = () => {
 		let pwd = request.payload.password;
 		let prom;
 		try {
+			// setup logger delegate to pass to loginToCloud
 			let logger = (msg) => { request.server.log(['info', 'AuthController#loginToCloud'], msg); };
+			// get promise back
 			prom = loginToCloud(un, pwd, logger);
 		} catch (e) {
 		}
 		if (!prom) {
 			return reply(boom.expectationFailed(err));
 		}
+		// handle particle login promise
 		prom.then(
 		  (data) => {
 	    	request.server.log(['info', 'auth.contoller'],
