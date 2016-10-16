@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   var storeduser_tokens = sequelize.define('storeduser_tokens', {
     username: DataTypes.STRING,
     pwd: DataTypes.STRING,
@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     cookietoken: DataTypes.STRING
   }, {
     classMethods: {
-      associate: function(models) {
+      associate: (models) => {
         // associations can be defined here
       }
     }

@@ -7,28 +7,20 @@ const Particle = require('particle-api-js');
  */
 function ParticleDevicesController() {
 
-	return {
-		listDevices : cloudDeviceList,
-		fn : cloudDeviceFunction,
-		sendSignal : signalDevice,
-		attrs : cloudDeviceAttrs,
-		varval : cloudDeviceVar
-	};
-
 	/**
 	 * Returns a list of devices registered with the particle cloud.
 	 */
-	function cloudDeviceList(request, reply) {
+	function deviceList(request, reply) {
 		var token = request.payload.token;
 		var devicesPr = particle.listDevices({ auth: token });
 
 		devicesPr.then(
 		  function(devices){
-		    console.log('Devices: ', devices);
+		  	server.log(['info', 'ParticleDevicesController#deviceList'], 'Devices: ', devices);
 	    	return reply(data);
 		  },
 		  function(err) {
-		    console.log('List particle cloud devices call failed: ', err);
+		  	server.log(['info', 'LedwaxDeviceController#getNumStrips'], 'List particle cloud devices call failed: ', err);
 	    	return reply(err);
 		  }
 		);
@@ -45,10 +37,10 @@ function ParticleDevicesController() {
 		var fnPr = particle.callFunction({ deviceId: deviceId, name: fn, argument: arg, auth: token });
 		fnPr.then(
 		  function(data) {
-		    console.log('Function called succesfully:', data);
+		  	server.log(['info', 'ParticleDevicesController#deviceList'], 'Function called succesfully:', data);
 	    	return reply(data);
 		  }, function(err) {
-		    console.log('An error occurred:', err);
+		  	server.log(['info', 'ParticleDevicesController#deviceList'], 'An error occurred:', err);
 	    	return reply(err);
 		  }
 		);
@@ -63,11 +55,11 @@ function ParticleDevicesController() {
 		var devicesPr = particle.getDevice({ deviceId: deviceId, auth: token });
 		devicesPr.then(
 		  function(data){
-		    console.log('Device attrs retrieved successfully:', data);
+		  	server.log(['info', 'ParticleDevicesController#deviceList'], 'Device attrs retrieved successfully:', data);
 	    	return reply(data);
 		  },
 		  function(err) {
-		    console.log('API call failed: ', err);
+		  	server.log(['info', 'ParticleDevicesController#deviceList'], 'API call failed: ', err);
 	    	return reply(err);
 		  }
 		);
@@ -81,10 +73,10 @@ function ParticleDevicesController() {
 			varname = request.payload.varname,
 			token = request.payload.token;
 		particle.getVariable({ deviceId: deviceId, name: varname, auth: token }).then(function(data) {
-		  console.log('Device variable retrieved successfully:', data);
+	  	server.log(['info', 'ParticleDevicesController#deviceList'], 'Device variable retrieved successfully:', data);
     	return reply(data);
 		}, function(err) {
-		  console.log('An error occurred while getting attrs:', err);
+	  	server.log(['info', 'ParticleDevicesController#deviceList'], 'An error occurred while getting attrs:', err);
     	return reply(err);
 		});
 	}
@@ -97,13 +89,22 @@ function ParticleDevicesController() {
 			signalOn = request.payload.signal,
 			token = request.payload.token;
 		particle.signalDevice({ deviceId: deviceId, signal: signalOn, auth: token }).then(function(data) {
-		  console.log('Device is' + (signalOn ? '' : ' not') + ' shouting rainbows:', data);
+	  	server.log(['info', 'ParticleDevicesController#deviceList'], 'Device is' + (signalOn ? '' : ' not') + ' shouting rainbows:', data);
     	return reply(data);
 		}, function(err) {
-		  console.log('Error sending a signal to the device:', err);
+	  	server.log(['info', 'ParticleDevicesController#deviceList'], 'Error sending a signal to the device:', err);
     	return reply(err);
 		});
 	}
+
+	// expose public methods
+	return {
+		listDevices : cloudDeviceList,
+		fn : cloudDeviceFunction,
+		sendSignal : signalDevice,
+		attrs : cloudDeviceAttrs,
+		varval : cloudDeviceVar
+	};
 
 };
 

@@ -55,29 +55,16 @@ module.exports.user = {
 	}
 };
 
-module.exports.particle_cloud = {
-	findCookie: {
-		query: {
-			cookietoken: Joi.string().trim().min(3).max(100).required()
-		},
-    failAction: failActDelegate('custom')
-	},
-	insert: {
-		payload: {
-			username: Joi.string().trim().min(3).max(100).required(),
-			password: Joi.string().trim().min(2).max(35).required(),
-			authtoken: Joi.string().trim().min(3).max(100).required(),
-			cookietoken: Joi.string().trim().min(3).max(100).required()
-		},
-    failAction: failActDelegate('custom')
-	},
-	updateCookie: {
-		payload: {
-			username: Joi.string().trim().min(3).max(100),
-			password: Joi.string().trim().min(2).max(35),
-			authtoken: Joi.string().trim().min(3).max(100).required(),
-			cookietoken: Joi.string().trim().min(3).max(100).required()
-		},
-    failAction: failActDelegate('custom')
-	}
-};
+let dynFuncNames = require('../controllers/ledwax_device').dynamicFuncNames;
+let dynamic_ledwax_devices = {};
+for (let i = 0; i < dynFuncNames.length; i++) {
+	let key = dynFuncNames[i];
+  dynamic_ledwax_devices[key] = {
+  		query: {
+  			authtoken: Joi.string().trim().min(3).max(100).required(),
+  			deviceId: Joi.string().trim().min(3).max(50).required()
+  		},
+      failAction: failActDelegate('custom')
+    };
+}
+module.exports.ledwaxDevices = dynamic_ledwax_devices;

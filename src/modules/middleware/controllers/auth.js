@@ -52,6 +52,7 @@ const AuthController = () => {
 		);
 	};
 
+	// expose public methods
 	return {
 		login: login
 	};

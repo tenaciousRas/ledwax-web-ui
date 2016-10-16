@@ -2,9 +2,10 @@
 
 const authController = require('../controllers/auth');
 const userController = require('../controllers/user');
+const ledwaxDeviceController = require('../controllers/ledwax_device');
 const	validations = require('../validations');
 
-module.exports = [
+let routeConfig = [
 	{
 		method : 'GET',
 		path : '/oauth/login',
@@ -57,3 +58,21 @@ module.exports = [
 		}
 	}
 ];
+
+let dynFuncNames = require('../controllers/ledwax_device').dynamicFuncNames;
+for (let i = 0; i < dynFuncNames.length; i++) {
+	let key = dynFuncNames[i];
+	routeConfig.push({
+		method : 'GET',
+		path : '/devices/' + key,
+		handler : ledwaxDeviceController.controller[key],
+		config : {
+			description : 'Path dynamically generated.',
+			notes : 'Returns a ledwax return value.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevices[key]
+		}
+	});
+}
+
+module.exports = routeConfig;

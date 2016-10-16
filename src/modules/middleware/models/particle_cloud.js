@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 'use strict';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   var particle_cloud = sequelize.define('particle_cloud', {
     id: DataTypes.INT,
     name: DataTypes.STRING,
     ip: DataTypes.STRING
   }, {
     classMethods: {
-      associate: function(models) {
+      associate: (models) => {
         // associations can be defined here
       }
     }

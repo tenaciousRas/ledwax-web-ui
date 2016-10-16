@@ -4,6 +4,7 @@
 const Path = require('path');
 const Sequelize = require('sequelize');
 
+const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 let internals = {
 	db: require('./sequelize.config.json')[rt_ctx_env],
 	staticContentPath : '../modules/public-ledwax-web-ui'

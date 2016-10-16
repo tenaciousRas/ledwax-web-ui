@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   var ledwax_device = sequelize.define('ledwax_device', {
     id: DataTypes.INT,
     device_id: DataTypes.STRING
   }, {
     classMethods: {
-      associate: function(models) {
+      associate: (models) => {
         // associations can be defined here
       }
     }
