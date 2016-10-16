@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.2.0",
   "author": "Free Beachler",
-  "description": "LEDWax IoT Web UI",
+  "description": "LEDWax IoT Web UI and REST API",
   "repository": {
     "type": "git",
     "url": "https://tbd.git"
