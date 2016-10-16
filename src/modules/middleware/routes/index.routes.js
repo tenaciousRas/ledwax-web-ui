@@ -13,7 +13,7 @@ module.exports = [
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
 			tags : [ 'api' ],
-			validate: validations.loginGet
+			validate: validations.auth.loginGet
 		}
 	}, {
 		method : 'POST',
@@ -23,7 +23,7 @@ module.exports = [
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
 			tags : [ 'api' ],
-			validate: validations.loginPost
+			validate: validations.auth.loginPost
 		}
 	}, {
 		method : 'GET',
@@ -33,7 +33,7 @@ module.exports = [
 			description : 'Find a stored user in DB by ID.',
 			notes : 'Return a user object.',
 			tags : [ 'api' ],
-			validate: validations.findCookie
+			validate: validations.user.findCookie
 		}
 	}, {
 		method : 'POST',
@@ -43,7 +43,7 @@ module.exports = [
 			description : 'Create a new persistent user.',
 			notes : 'Returns the persistent user object.',
 			tags : [ 'api' ],
-			validate: validations.insert
+			validate: validations.user.insert
 		}
 	}, {
 		method : 'POST',
@@ -53,7 +53,7 @@ module.exports = [
 			description : 'Update an existing persistent user\'s cookietoken.',
 			notes : 'Returns the persistent user object.',
 			tags : [ 'api' ],
-			validate: validations.updateCookie
+			validate: validations.user.updateCookie
 		}
 	}
 ];

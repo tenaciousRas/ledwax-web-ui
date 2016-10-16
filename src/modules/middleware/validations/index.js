@@ -11,7 +11,7 @@ let failActDelegate = (msg) => {
   };
 };
 
-module.exports = {
+module.exports.auth = {
 	loginPost: {
 		payload: {
 			username: Joi.string().trim().min(3).max(100).required(),
@@ -25,7 +25,37 @@ module.exports = {
 			password: Joi.string().trim().min(2).max(35).required()
 		},
     failAction: failActDelegate('custom')
+	}
+};
+
+module.exports.user = {
+	findCookie: {
+		query: {
+			cookietoken: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: failActDelegate('custom')
 	},
+	insert: {
+		payload: {
+			username: Joi.string().trim().min(3).max(100).required(),
+			password: Joi.string().trim().min(2).max(35).required(),
+			authtoken: Joi.string().trim().min(3).max(100).required(),
+			cookietoken: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: failActDelegate('custom')
+	},
+	updateCookie: {
+		payload: {
+			username: Joi.string().trim().min(3).max(100),
+			password: Joi.string().trim().min(2).max(35),
+			authtoken: Joi.string().trim().min(3).max(100).required(),
+			cookietoken: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: failActDelegate('custom')
+	}
+};
+
+module.exports.particle_cloud = {
 	findCookie: {
 		query: {
 			cookietoken: Joi.string().trim().min(3).max(100).required()
