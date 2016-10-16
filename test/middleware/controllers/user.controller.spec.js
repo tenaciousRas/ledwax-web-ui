@@ -136,7 +136,7 @@ describe('api', () => {
         where: {
           username: 'foo'
         },
-        truncate: false  //ignore where and truncate the table instead
+        truncate: true  //ignore where and truncate the table instead
       }).then((affectedRows) => {
         // make request
   			let options = {
@@ -147,14 +147,92 @@ describe('api', () => {
 
   			server.inject(options, (response) => {
   				expect(response.statusCode).toBe(200);
-//  				expect(JSON.parse(response.payload).message).toBe('bah');
-          // stuser.findOne({
-          //   where: {cookietoken: ct},
-          //   }).then((user) => {
-  				//     expect(user).toBe('humbug');
+          console.log(stuser);
+          stuser.findOne({
+            where: {cookietoken: options.payload.cookietoken},
+            }).then((user) => {
+  				    expect(user.cookietoken).toBe('quux');
   				    done();
-          //   });
+          });
   			});
+      });
+		});
+
+	});
+
+	describe('user controller update', () => {
+
+		it('empty params responds with 422 NOT OK', (done) => {
+			let options = {
+				method : 'POST',
+				url : '/users/update',
+        payload : {}
+			};
+
+			server.inject(options, (response) => {
+				expect(response.statusCode).toBe(422);
+				expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+				done();
+			});
+		});
+
+		it('missing params responds with 422 NOT OK', (done) => {
+      let options = {};
+      let parmNames = ['username', 'password', 'authtoken', 'cookietoken'];
+      for (let i = 0; i < parmNames.length; i++) {
+        let jsObj = {};
+        jsObj[parmNames[i]] == 'foo';
+  			options = {
+  				method : 'POST',
+  				url : '/users/update',
+  				payload : jsObj
+  			};
+  			server.inject(options, (response) => {
+  				expect(response.statusCode).toBe(422);
+          if (i == (parmNames.length - 1)) {
+  				  done();
+          }
+  			});
+      }
+		});
+
+		it('valid update responds with 200 OK', (done) => {
+      // delete all users
+      let db = server.plugins['hapi-sequelize']['apidb'];
+      let stuser = db.getModel('storeduser_tokens');
+      stuser.destroy({
+        where: {
+          username: 'foo'
+        },
+        truncate: true  //ignore where and truncate the table instead
+      }).then((affectedRows) => {
+        let vals = {
+          username: 'foo',
+      		pwd: 'bar',
+      		authtoken: 'bazz',
+      		cookietoken: 'qux'
+        };
+        stuser.build(vals).
+          save().then((user) => {
+            // make request
+      			let options = {
+      				method : 'POST',
+      				url : '/users/update',
+              payload : {username: 'foofoo', password: 'bar', authtoken: 'bazz', cookietoken: 'corge'}
+      			};
+
+      			server.inject(options, (response) => {
+      				expect(response.statusCode).toBe(200);
+       				expect(JSON.parse(response.payload).authtoken).toBe(vals.authtoken);
+              stuser.findOne({
+                where: {authtoken: options.payload.authtoken},
+                }).then((user) => {
+      				    expect(user.username).toBe(vals.username);
+      				    expect(user.cookietoken).toBe(options.payload.cookietoken);
+      				    done();
+                });
+      			});
+        });
       });
 		});
 

@@ -48,6 +48,8 @@ module.exports = {
 	},
 	updateCookie: {
 		payload: {
+			username: Joi.string().trim().min(3).max(100),
+			password: Joi.string().trim().min(2).max(35),
 			authtoken: Joi.string().trim().min(3).max(100).required(),
 			cookietoken: Joi.string().trim().min(3).max(100).required()
 		},

@@ -46,7 +46,7 @@ const UserController = () => {
     };
     try {
       stuser.build(vals).
-        save().then((user) => { reply('foo'); });
+        save().then((user) => { reply(user); });
     } catch (e) {
       console.log(e);
       return reply(boom.badImplementation('unable to create user', e));
@@ -57,20 +57,23 @@ const UserController = () => {
 	 * Updates a user's cookietoken with a new and unique cookietoken.
 	 */
 	const updateCookie = (request, reply) => {
-    let db = request.getDb('apidb');
 		let ct = request.payload.cookietoken;
 		let at = request.payload.authtoken;
+    let db = request.getDb('apidb');
     let stuser = db.getModel('storeduser_tokens');
     try {
       stuser.findOne({
-        where: {cookietoken: ct},
+        where: {authtoken: at},
         }).then((user) => {
-  	    	request.server.log(['debug', 'user.contoller'],
-  						'DB call complete - promise success, user =:' + user);
+  	    	request.server.log(['debug', 'user.contoller#updateCookie'],
+  						'DB call complete - find promise success, user =:' + user);
           if (null == user) {
-            return reply(boom.notFound(ct));
+            return reply(boom.notFound(at));
           }
-          user.save({fields: ['cookietoken']}).then(() => {
+          user.cookietoken = ct;
+          user.save({fields: ['cookietoken']}).then((user) => {
+  	    	request.server.log(['debug', 'user.contoller#updateCookie'],
+  						'DB call complete - update promise success, user =:' + user);
   				  return reply(user);
           });
       });
