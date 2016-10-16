@@ -1,95 +1,65 @@
+#!/usr/bin/env node
 'use strict';
 
 const assert = require('assert');
 const boom = require('boom');
-const particle = require('particle-api-js');
+const particlewrap = require('particle-api-js');
+
+const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
+const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
+let particle = new particlewrap(particle_config);
 
 /**
  * Auth controller
  */
-function AuthController() {
+const AuthController = () => {
 
-	return {
-		list : list,
-		update : update,
-		login : login
-	};
-
-	function loginToCloud(username, password) {
-		var promise = particle.login({username: username, password: password});
+	const loginToCloud = (username, password, log) => {
+	  log('particle call w/config : ' + particle_config);
+		let promise = particle.login({username: username, password: password});
 		return promise;
-	}
+	};
 
 	/**
 	 * Authenticate a user.
 	 */
-	function login(request, reply) {
-		if (typeof request === 'undefined' || !request
-				|| typeof request.payload === 'undefined' || !request.payload) {
-			return reply(boom.badData('invalid request params'));
-		}
-		var un = request.payload.username;
-		var pwd = request.payload.password;
-		var prom;
+	const login = (request, reply) => {
+	  // request.server.log(['error', 'auth#login'], 'request.payload -- ' + request.payload);
+		// if (typeof request === 'undefined' || !request
+		// 		|| typeof request.payload === 'undefined' || !request.payload) {
+		// 	return reply(boom.badData('invalid request params'));
+		// }
+		let un = request.payload.username;
+		let pwd = request.payload.password;
+		// if (typeof un === 'undefined' || typeof pwd === 'undefined') {
+		// 	return reply(boom.badData('invalid request params'));
+		// }
+		let prom;
 		try {
-			prom = loginToCloud(un, pwd);
+			let logger = (msg) => { request.server.log(['info', 'AuthController#loginToCloud'], msg); };
+			prom = loginToCloud(un, pwd, logger);
 		} catch (e) {
 		}
 		if (!prom) {
 			return reply(boom.expectationFailed(err));
 		}
 		prom.then(
-		  function(data){
-		    console.log('API call completed on promise resolve: ', data.body.access_token);
+		  (data) => {
+	    	request.server.log(['info', 'auth.contoller'],
+						'API call complete - promise success:\n' + data.body.access_token);
 				return reply(data);
 		  },
-		  function(err) {
-		    console.log('API call completed on promise fail: ', err);
+		  (err) => {
+	    	request.server.log(['info', 'auth.contoller'],
+						'API call complete - promise error:\n' + err);
 				return reply(boom.expectationFailed(err));
 		  }
 		);
-	}
+	};
 
-	/**
-	 * Returns an array of all users
-	 */
-	function list(request, reply) {
-		// var UserModel = mongoose.model('User');
-		// UserModel.find({}, function(err, data) {
-		// 	return reply(data);
-		// });
-		var select = 'SELECT * FROM storedusertokens';
-	  request.pg.client.query(select, function(err, result) {
-			if (err) return reply(err);
-			if (!result) return reply({rows: []});
-	    return reply(result.rows[0]);
-	  });
-	}
-
-	/**
-	 * Updates a single user
-	 */
-	function update(request, reply) {
-		// var UserModel = mongoose.model('User');
-		// var user = new UserModel(request.payload);
-		// user.save(function(err) {
-		// 	if (err) {
-		// 		return reply(boom.badImplementation(
-		// 				'There was an internal error', err));
-		// 	}
-		//
-		// 	return reply(user);
-		// });
-		var update = 'UPDATE StoredUserTokens WHERE data = $1';
-		var params = [request.payload];
-	  request.pg.client.update(update, params, function(err, result) {
-	    console.log(err, result);
-			if(err) return reply(err);
-			if (!result) return reply({rows: []});
-	    return reply(result.rows[0]);
-	  });
-	}
-
+	return {
+		login: login
+	};
 };
 
 module.exports = AuthController();

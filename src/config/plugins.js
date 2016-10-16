@@ -1,8 +1,27 @@
-var Path = require('path');
+#!/usr/bin/env node
+'use strict';
 
-var internals = {
-	dbconnection: 'postgres://postgres:password@localhost/ledwax_web_ui_dev',
-//	dbconnection : 'mongodb://localhost/ledwax-web-ui-dev',
+const Path = require('path');
+const Sequelize = require('sequelize');
+
+let internals = {
+	db: {
+    user: 'postgres',
+    password: 'password',
+    database: 'ledwax_web_ui_dev',
+    host: 'localhost',
+    port: 5432,
+		connStr: 'postgres://postgres:password@localhost/ledwax_web_ui_dev',
+		sequelize: {
+			host: 'localhost',
+		  dialect: 'postgres',
+		  pool: {
+		    max: 5,
+		    min: 0,
+		    idle: 10000
+		  }
+		}
+	},
 	staticContentPath : '../modules/public-ledwax-web-ui'
 };
 
@@ -78,10 +97,17 @@ module.exports = {
 		// Registers the database handler
 		{
 			plugin : {
-				register : './postgresql-config',
-				options : {
-					database : internals.dbconnection
-				}
+				register : 'hapi-sequelize',
+				options : [ {
+					name: 'apidb', // identifier
+			    models: ['./src/modules/middleware/models/*.js'],  // relative to src/index.js
+			    sequelize: new Sequelize(internals.db.database,
+							internals.db.user,
+							internals.db.password,
+							internals.db.sequelize), // sequelize instance
+			    sync: true, // sync models - default false
+			    forceSync: false // force sync (drops tables) - default false
+				} ]
 			},
 			options : {
 				select : [ 'api' ]

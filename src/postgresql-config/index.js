@@ -7,7 +7,7 @@ var assert = require('assert');
 var pg = require('pg');
 var pkg = require('./package.json');
 var glob = require('glob'),
-    Hoek = require("hoek");
+    Hoek = require('hoek');
 
 var internals = {
 	defaults: {

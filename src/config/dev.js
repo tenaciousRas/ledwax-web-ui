@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+'use strict';
+
 const Path = require('path');
-var hapiplugins = require('./plugins');
-var internals = hapiplugins.internals
+const hapiplugins = require('./plugins');
+const internals = hapiplugins.internals
 
 // export server config settings
 module.exports = {

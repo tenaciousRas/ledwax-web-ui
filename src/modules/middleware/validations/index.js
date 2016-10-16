@@ -1,18 +1,59 @@
+#!/usr/bin/env node
 'use strict';
 
-var Joi = require('joi');
+const Joi = require('joi');
+const boom = require('boom');
 
 module.exports = {
-	login: {
+	loginPost: {
 		payload: {
-			name: Joi.string().trim().min(3).max(100).required(),
+			username: Joi.string().trim().min(3).max(100).required(),
 			password: Joi.string().trim().min(2).max(35).required()
-		}
+		},
+    failAction: (request, reply, source, error) => {
+        error.output.payload.message = 'custom';
+        return reply(boom.badData(error));
+    }
 	},
-	update: {
-		payload: {
-			name: Joi.string().trim().min(3).max(100).required(),
+	loginGet: {
+		query: {
+			username: Joi.string().trim().min(3).max(100).required(),
 			password: Joi.string().trim().min(2).max(35).required()
-		}
+		},
+    failAction: (request, reply, source, error) => {
+        error.output.payload.message = 'custom';
+        return reply(boom.badData(error));
+    }
+	},
+	findCookie: {
+		query: {
+			cookietoken: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: (request, reply, source, error) => {
+        error.output.payload.message = 'custom';
+        return reply(boom.badData(error));
+    }
+	},
+	insert: {
+		payload: {
+			username: Joi.string().trim().min(3).max(100).required(),
+			password: Joi.string().trim().min(2).max(35).required(),
+			authtoken: Joi.string().trim().min(3).max(100).required(),
+			cookietoken: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: (request, reply, source, error) => {
+        error.output.payload.message = 'custom';
+        return reply(boom.badData(error));
+    }
+	},
+	updateCookie: {
+		payload: {
+			authtoken: Joi.string().trim().min(3).max(100).required(),
+			cookietoken: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: (request, reply, source, error) => {
+        error.output.payload.message = 'custom';
+        return reply(boom.badData(error));
+    }
 	}
 };

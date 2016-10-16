@@ -1,52 +1,91 @@
+#!/usr/bin/env node
 'use strict';
 
 const assert = require('assert');
-var pg = require('pg');
+let pg = require('pg');
 const boom = require('boom');
 
 describe('api', function() {
 
-	var server;
-	var db;
+	let server, db, particleConfig;
 
 	beforeAll(function(done) {
 		server = require('../mockserver.js').createServer();
-		db = server.db;
-		db.on('drain', db.end.bind(db)); //disconnect client when all queries are finished
-    db.connect();
-		var select = escape('DELETE FROM user');
-	  db.query(select, (err, result) => {
-	 		assert(err, 'mockserver' + ' :: ERROR Connecting during run-once to PostgreSQL!\n' + err);
-	    server.log(['info', 'auth.contoller.spec'], 'deleted db rows -- ' + result);
-	  });
-		done();
+		particleConfig = server.methods.particle.config();
+    done();
 	});
 
 	describe('auth controller', () => {
 
-		it('empty login should respond with 400 NOT OK', (done) => {
-			var options = {
+		it('empty login responds with 422 NOT OK', (done) => {
+			let options = {
 				method : 'GET',
 				url : '/oauth/login'
 			};
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(response.payload).toBe('{"statusCode":422,"error":"Unprocessable Entity","message":"invalid request params"}');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "username" fails because ["username" is required]');
 				done();
 			});
 		});
 
-		it('invalid login should respond with 400 NOT OK', (done) => {
-			var options = {
+		it('login with empty password respond with 422 NOT OK', (done) => {
+			let options = {
 				method : 'POST',
 				url : '/oauth/login',
-				payload : {name: 'foo', password: 'bar'}
+				payload : {username: 'bar'}
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(500);
-				expect(response.payload).toBe('{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"}');
+				expect(response.statusCode).toBe(422);
+				expect(JSON.parse(response.payload).message).toBe('Error: child "password" fails because ["password" is required]');
+				done();
+			});
+		});
+
+		it('logins with empty username respond with 422 NOT OK', (done) => {
+			let options = {
+				method : 'POST',
+				url : '/oauth/login',
+				payload : {password: 'foo'}
+			};
+
+			server.inject(options, (response) => {
+				expect(response.statusCode).toBe(422);
+				expect(JSON.parse(response.payload).message).toBe('Error: child "username" fails because ["username" is required]');
+				done();
+			});
+		});
+
+		it('invalid credentials respond with 417 NOT OK', (done) => {
+			let options = {
+				method : 'POST',
+				url : '/oauth/login',
+				payload : {username: 'foo', password: 'bar'}
+			};
+
+			server.inject(options, (response) => {
+				expect(response.statusCode).toBe(417);
+				expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 417 from ' +
+						response.request.server.methods.particle.config().baseUrl +
+						'/oauth/token');
+				done();
+			});
+
+		});
+
+		it('valid login should respond with 200 OK', (done) => {
+			let options = {
+				method : 'POST',
+				url : '/oauth/login',
+				payload : {username: 'user', password: 'password'}
+			};
+
+			server.inject(options, (response) => {
+				expect(response.statusCode).toBe(200);
+				expect(JSON.parse(response.payload).body.access_token)
+						.toBe('254406f79c1999af65a7df4388971354f85cfee9');
 				done();
 			});
 		});

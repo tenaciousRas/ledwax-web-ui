@@ -1,6 +1,8 @@
 "use strict";
 
-var authController = require('../controllers/auth'), validations = require('../validations');
+const authController = require('../controllers/auth');
+const userController = require('../controllers/user');
+const	validations = require('../validations');
 
 module.exports = [
 	{
@@ -10,7 +12,8 @@ module.exports = [
 		config : {
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
-			tags : [ 'api' ]
+			tags : [ 'api' ],
+			validate: validations.loginGet
 		}
 	}, {
 		method : 'POST',
@@ -19,17 +22,38 @@ module.exports = [
 		config : {
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
-			tags : [ 'api' ]
+			tags : [ 'api' ],
+			validate: validations.loginPost
 		}
-	},
-	{
+	}, {
 		method : 'GET',
-		path : '/users/list',
-		handler : authController.list,
+		path : '/users/find',
+		handler : userController.findCookie,
 		config : {
-			description : 'List users stored in DB.',
-			notes : 'Return array of users.',
-			tags : [ 'api' ]
+			description : 'Find a stored user in DB by ID.',
+			notes : 'Return a user object.',
+			tags : [ 'api' ],
+			validate: validations.findCookie
+		}
+	}, {
+		method : 'POST',
+		path : '/users/create',
+		handler : userController.insert,
+		config : {
+			description : 'Create a new persistent user.',
+			notes : 'Returns the persistent user object.',
+			tags : [ 'api' ],
+			validate: validations.insert
+		}
+	}, {
+		method : 'POST',
+		path : '/users/update',
+		handler : userController.updateCookie,
+		config : {
+			description : 'Update an existing persistent user\'s cookietoken.',
+			notes : 'Returns the persistent user object.',
+			tags : [ 'api' ],
+			validate: validations.updateCookie
 		}
 	}
 ];
