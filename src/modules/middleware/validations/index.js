@@ -4,7 +4,7 @@
 const Joi = require('joi');
 const boom = require('boom');
 
-let failActDelegate = (msg) => {
+const failActDelegate = (msg) => {
   return (request, reply, source, error) => {
     error.output.payload.message = msg;
     return reply(boom.badData(error));
@@ -55,16 +55,34 @@ module.exports.user = {
 	}
 };
 
-let dynFuncNames = require('../controllers/ledwax_device').dynamicFuncNames;
-let dynamic_ledwax_devices = {};
-for (let i = 0; i < dynFuncNames.length; i++) {
-	let key = dynFuncNames[i];
-  dynamic_ledwax_devices[key] = {
-  		query: {
-  			authtoken: Joi.string().trim().min(3).max(100).required(),
-  			deviceId: Joi.string().trim().min(3).max(50).required()
-  		},
-      failAction: failActDelegate('custom')
-    };
-}
-module.exports.ledwaxDevices = dynamic_ledwax_devices;
+// add routes for dynamically created iot vars and iot FNs
+const buildDynamicValidationsForController = () => {
+  let dynamic_ledwax_devices = {};
+  // validate iot vars
+  let dynFuncNames = require('../controllers/ledwax_device').dynamicFuncNames.iotVars;
+  for (let i = 0; i < dynFuncNames.length; i++) {
+  	let key = dynFuncNames[i].handlerFuncName;
+    dynamic_ledwax_devices[key] = {
+    		query: {
+    			authtoken: Joi.string().trim().min(3).max(100).required(),
+    			deviceId: Joi.string().trim().min(3).max(50).required()
+    		},
+        failAction: failActDelegate('custom')
+      };
+  }
+  // validate iot FNs
+  dynFuncNames = require('../controllers/ledwax_device').dynamicFuncNames.iotFns;
+  for (let i = 0; i < dynFuncNames.length; i++) {
+  	let key = dynFuncNames[i].handlerFuncName;
+    dynamic_ledwax_devices[key] = {
+    		payload: {
+    			authtoken: Joi.string().trim().min(3).max(100).required(),
+    			deviceId: Joi.string().trim().min(3).max(50).required(),
+    			args: Joi.any().optional()
+    		},
+        failAction: failActDelegate('custom')
+      };
+  }
+  module.exports.ledwaxDevices = dynamic_ledwax_devices;
+};
+buildDynamicValidationsForController();

@@ -19,8 +19,9 @@ describe('api', function() {
 
 		it('empty login responds with 422 NOT OK', (done) => {
 			let options = {
-				method : 'GET',
-				url : '/oauth/login'
+				method : 'POST',
+				url : '/oauth/login',
+				payload: {}
 			};
 
 			server.inject(options, (response) => {

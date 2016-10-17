@@ -59,20 +59,40 @@ let routeConfig = [
 	}
 ];
 
-let dynFuncNames = ledwaxDeviceController.dynamicFuncNames;
-for (let i = 0; i < dynFuncNames.length; i++) {
-	let key = dynFuncNames[i];
+/**
+ * Add a dynamic route for iot vars andfunctions.
+ */
+const addDynamicRoute = (key, method, notes) => {
 	routeConfig.push({
-		method : 'GET',
+		method : method,
 		path : '/devices/' + key,
 		handler : ledwaxDeviceController.controller[key],
 		config : {
-			description : 'Path dynamically generated.',
-			notes : 'Returns a ledwax return value.',
+			description : 'Dynamically generated path.',
+			notes : notes,
 			tags : [ 'api' ],
 			validate: validations.ledwaxDevices[key]
 		}
 	});
-}
+};
+
+/**
+ * Build dynamic routes for dynamic handler functions in controller.
+ */
+const buildDynamicRoutesForController = () => {
+	// routes for iot vars
+	let dynFuncNames = ledwaxDeviceController.dynamicFuncNames.iotVars;
+	for (let i = 0; i < dynFuncNames.length; i++) {
+		let key = dynFuncNames[i].handlerFuncName;
+		addDynamicRoute(key, 'GET', 'Returns a ledwax return value.');
+	}
+	// routes for iot FNs
+	dynFuncNames = ledwaxDeviceController.dynamicFuncNames.iotFns;
+	for (let i = 0; i < dynFuncNames.length; i++) {
+		let key = dynFuncNames[i].handlerFuncName;
+		addDynamicRoute(key, 'POST', 'Returns a ledwax function.');
+	}
+};
+buildDynamicRoutesForController();
 
 module.exports = routeConfig;
