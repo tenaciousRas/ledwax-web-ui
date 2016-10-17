@@ -103,7 +103,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "username" fails because ["username" is required]');
+				expect(JSON.parse(response.payload).error).toBe('Unprocessable Entity');
 				done();
 			});
 		});
@@ -171,7 +171,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+				expect(JSON.parse(response.payload).error).toBe('Unprocessable Entity');
 				done();
 			});
 		});

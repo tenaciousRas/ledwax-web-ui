@@ -2,6 +2,7 @@
 'use strict';
 
 const boom = require('boom');
+const _ = require('lodash');
 const util = require('../../../util');
 const particlewrap = require('particle-api-js');
 
@@ -81,8 +82,129 @@ const LedwaxDeviceController = () => {
 				});
 		};
 	}
+
+	/**
+	 * Generic function calls for convenience methods.
+	 */
+	const genericParticleFunctionCall = (request, reply, arg) => {
+    let authToken = request.payload.authtoken;
+    let deviceId = request.payload.deviceId;
+		let fnProm = particle.callFunction({ deviceId: deviceId, name: iotFn, argument: arg, auth: authToken });
+		if (!fnProm) {
+			return reply(boom.expectationFailed('unable to call particle function - unknown error'));
+		}
+		fnProm.then(
+			(data) => {
+			  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'Device function retrieved successfully:', data);
+	    	return reply(data);
+			}, (err) => {
+			  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'An error occurred while getting function:', err);
+				return reply(boom.expectationFailed(err));
+			});
+	};
+
+	/**
+	 * Set current LED strip being controlled.
+	 */
+	const setCurrentStrip = (request, reply) => {
+    let stripIndex = request.payload.stripIndex;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// > [command-name];[cmd-value]?[,cmd-value]*
+		let arg = 'idx;' + stripIndex;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
+	/**
+	 * Set LED strip brightness.
+	 */
+	const setBrightness = (request, reply) => {
+    let brightness = request.payload.brightness;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// [command-name];[cmd-value]?[,cmd-value]*
+		let arg = 'brt;' + brightness;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
+	/**
+	 * Set LED strip display mode.
+	 */
+	const setDispMode = (request, reply) => {
+    let dispMode = request.payload.dispMode;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// > [command-name];[cmd-value]?[,cmd-value]*
+		let arg = 'mod;' + dispMode;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
+	/**
+	 * Set LED strip color.
+	 */
+	const setColor = (request, reply) => {
+    let modeColorIndex = request.payload.modeColorIndex;
+    let color24Bit = request.payload.color24Bit;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// > [command-name];[cmd-value]?[,cmd-value]*
+		//	[mode-color-index],[24-bit-integer]
+		//	where mode-color-index is the index of the mode color (family 1 display mode) to set
+		//	valid color values are 0 - 16777215 (24-bit integer)
+		let arg = 'col;' + modeColorIndex + ',' + color24Bit;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
+	/**
+	 * Set LED strip multi color hold time = time to display each color in the display mode.
+	 * See (firmware docs)[https://github.com/tenaciousRas/ledwax-photon-firmware].
+	 */
+	const setMultiColorHoldTime = (request, reply) => {
+    let holdTime = request.payload.holdTime;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// > [command-name];[cmd-value]?[,cmd-value]*
+		let arg = 'mht;' + holdTime;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
+	/**
+	 * Set LED strip fade mode.  The led-fade-mode is the style of transition between colors, and only applies to certain display modes.
+	 * See (firmware docs)[https://github.com/tenaciousRas/ledwax-photon-firmware].
+	 */
+	const setLEDFadeMode = (request, reply) => {
+    let fadeMode = request.payload.fadeMode;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// > [command-name];[cmd-value]?[,cmd-value]*
+		let arg = 'lfm;' + fadeMode;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
+	/**
+	 * Set LED fade time interval.  The led-fade-mode-time-interval is the duration of the fade.
+	 * The LED-fade-mode time-interval defines the duration of the LED color transition, in milliseconds.
+	 */
+	const setLEDFadeTimeInterval = (request, reply) => {
+    let fadeTimeInterval = request.payload.fadeTimeInterval;
+    let iotFn = 'setLEDParams';
+		// The format for "command" is:
+		// > [command-name];[cmd-value]?[,cmd-value]*
+		let arg = 'lfti;' + fadeTimeInterval;
+		return genericParticleFunctionCall(request, reply, arg);
+	};
+
 	// expose public methods
-	return dynamicControllerFunctions;
+	let staticFns = {
+		setCurrentStrip : setCurrentStrip,
+		setBrightness : setBrightness,
+		setDispMode : setDispMode,
+		setColor : setColor,
+		setMultiColorHoldTime : setMultiColorHoldTime,
+		setLEDFadeMode : setLEDFadeMode,
+		setLEDFadeTimeInterval : setLEDFadeTimeInterval
+	};
+	return _.extend(dynamicControllerFunctions, staticFns);
 };
 
 module.exports.controller = LedwaxDeviceController();

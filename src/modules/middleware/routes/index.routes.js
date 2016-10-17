@@ -51,10 +51,70 @@ let routeConfig = [
 		path : '/users/update',
 		handler : userController.updateCookie,
 		config : {
-			description : 'Update an existing persistent user\'s cookietoken.',
+			description : 'Set current strip being controlled for given device.',
 			notes : 'Returns the persistent user object.',
 			tags : [ 'api' ],
-			validate: validations.user.updateCookie
+			validate: validations.user.insert
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/setCurrentStrip',
+		handler : ledwaxDeviceController.controller.setCurrentStrip,
+		config : {
+			description : 'Set current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevicesConvenience.setCurrentStrip
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/setBrightness',
+		handler : ledwaxDeviceController.controller.setBrightness,
+		config : {
+			description : 'Set brightness for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevicesConvenience.setBrightness
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/setDispMode',
+		handler : ledwaxDeviceController.controller.setDispMode,
+		config : {
+			description : 'Set LED display mode for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevicesConvenience.setDispMode
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/setColor',
+		handler : ledwaxDeviceController.controller.setColor,
+		config : {
+			description : 'Set LED strip color for given mode-color-index, for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevicesConvenience.setColor
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/setMultiColorHoldTime',
+		handler : ledwaxDeviceController.controller.setMultiColorHoldTime,
+		config : {
+			description : 'Set LED multi-color hold time for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevicesConvenience.setMultiColorHoldTime
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/setLEDFadeTimeInterval',
+		handler : ledwaxDeviceController.controller.setLEDFadeTimeInterval,
+		config : {
+			description : 'Set LED fade time interval for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxDevicesConvenience.setLEDFadeTimeInterval
 		}
 	}
 ];
