@@ -4,6 +4,7 @@
 const assert = require('assert');
 const boom = require('boom');
 const particlewrap = require('particle-api-js');
+const util = require('../../../util');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
@@ -14,8 +15,11 @@ let particle = new particlewrap(particle_config);
  */
 const AuthController = () => {
 
+	/**
+	 * Login to particle cloud via Particle api.
+	 */
 	const loginToCloud = (username, password, log) => {
-	  log('particle call w/config : ' + particle_config);
+	  log('info', 'AuthController#loginToCloud', 'particle call w/config : ' + particle_config);
 		let promise = particle.login({username: username, password: password});
 		return promise;
 	};
@@ -27,9 +31,9 @@ const AuthController = () => {
 		let un = request.payload.username;
 		let pwd = request.payload.password;
 		let prom;
+		// setup logger delegate to pass to loginToCloud
+		let logger = util.logDelegateFactory(request);
 		try {
-			// setup logger delegate to pass to loginToCloud
-			let logger = (msg) => { request.server.log(['info', 'AuthController#loginToCloud'], msg); };
 			// get promise back
 			prom = loginToCloud(un, pwd, logger);
 		} catch (e) {

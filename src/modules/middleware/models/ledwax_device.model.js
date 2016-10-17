@@ -2,13 +2,12 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  var ledwax_device = sequelize.define('ledwax_device', {
-    id: DataTypes.INT,
+  let ledwax_device = sequelize.define('ledwax_device', {
     device_id: DataTypes.STRING
   }, {
     classMethods: {
       associate: (models) => {
-        // associations can be defined here
+        return ledwax_device.belongsTo(models.particle_cloud);
       }
     }
   });

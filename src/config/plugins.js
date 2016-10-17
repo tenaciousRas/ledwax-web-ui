@@ -72,7 +72,7 @@ module.exports = {
 					},
 					endpoint : '/swagger',
 					documentationPath : '/docs',
-					apiVersion : '0.1.0' // require('../modules/middleware/package.json').version
+					apiVersion : require(Path.join(__dirname, '../modules/middleware/package.json')).version
 				}
 			},
 			options : {
@@ -85,7 +85,7 @@ module.exports = {
 				register : 'hapi-sequelize',
 				options : [ {
 					name: 'apidb', // identifier
-			    models: ['./src/modules/middleware/models/*.js'],  // relative to src/index.js
+					models : [Path.join(__dirname, '../modules/middleware/models/*.js')],
 			    sequelize: new Sequelize(internals.db.database,
 							internals.db.username,
 							internals.db.password,
