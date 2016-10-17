@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 
-const Boom = require('boom');
-const Particle = require('particle-api-js');
+const boom = require('boom');
 const util = require('../../../util');
+const particlewrap = require('particle-api-js');
+
+const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
+const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
+let particle = new particlewrap(particle_config);
 
 /**
  * LedwaxDevice controller
@@ -21,24 +25,31 @@ const LedwaxDeviceController = () => {
 		fadeTime: "fadeTime",
 		colorTime: "colorTime"
 	};
+	// create handler functions with name of get[variable-name]
+	// where variable-name in particleDeviceVariableNames
 	let dynamicControllerFunctions = {};
 	for (let funcName in particleDeviceVariableNames) {
-		dynamicControllerFunctions['get' + util.capitalizeFirstLetter(funcName)] = () => {
-	    let authToken = request.payload.auth;
-	    let deviceId = request.payload.deviceId;
+		dynamicControllerFunctions['get' + util.capitalizeFirstLetter(funcName)] = (request, reply) => {
+			// particle variables are GET routes
+	    let authToken = request.query.authtoken;
+	    let deviceId = request.query.deviceId;
 	    let varname = particleDeviceVariableNames[funcName];
 			let fnProm = particle.getVariable({
 					deviceId: deviceId,
 					name: varname,
 					auth: authToken
 				});
-			fnProm.then(function(data) {
-			  server.log(['info', 'LedwaxDeviceController#' + funcName], 'Device variable retrieved successfully:', data);
-	    	return reply(data);
-			}, function(err) {
-			  server.log(['info', 'LedwaxDeviceController#' + funcName], 'An error occurred while getting attrs:', err);
-	    	return reply(err);
-			});
+			if (!fnProm) {
+				return reply(boom.expectationFailed(err));
+			}
+			fnProm.then(
+				(data) => {
+				  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'Device variable retrieved successfully:', data);
+		    	return reply(data);
+				}, (err) => {
+				  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'An error occurred while getting attrs:', err);
+					return reply(boom.expectationFailed(err));
+				});
 		};
 	}
 	// expose public methods

@@ -59,7 +59,7 @@ let routeConfig = [
 	}
 ];
 
-let dynFuncNames = require('../controllers/ledwax_device').dynamicFuncNames;
+let dynFuncNames = ledwaxDeviceController.dynamicFuncNames;
 for (let i = 0; i < dynFuncNames.length; i++) {
 	let key = dynFuncNames[i];
 	routeConfig.push({
