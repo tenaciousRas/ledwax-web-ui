@@ -3,6 +3,7 @@
 const authController = require('../controllers/auth');
 const userController = require('../controllers/user');
 const ledwaxDeviceController = require('../controllers/ledwax_device');
+const ledwaxCloudDeviceController = require('../controllers/ledwax_cloud_device');
 const	validations = require('../validations');
 
 let routeConfig = [
@@ -115,6 +116,16 @@ let routeConfig = [
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
 			validate: validations.ledwaxDevicesConvenience.setLEDFadeTimeInterval
+		}
+	}, {
+		method : 'GET',
+		path : '/devices/retrieveStoredDevices',
+		handler : ledwaxCloudDeviceController.retrieveStoredDevices,
+		config : {
+			description : 'Set LED fade time interval for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxCloudDevices.retrieveStoredDevices
 		}
 	}
 ];

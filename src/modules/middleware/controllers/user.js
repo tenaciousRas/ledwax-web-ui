@@ -46,9 +46,10 @@ const UserController = () => {
     };
     try {
       stuser.build(vals).
-        save().then((user) => { reply(user); });
+        save().then((user) => { return reply(user); });
     } catch (e) {
-      console.log(e);
+    	request.server.log(['debug', 'user.contoller#create'],
+					'DB call complete - create user error, exception =:' + e);
       return reply(boom.badImplementation('unable to create user', e));
     }
 	};
