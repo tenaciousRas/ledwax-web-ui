@@ -3,20 +3,20 @@
 
 const Hapi = require('hapi');
 const Sequelize = require('sequelize');
-// const pg = require('pg');
+const Path = require('path');
 const	api = require('../../src/modules/middleware/index.js');
 const	routes = require('../../src/modules/middleware/routes/index.routes');
-const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
+const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'test';
 const particleConfig = require('../../src/particle-config').attributes[rt_ctx_env];
 
-var internals = {
+let internals = {
 	dbConfig: require('../../src/config/sequelize.config.json')[rt_ctx_env]
 };
-var db;
+let db;
 
 module.exports.createServer = (done) => {
 
-	var server = new Hapi.Server({debug: {request: ['debug'], log: ['debug']}});
+	let server = new Hapi.Server({debug: {request: ['debug'], log: ['debug']}});
 	server.connection({
 		port : 8753
 	});
@@ -27,7 +27,7 @@ module.exports.createServer = (done) => {
 		      options: [
 		        {
 		          name: 'apidb', // identifier
-		          models: ['./src/modules/middleware/models/**/*.js'],  // relative to /webui -- where npm test is run
+		          models: [Path.join(__dirname, '../../src/modules/middleware/models/**/*.model.js')],
 					    sequelize: new Sequelize(internals.dbConfig.database,
 									internals.dbConfig.username,
 									internals.dbConfig.password,
@@ -40,6 +40,7 @@ module.exports.createServer = (done) => {
 	);
 	prom.then(
 	  (data) => {
+			server.log(['info', 'mockserver'], 'registered hapi-sequelize module');
 	  },
 		(err) => {
 			server.log(['error', 'mockserver'], 'there was an error registering hapi-sequelize module\n' + err);
