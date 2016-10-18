@@ -147,7 +147,6 @@ describe('api', () => {
 
   			server.inject(options, (response) => {
   				expect(response.statusCode).toBe(200);
-          console.log(stuser);
           stuser.findOne({
             where: {cookietoken: options.payload.cookietoken},
             }).then((user) => {
