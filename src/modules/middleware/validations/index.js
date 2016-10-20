@@ -59,7 +59,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setCurrentStrip: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			stripIndex: Joi.number().integer().min(0).max(65535).required()
 		},
     failAction: failActDelegate('custom')
@@ -67,7 +67,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setBrightness: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			brightness: Joi.number().integer().min(0).max(1024).required()
 		},
     failAction: failActDelegate('custom')
@@ -75,7 +75,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setDispMode: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			dispMode: Joi.number().integer().min(0).max(35).required()
 		},
     failAction: failActDelegate('custom')
@@ -83,7 +83,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setColor: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			modeColorIndex: Joi.number().integer().min(0).max(65535).required(),
 			color24Bit: Joi.number().integer().min(0).max(16777215).required()
 		},
@@ -92,7 +92,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setMultiColorHoldTime: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			holdTime: Joi.number().integer().min(0).max(65535).required()
 		},
     failAction: failActDelegate('custom')
@@ -100,7 +100,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setLEDFadeMode: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			fadeMode: Joi.number().integer().min(0).max(2).required()
 		},
     failAction: failActDelegate('custom')
@@ -108,7 +108,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setLEDFadeTimeInterval: {
 		payload: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
-			deviceId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
 			fadeTimeInterval: Joi.number().integer().min(0).max(65535).required()
 		},
     failAction: failActDelegate('custom')
@@ -116,10 +116,37 @@ module.exports.ledwaxDevicesConvenience = {
 };
 
 module.exports.ledwaxCloudDevices = {
-	retrieveStoredDevices: {
+	retrieveAllStoredDevices: {
 		query: {
 			cookietoken: Joi.string().trim().min(3).max(100).required(),
 			particleCloudId: Joi.number().integer().required()
+		},
+    failAction: failActDelegate('custom')
+	},
+	retrieveStoredDevice: {
+		query: {
+			cookietoken: Joi.string().trim().min(3).max(100).required(),
+			particleCloudId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required()
+		},
+    failAction: failActDelegate('custom')
+	},
+	saveDevice: {
+		payload: {
+			cookietoken: Joi.string().trim().min(3).max(100).required(),
+			id: Joi.number().integer().optional(),
+			particleCloudId: Joi.number().integer().required(),
+			deviceId: Joi.string().trim().min(3).max(100).required(),
+			numStrips: Joi.number().integer().min(0).max(65535).optional(),
+			stripIndex: Joi.number().integer().min(0).max(65535).optional(),
+			stripType: Joi.number().integer().min(0).max(1).optional(),
+			brightness: Joi.number().integer().min(0).max(1024).optional(),
+			dispMode: Joi.number().integer().min(0).max(35).optional(),
+			modeColorIndex: Joi.number().integer().min(0).max(65535).optional(),
+			color24Bit: Joi.number().integer().min(0).max(16777215).optional(),
+			colorHoldTime: Joi.number().integer().min(0).max(65535).optional(),
+			fadeMode: Joi.number().integer().min(0).max(2).optional(),
+			fadeTimeInterval: Joi.number().integer().min(0).max(65535).optional()
 		},
     failAction: failActDelegate('custom')
 	}

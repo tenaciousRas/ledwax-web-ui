@@ -7,12 +7,14 @@ const boom = require('boom');
 
 describe('api', function() {
 
-	let server, db, particleConfig;
+	let server,
+		db,
+		particleConfig;
 
 	beforeAll(function(done) {
 		server = require('../mockserver.js').createServer();
 		particleConfig = server.methods.particle.config();
-    done();
+		done();
 	});
 
 	describe('auth controller', () => {
@@ -21,7 +23,7 @@ describe('api', function() {
 			let options = {
 				method : 'POST',
 				url : '/oauth/login',
-				payload: {}
+				payload : {}
 			};
 
 			server.inject(options, (response) => {
@@ -35,7 +37,9 @@ describe('api', function() {
 			let options = {
 				method : 'POST',
 				url : '/oauth/login',
-				payload : {username: 'bar'}
+				payload : {
+					username : 'bar'
+				}
 			};
 
 			server.inject(options, (response) => {
@@ -49,7 +53,9 @@ describe('api', function() {
 			let options = {
 				method : 'POST',
 				url : '/oauth/login',
-				payload : {password: 'foo'}
+				payload : {
+					password : 'foo'
+				}
 			};
 
 			server.inject(options, (response) => {
@@ -63,14 +69,17 @@ describe('api', function() {
 			let options = {
 				method : 'POST',
 				url : '/oauth/login',
-				payload : {username: 'foo', password: 'bar'}
+				payload : {
+					username : 'foo',
+					password : 'bar'
+				}
 			};
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(417);
 				expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 417 from ' +
-						response.request.server.methods.particle.config().baseUrl +
-						'/oauth/token');
+					response.request.server.methods.particle.config().baseUrl +
+					'/oauth/token');
 				done();
 			});
 
@@ -80,13 +89,16 @@ describe('api', function() {
 			let options = {
 				method : 'POST',
 				url : '/oauth/login',
-				payload : {username: 'user', password: 'password'}
+				payload : {
+					username : 'user',
+					password : 'password'
+				}
 			};
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(200);
 				expect(JSON.parse(response.payload).body.access_token)
-						.toBe('254406f79c1999af65a7df4388971354f85cfee9');
+					.toBe('254406f79c1999af65a7df4388971354f85cfee9');
 				done();
 			});
 		});

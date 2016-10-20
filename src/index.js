@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-const Hapi = require('hapi'), Glue = require('glue'), Inert = require('inert'), Path = require('path');
+const Hapi = require('hapi'),
+	Glue = require('glue'),
+	Inert = require('inert'),
+	Path = require('path');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 
@@ -20,8 +23,8 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 	}
 	server.start(() => {
 		console.log('LEDWax running in ' + rt_ctx_env
-				+ ' mode; using [hapi] server v' + server.version
-				+ ' running at: ', server.connections[0].info.uri);
+			+ ' mode; using [hapi] server v' + server.version
+			+ ' running at: ', server.connections[0].info.uri);
 	});
 	// export the server for testing
 	module.exports.server = server;

@@ -1,6 +1,7 @@
 'use strict';
 
-var glob = require('glob'), path = require('path');
+var glob = require('glob'),
+	path = require('path');
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 let particleConfig = require('../../particle-config').attributes[rt_ctx_env];
 
@@ -16,7 +17,9 @@ exports.register = (server, options, next) => {
 
 		return next();
 	});
-	server.method('particle.config', () => {return particleConfig;});
+	server.method('particle.config', () => {
+		return particleConfig;
+	});
 };
 
 exports.register.attributes = {

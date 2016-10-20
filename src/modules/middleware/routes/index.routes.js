@@ -119,13 +119,33 @@ let routeConfig = [
 		}
 	}, {
 		method : 'GET',
-		path : '/devices/retrieveStoredDevices',
-		handler : ledwaxCloudDeviceController.retrieveStoredDevices,
+		path : '/devices/retrieveAllStoredDevices',
+		handler : ledwaxCloudDeviceController.retrieveAllStoredDevices,
 		config : {
-			description : 'Set LED fade time interval for current strip being controlled for given device.',
-			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			description : 'Get all devices in persistent storage.',
+			notes : 'Returns an array of device objects or empty array',
 			tags : [ 'api' ],
-			validate: validations.ledwaxCloudDevices.retrieveStoredDevices
+			validate: validations.ledwaxCloudDevices.retrieveAllStoredDevices
+		}
+	}, {
+		method : 'GET',
+		path : '/devices/retrieveStoredDevice',
+		handler : ledwaxCloudDeviceController.retrieveStoredDevice,
+		config : {
+			description : 'Get all devices in persistent storage.',
+			notes : 'Returns a single device objects or an empty object',
+			tags : [ 'api' ],
+			validate: validations.ledwaxCloudDevices.retrieveStoredDevice
+		}
+	}, {
+		method : 'POST',
+		path : '/devices/saveDevice',
+		handler : ledwaxCloudDeviceController.saveDevice,
+		config : {
+			description : 'Save device to persistent storage.',
+			notes : 'Performs insert or update.  Returns the saved object.',
+			tags : [ 'api' ],
+			validate: validations.ledwaxCloudDevices.saveDevice
 		}
 	}
 ];
