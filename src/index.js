@@ -8,7 +8,7 @@ const Hapi = require('hapi'),
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 
-let hapiConfig = require('./config/' + rt_ctx_env);
+let hapiConfig = require('./config/app.config')[rt_ctx_env];
 
 // Configure the hapi server using a manifest(config) file
 let options = {
@@ -22,9 +22,16 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 		throw err;
 	}
 	server.start(() => {
+		let connects = ' running at: ';
+		for (let i = 0; i < server.connections.length; i++) {
+			connects += server.connections[i].info.uri;
+			if (i < server.connections.length - 1) {
+				connects += ", ";
+			}
+		}
 		console.log('LEDWax running in ' + rt_ctx_env
 			+ ' mode; using [hapi] server v' + server.version
-			+ ' running at: ', server.connections[0].info.uri);
+			+ connects);
 	});
 	// export the server for testing
 	module.exports.server = server;

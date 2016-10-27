@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 let internals = {
-	db: require('./sequelize.config.json')[rt_ctx_env],
+	db : require('./sequelize.config.json')[rt_ctx_env],
 	staticContentPath : '../modules/public-ledwax-web-ui'
 };
 
@@ -84,14 +84,14 @@ module.exports = {
 			plugin : {
 				register : 'hapi-sequelize',
 				options : [ {
-					name: 'apidb', // identifier
-					models : [Path.join(__dirname, '../modules/middleware/models/*.js')],
-			    sequelize: new Sequelize(internals.db.database,
-							internals.db.username,
-							internals.db.password,
-							internals.db.sequelize), // sequelize instance
-			    sync: true, // sync models - default false
-			    forceSync: false // force sync (drops tables) - default false
+					name : 'apidb', // identifier
+					models : [ Path.join(__dirname, '../modules/middleware/models/*.js') ],
+					sequelize : new Sequelize(internals.db.database,
+						internals.db.username,
+						internals.db.password,
+						internals.db.sequelize), // sequelize instance
+					sync : true, // sync models - default false
+					forceSync : false // force sync (drops tables) - default false
 				} ]
 			},
 			options : {
