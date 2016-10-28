@@ -95,21 +95,23 @@ const UserController = () => {
 					}
 				]
 			}).then((user) => {
-				request.server.log([ 'debug', 'user.contoller#update' ],
-					'DB call complete - find promise success, user =:' + user);
 				if (null == user) {
 					return reply(boom.notFound(at));
 				}
-				user.sessiontoken = ct;
-				user.addParticle_cloud([ cloudInstance ], {
-					authtoken : at
-				});
-				user.save({
-					fields : [ 'sessiontoken' ]
-				}).then((user) => {
+				user.sequelize.transaction((t) => {
 					request.server.log([ 'debug', 'user.contoller#update' ],
-						'DB call complete - update promise success, user =:' + user);
-					return reply(user);
+						'DB call complete - find promise success, user =:' + user);
+					user.sessiontoken = ct;
+					user.addParticle_cloud([ cloudInstance ], {
+						authtoken : at
+					});
+					return user.save({
+						fields : [ 'sessiontoken' ]
+					});
+				}).then((result) => {
+					request.server.log([ 'debug', 'user.contoller#update' ],
+						'DB call complete - update promise success, user =:' + result);
+					return reply(result);
 				});
 			});
 		} catch (e) {

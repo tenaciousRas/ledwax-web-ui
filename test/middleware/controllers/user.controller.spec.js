@@ -274,7 +274,7 @@ describe('api', () => {
 								payload : {
 									username : 'foofoo',
 									cloudid : newCloud.id,
-									authtoken : 'authtoken_foobar',
+									authtoken : 'authtoken_barbaz',
 									sessiontoken : 'corge'
 								}
 							};
@@ -284,16 +284,23 @@ describe('api', () => {
 								if (response.statusCode == 200) {
 									let pl = JSON.parse(response.payload);
 									expect(pl.sessiontoken).toBe(options.payload.sessiontoken);
-									expect(pl.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken).toBe(options.payload.authtoken);
+									// sequelize doesn't update return value from transaction
+									expect(pl.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken).toBe('authtoken_foobar');
 									// reset webuser from instance -> model
 									webuser = db.getModel('webuser');
 									webuser.findOne({
 										where : {
 											id : pl.id
 										},
+										include : [
+											{
+												model : particleCloud
+											}
+										]
 									}).then((user) => {
 										expect(user.username).toBe(vals.username);
 										expect(user.sessiontoken).toBe(options.payload.sessiontoken);
+										expect(user.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken).toBe(options.payload.authtoken);
 										done();
 									});
 								} else {
