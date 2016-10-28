@@ -29,7 +29,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -42,7 +42,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -60,7 +60,7 @@ describe('api', () => {
 				// inject request
 				let options = {
 					method : 'GET',
-					url : '/devices/retrieveAllStoredDevices?cookietoken=foobar&particleCloudId=1'
+					url : '/devices/retrieveAllStoredDevices?sessiontoken=foobar&particleCloudId=1'
 				};
 
 				server.inject(options, (response) => {
@@ -108,7 +108,7 @@ describe('api', () => {
 						// inject request
 						let options = {
 							method : 'GET',
-							url : '/devices/retrieveAllStoredDevices?cookietoken=foobar&particleCloudId=' + particleCloud.id
+							url : '/devices/retrieveAllStoredDevices?sessiontoken=foobar&particleCloudId=' + particleCloud.id
 						};
 						server.inject(options, (response) => {
 							expect(response.statusCode).toBe(200);
@@ -143,7 +143,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -156,7 +156,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -164,7 +164,7 @@ describe('api', () => {
 		it('missing particleCloudId param responds with 422 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/retrieveStoredDevice?cookietoken=foobar&deviceId=1'
+				url : '/devices/retrieveStoredDevice?sessiontoken=foobar&deviceId=1'
 			};
 
 			server.inject(options, (response) => {
@@ -177,7 +177,7 @@ describe('api', () => {
 		it('missing deviceId param responds with 422 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/retrieveStoredDevice?cookietoken=foobar&particleCloudId=1'
+				url : '/devices/retrieveStoredDevice?sessiontoken=foobar&particleCloudId=1'
 			};
 
 			server.inject(options, (response) => {
@@ -200,7 +200,7 @@ describe('api', () => {
 				// inject request
 				let options = {
 					method : 'GET',
-					url : '/devices/retrieveStoredDevice?cookietoken=foobar&deviceId=quuxcorge&particleCloudId=1'
+					url : '/devices/retrieveStoredDevice?sessiontoken=foobar&deviceId=quuxcorge&particleCloudId=1'
 				};
 
 				server.inject(options, (response) => {
@@ -248,7 +248,7 @@ describe('api', () => {
 						// inject request
 						let options = {
 							method : 'GET',
-							url : '/devices/retrieveStoredDevice?cookietoken=foobar&deviceId=foobar&particleCloudId=' + particleCloud.id
+							url : '/devices/retrieveStoredDevice?sessiontoken=foobar&deviceId=foobar&particleCloudId=' + particleCloud.id
 						};
 						server.inject(options, (response) => {
 							expect(response.statusCode).toBe(200);
@@ -284,7 +284,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -300,7 +300,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -316,7 +316,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -361,7 +361,7 @@ describe('api', () => {
 							url : '/devices/saveDevice',
 							payload : {
 								id : device.id,
-								cookietoken : 'cookieTokenFoo',
+								sessiontoken : 'sessiontokenFoo',
 								deviceId : vals.deviceId,
 								particleCloudId : particleCloud.id,
 								modeColorIndex : vals.modeColorIdx,
@@ -407,7 +407,7 @@ describe('api', () => {
 						method : 'POST',
 						url : '/devices/saveDevice',
 						payload : {
-							cookietoken : 'cookieTokenFoo',
+							sessiontoken : 'sessiontokenFoo',
 							particleCloudId : particleCloud.id,
 							deviceId : 'deviceFooId-2',
 							numStrips : 2,

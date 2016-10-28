@@ -91,7 +91,7 @@ module.exports = {
 						internals.db.password,
 						internals.db.sequelize), // sequelize instance
 					sync : true, // sync models - default false
-					forceSync : false // force sync (drops tables) - default false
+					forceSync : true // force sync (drops tables) - default false
 				} ]
 			},
 			options : {

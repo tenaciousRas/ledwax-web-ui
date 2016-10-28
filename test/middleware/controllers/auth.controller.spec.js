@@ -22,7 +22,7 @@ describe('api', function() {
 		it('empty login responds with 422 NOT OK', (done) => {
 			let options = {
 				method : 'POST',
-				url : '/oauth/login',
+				url : '/user/login',
 				payload : {}
 			};
 
@@ -36,7 +36,7 @@ describe('api', function() {
 		it('login with empty password respond with 422 NOT OK', (done) => {
 			let options = {
 				method : 'POST',
-				url : '/oauth/login',
+				url : '/user/login',
 				payload : {
 					username : 'bar'
 				}
@@ -52,7 +52,7 @@ describe('api', function() {
 		it('logins with empty username respond with 422 NOT OK', (done) => {
 			let options = {
 				method : 'POST',
-				url : '/oauth/login',
+				url : '/user/login',
 				payload : {
 					password : 'foo'
 				}
@@ -68,7 +68,7 @@ describe('api', function() {
 		it('invalid credentials respond with 417 NOT OK', (done) => {
 			let options = {
 				method : 'POST',
-				url : '/oauth/login',
+				url : '/user/login',
 				payload : {
 					username : 'foo',
 					password : 'bar'
@@ -88,7 +88,7 @@ describe('api', function() {
 		it('valid login should respond with 200 OK', (done) => {
 			let options = {
 				method : 'POST',
-				url : '/oauth/login',
+				url : '/user/login',
 				payload : {
 					username : 'user',
 					password : 'password'

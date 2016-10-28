@@ -9,7 +9,7 @@ const	validations = require('../validations');
 let routeConfig = [
 	{
 		method : 'GET',
-		path : '/oauth/login',
+		path : '/user/login',
 		handler : authController.login,
 		config : {
 			description : 'Authenticate a user.',
@@ -19,7 +19,7 @@ let routeConfig = [
 		}
 	}, {
 		method : 'POST',
-		path : '/oauth/login',
+		path : '/user/login',
 		handler : authController.login,
 		config : {
 			description : 'Authenticate a user.',
@@ -30,12 +30,12 @@ let routeConfig = [
 	}, {
 		method : 'GET',
 		path : '/users/find',
-		handler : userController.findCookie,
+		handler : userController.find,
 		config : {
-			description : 'Find a stored user in DB by ID.',
+			description : 'Find a stored user in DB by session ID.',
 			notes : 'Return a user object.',
 			tags : [ 'api' ],
-			validate: validations.user.findCookie
+			validate: validations.user.find
 		}
 	}, {
 		method : 'POST',
@@ -50,7 +50,7 @@ let routeConfig = [
 	}, {
 		method : 'POST',
 		path : '/users/update',
-		handler : userController.updateCookie,
+		handler : userController.update,
 		config : {
 			description : 'Set current strip being controlled for given device.',
 			notes : 'Returns the persistent user object.',

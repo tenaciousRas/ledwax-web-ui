@@ -7,13 +7,15 @@ const boom = require('boom');
 
 describe('api', () => {
 
-	let server, db, particleConfig;
+	let server,
+		db,
+		particleConfig;
 
 	beforeAll((done) => {
 		server = require('../mockserver.js').createServer();
 		particleConfig = server.methods.particle.config();
-    // https://github.com/hapijs/hapi/issues/3017
-    setTimeout(done, 1000);
+		// https://github.com/hapijs/hapi/issues/3017
+		setTimeout(done, 1000);
 	});
 
 	describe('user controller find', () => {
@@ -26,7 +28,7 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
@@ -39,15 +41,15 @@ describe('api', () => {
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "cookietoken" fails because ["cookietoken" is required]');
+				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
 				done();
 			});
 		});
 
-		it('returns 404 not found when storeduser_tokens table is empty', (done) => {
+		it('returns 404 not found when webuser table is empty', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/users/find?cookietoken=foobar'
+				url : '/users/find?sessiontoken=foobar'
 			};
 
 			server.inject(options, (response) => {
@@ -57,10 +59,10 @@ describe('api', () => {
 			});
 		});
 
-		it('returns cookietoken when user doesn\'t exist in storeduser_tokens table by cookietoken', (done) => {
+		it('returns sessiontoken when user doesn\'t exist in webuser table by sessiontoken', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/users/find?cookietoken=foobar'
+				url : '/users/find?sessiontoken=foobar'
 			};
 
 			server.inject(options, (response) => {
@@ -70,24 +72,26 @@ describe('api', () => {
 			});
 		});
 
-		it('returns user that exists in storeduser_tokens table by cookietoken', (done) => {
-      let db = server.plugins['hapi-sequelize']['apidb'];
-      let stuser = db.getModel('storeduser_tokens');
-      let expectedToken = "234234234";
-      stuser.create({ username: 'foo', pwd: 'bar', authtoken: 'baz', cookietoken: expectedToken })
-          .then(function(stuser) {
-      			let options = {
-      				method : 'GET',
-      				url : '/users/find?cookietoken=234234234'
-      			};
+		it('returns user that exists in webuser table by sessiontoken', (done) => {
+			let db = server.plugins['hapi-sequelize']['apidb'];
+			let webuser = db.getModel('webuser');
+			let expectedToken = "234234234";
+			webuser.create({
+				username : 'foo',
+				sessiontoken : expectedToken
+			})
+				.then(function(webuser) {
+					let options = {
+						method : 'GET',
+						url : '/users/find?sessiontoken=234234234'
+					};
 
-      			server.inject(options, (response) => {
-      				expect(response.statusCode).toBe(200);
-      				expect(JSON.parse(response.payload).authtoken).toBe('baz');
-      				expect(JSON.parse(response.payload).cookietoken).toBe(expectedToken);
-      				done();
-      			});
-          });
+					server.inject(options, (response) => {
+						expect(response.statusCode).toBe(200);
+						expect(JSON.parse(response.payload).sessiontoken).toBe(expectedToken);
+						done();
+					});
+				});
 		});
 
 	});
@@ -98,7 +102,7 @@ describe('api', () => {
 			let options = {
 				method : 'POST',
 				url : '/users/create',
-        payload : {}
+				payload : {}
 			};
 
 			server.inject(options, (response) => {
@@ -109,54 +113,88 @@ describe('api', () => {
 		});
 
 		it('missing params responds with 422 NOT OK', (done) => {
-      let options = {};
-      let parmNames = ['username', 'password', 'authtoken', 'cookietoken'];
-      for (let i = 0; i < parmNames.length; i++) {
-        let jsObj = {};
-        jsObj[parmNames[i]] == 'foo';
-  			options = {
-  				method : 'POST',
-  				url : '/users/create',
-  				payload : jsObj
-  			};
-  			server.inject(options, (response) => {
-  				expect(response.statusCode).toBe(422);
-          if (i == (parmNames.length - 1)) {
-  				  done();
-          }
-  			});
-      }
+			let options = {};
+			let parmNames = [ 'username', 'password', 'authtoken', 'sessiontoken' ];
+			for (let i = 0; i < parmNames.length; i++) {
+				let jsObj = {};
+				jsObj[parmNames[i]] == 'foo';
+				options = {
+					method : 'POST',
+					url : '/users/create',
+					payload : jsObj
+				};
+				server.inject(options, (response) => {
+					expect(response.statusCode).toBe(422);
+					if (i == (parmNames.length - 1)) {
+						done();
+					}
+				});
+			}
 		});
 
 		it('valid insert responds with 200 OK', (done) => {
-      // delete all users
-      let db = server.plugins['hapi-sequelize']['apidb'];
-      let stuser = db.getModel('storeduser_tokens');
-      stuser.destroy({
-        where: {
-          username: 'foo'
-        },
-        truncate: true  //ignore where and truncate the table instead
-      }).then((affectedRows) => {
-        // make request
-  			let options = {
-  				method : 'POST',
-  				url : '/users/create',
-          payload : {username: 'foo', password: 'bar', authtoken: 'baz', cookietoken: 'quux'}
-  			};
+			// delete all users
+			let db = server.plugins['hapi-sequelize']['apidb'];
+			let particleCloud = db.getModel('particle_cloud');
+			let webuser = db.getModel('webuser');
+			db.getModel('webuser_particle_cloud_auth_tokens').destroy({
+				truncate : true //ignore where and truncate the table instead
+			}).then((affectedRows) => {
+				// http://docs.sequelizejs.com/en/latest/docs/querying/#operators
+				webuser.destroy({
+					where : {
+						id : {
+							$gt : 0
+						}
+					},
+					truncate : false // cannot truncate table ref'd by foreign key
+				}).then((affectedRows) => {
+					// insert new cloud
+					let vals = {
+						name : 'testfoo',
+						ip : 'address.ip',
+						port : 20000
+					};
+					particleCloud.build(vals).save().then((newCloud) => {
+						// make request
+						let options = {
+							method : 'POST',
+							url : '/users/create',
+							payload : {
+								username : 'foo',
+								cloudid : newCloud.id,
+								authtoken : 'authtoken_foobar',
+								sessiontoken : 'quux'
+							}
+						};
 
-  			server.inject(options, (response) => {
-  				expect(response.statusCode).toBe(200);
-          stuser.findOne({
-            where: {cookietoken: options.payload.cookietoken},
-            }).then((user) => {
-  				    expect(user.cookietoken).toBe('quux');
-  				    done();
-          });
-  			});
-      });
+						server.inject(options, (response) => {
+							expect(response.statusCode).toBe(200);
+							if (response.statusCode == 200) {
+								webuser.findOne({
+									where : {
+										username : options.payload.username
+									},
+									include : [
+										{
+											model : particleCloud,
+											where : {
+												id : newCloud.id
+											}
+										}
+									]
+								}).then((user) => {
+									expect(user.sessiontoken).toBe('quux');
+									done();
+								});
+							} else {
+								done();
+							}
+						});
+					});
+				});
+			});
 		});
-
 	});
 
 	describe('user controller update', () => {
@@ -165,7 +203,7 @@ describe('api', () => {
 			let options = {
 				method : 'POST',
 				url : '/users/update',
-        payload : {}
+				payload : {}
 			};
 
 			server.inject(options, (response) => {
@@ -176,65 +214,97 @@ describe('api', () => {
 		});
 
 		it('missing params responds with 422 NOT OK', (done) => {
-      let options = {};
-      let parmNames = ['username', 'password', 'authtoken', 'cookietoken'];
-      for (let i = 0; i < parmNames.length; i++) {
-        let jsObj = {};
-        jsObj[parmNames[i]] == 'foo';
-  			options = {
-  				method : 'POST',
-  				url : '/users/update',
-  				payload : jsObj
-  			};
-  			server.inject(options, (response) => {
-  				expect(response.statusCode).toBe(422);
-          if (i == (parmNames.length - 1)) {
-  				  done();
-          }
-  			});
-      }
+			let options = {};
+			let parmNames = [ 'username', 'password', 'authtoken', 'sessiontoken' ];
+			for (let i = 0; i < parmNames.length; i++) {
+				let jsObj = {};
+				jsObj[parmNames[i]] == 'foo';
+				options = {
+					method : 'POST',
+					url : '/users/update',
+					payload : jsObj
+				};
+				server.inject(options, (response) => {
+					expect(response.statusCode).toBe(422);
+					if (i == (parmNames.length - 1)) {
+						done();
+					}
+				});
+			}
 		});
 
 		it('valid update responds with 200 OK', (done) => {
-      // delete all users
-      let db = server.plugins['hapi-sequelize']['apidb'];
-      let stuser = db.getModel('storeduser_tokens');
-      stuser.destroy({
-        where: {
-          username: 'foo'
-        },
-        truncate: true  //ignore where and truncate the table instead
-      }).then((affectedRows) => {
-        let vals = {
-          username: 'foo',
-      		pwd: 'bar',
-      		authtoken: 'bazz',
-      		cookietoken: 'qux'
-        };
-        stuser.build(vals).
-          save().then((user) => {
-            // make request
-      			let options = {
-      				method : 'POST',
-      				url : '/users/update',
-              payload : {username: 'foofoo', password: 'bar', authtoken: 'bazz', cookietoken: 'corge'}
-      			};
-
-      			server.inject(options, (response) => {
-      				expect(response.statusCode).toBe(200);
-       				expect(JSON.parse(response.payload).authtoken).toBe(vals.authtoken);
-              stuser.findOne({
-                where: {authtoken: options.payload.authtoken},
-                }).then((user) => {
-      				    expect(user.username).toBe(vals.username);
-      				    expect(user.cookietoken).toBe(options.payload.cookietoken);
-      				    done();
-                });
-      			});
-        });
-      });
+			// delete all users
+			let db = server.plugins['hapi-sequelize']['apidb'];
+			let particleCloud = db.getModel('particle_cloud');
+			let webuser = db.getModel('webuser');
+			db.getModel('webuser_particle_cloud_auth_tokens').destroy({
+				truncate : true //ignore where and truncate the table instead
+			}).then((affectedRows) => {
+				// http://docs.sequelizejs.com/en/latest/docs/querying/#operators
+				webuser.destroy({
+					where : {
+						id : {
+							$gt : 0
+						}
+					},
+					truncate : false // cannot truncate table ref'd by foreign key
+				}).then((affectedRows) => {
+					// insert new cloud
+					let vals = {
+						name : 'testfoo',
+						ip : 'address.ip',
+						port : 20000
+					};
+					particleCloud.build(vals).save().then((newCloud) => {
+						let vals = {
+							username : 'foofoo',
+							cloudid : newCloud.id,
+							sessiontoken : 'qux'
+						};
+						webuser = webuser.build(vals);
+						webuser.addParticle_cloud([ newCloud ], {
+							authtoken : 'authtoken_foobar'
+						});
+						webuser.save().then((user) => {
+							// make request
+							let options = {
+								method : 'POST',
+								url : '/users/update',
+								payload : {
+									username : 'foofoo',
+									cloudid : newCloud.id,
+									authtoken : 'authtoken_foobar',
+									sessiontoken : 'corge'
+								}
+							};
+							// make request
+							server.inject(options, (response) => {
+								expect(response.statusCode).toBe(200);
+								if (response.statusCode == 200) {
+									let pl = JSON.parse(response.payload);
+									expect(pl.sessiontoken).toBe(options.payload.sessiontoken);
+									expect(pl.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken).toBe(options.payload.authtoken);
+									// reset webuser from instance -> model
+									webuser = db.getModel('webuser');
+									webuser.findOne({
+										where : {
+											id : pl.id
+										},
+									}).then((user) => {
+										expect(user.username).toBe(vals.username);
+										expect(user.sessiontoken).toBe(options.payload.sessiontoken);
+										done();
+									});
+								} else {
+									done();
+								}
+							});
+						});
+					});
+				});
+			});
 		});
-
 	});
 
 });

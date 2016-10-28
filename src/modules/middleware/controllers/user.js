@@ -10,83 +10,117 @@ const boom = require('boom');
 const UserController = () => {
 
 	/**
-	 * Returns a user given cookie token
+	 * Returns a user given session token
 	 */
-	const retrieveByCookie = (request, reply) => {
-		let ct = request.payload ? request.payload.cookietoken : request.query.cookietoken;
-    let db = request.getDb('apidb');
-    let stuser = db.getModel('storeduser_tokens');
-    try {
-      stuser.findOne({
-        where: {cookietoken: ct},
-        }).then((user) => {
-  	    	request.server.log(['debug', 'user.contoller'],
-  						'DB call complete - promise success, user =:' + user);
-          if (null == user) {
-            return reply(boom.notFound(ct));
-          }
-  				return reply(user);
-        });
-    } catch (e) {
-      return reply(boom.badImplementation('unable to find user', e));
-    }
+	const retrieveBySession = (request, reply) => {
+		let ct = request.payload ? request.payload.sessiontoken : request.query.sessiontoken;
+		let db = request.getDb('apidb');
+		let webuser = db.getModel('webuser');
+		try {
+			webuser.findOne({
+				where : {
+					sessiontoken : ct
+				},
+			}).then((user) => {
+				request.server.log([ 'debug', 'user.contoller' ],
+					'DB call complete - promise success, user =:' + user);
+				if (null == user) {
+					return reply(boom.notFound(ct));
+				}
+				return reply(user);
+			});
+		} catch (e) {
+			return reply(boom.badImplementation('unable to find user', e));
+		}
 	};
 
 	/**
-	 * Create a new user in the DB with a unique authtoken.
+	 * Create a new user in the DB.
 	 */
 	const create = (request, reply) => {
-    let db = request.getDb('apidb');
-    let stuser = db.getModel('storeduser_tokens');
-    let vals = {
-      username: request.payload.username,
-  		pwd: request.payload.password,
-  		authtoken: request.payload.authtoken,
-  		cookietoken: request.payload.cookietoken
-    };
-    try {
-      stuser.build(vals).
-        save().then((user) => { return reply(user); });
-    } catch (e) {
-    	request.server.log(['debug', 'user.contoller#create'],
-					'DB call complete - create user error, exception =:' + e);
-      return reply(boom.badImplementation('unable to create user', e));
-    }
+		let at = request.payload.authtoken;
+		let ct = request.payload.sessiontoken;
+		let un = request.payload.username;
+		let cid = request.payload.cloudid;
+		let db = request.getDb('apidb');
+		let webuser = db.getModel('webuser');
+		let particleCloud = db.getModel('particle_cloud');
+		let vals = {
+			username : request.payload.username,
+			sessiontoken : ct
+		};
+		try {
+			particleCloud = particleCloud.build({
+				id : cid
+			});
+			webuser = webuser.build(vals);
+			webuser.addParticle_cloud([ particleCloud ], {
+				authtoken : at
+			});
+			webuser.save().then((user) => {
+				return reply(user);
+			});
+		} catch (e) {
+			request.server.log([ 'debug', 'user.contoller#create' ],
+				'DB call complete - create user error, exception =:' + e);
+			return reply(boom.badImplementation('unable to create user', e));
+		}
 	};
 
 	/**
-	 * Updates a user's cookietoken with a new and unique cookietoken.
+	 * Updates a user's sessiontoken and authtoken given username, cloudId, authtoken and sessiontoken.
 	 */
-	const updateCookie = (request, reply) => {
-		let ct = request.payload.cookietoken;
+	const update = (request, reply) => {
+		let ct = request.payload.sessiontoken;
 		let at = request.payload.authtoken;
-    let db = request.getDb('apidb');
-    let stuser = db.getModel('storeduser_tokens');
-    try {
-      stuser.findOne({
-        where: {authtoken: at},
-        }).then((user) => {
-  	    	request.server.log(['debug', 'user.contoller#updateCookie'],
-  						'DB call complete - find promise success, user =:' + user);
-          if (null == user) {
-            return reply(boom.notFound(at));
-          }
-          user.cookietoken = ct;
-          user.save({fields: ['cookietoken']}).then((user) => {
-  	    	request.server.log(['debug', 'user.contoller#updateCookie'],
-  						'DB call complete - update promise success, user =:' + user);
-  				  return reply(user);
-          });
-      });
-    } catch (e) {
-      return reply(boom.badImplementation('unable to update user', e));
-    }
+		let un = request.payload.username;
+		let cid = request.payload.cloudid;
+		let db = request.getDb('apidb');
+		let webuser = db.getModel('webuser');
+		let particleCloud = db.getModel('particle_cloud');
+		try {
+			let cloudInstance = particleCloud.build({
+				id : cid
+			});
+			webuser.findOne({
+				where : {
+					username : un
+				},
+				include : [
+					{
+						model : particleCloud,
+						where : {
+							id : cid
+						}
+					}
+				]
+			}).then((user) => {
+				request.server.log([ 'debug', 'user.contoller#update' ],
+					'DB call complete - find promise success, user =:' + user);
+				if (null == user) {
+					return reply(boom.notFound(at));
+				}
+				user.sessiontoken = ct;
+				user.addParticle_cloud([ cloudInstance ], {
+					authtoken : at
+				});
+				user.save({
+					fields : [ 'sessiontoken' ]
+				}).then((user) => {
+					request.server.log([ 'debug', 'user.contoller#update' ],
+						'DB call complete - update promise success, user =:' + user);
+					return reply(user);
+				});
+			});
+		} catch (e) {
+			return reply(boom.badImplementation('unable to update user', e));
+		}
 	};
 
 	return {
-		findCookie : retrieveByCookie,
+		find : retrieveBySession,
 		insert : create,
-		updateCookie : updateCookie
+		update : update
 	};
 
 };
