@@ -118,7 +118,13 @@ const LedwaxCloudDeviceController = () => {
 					return reply(device);
 				});
 			} else {
-				ledwaxDevice.update(vals, {logging : true, fields: saveFields, where: { id : vals.id }}).then((device) => {
+				ledwaxDevice.update(vals, {
+					logging : true,
+					fields : saveFields,
+					where : {
+						id : vals.id
+					}
+				}).then((device) => {
 					return reply(device);
 				});
 			}

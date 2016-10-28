@@ -12,21 +12,21 @@ let particle = new particlewrap(particle_config);
 
 // map particle variable to handler method names
 const particleDeviceVariableNames = {
-	numStrips: "getNumStrips",
-	stripIndex: "getStripIndex",
-	stripType: "getStripType",
-	dispMode: "getDispMode",
-	modeColor: "getModeColor",
-	modeColorIdx: "getModeColorIdx",
-	brightness: "getBrightness",
-	fadeMode: "getFadeMode",
-	fadeTime: "getFadeTime",
-	colorTime: "getColorTime"
+	numStrips : "getNumStrips",
+	stripIndex : "getStripIndex",
+	stripType : "getStripType",
+	dispMode : "getDispMode",
+	modeColor : "getModeColor",
+	modeColorIdx : "getModeColorIdx",
+	brightness : "getBrightness",
+	fadeMode : "getFadeMode",
+	fadeTime : "getFadeTime",
+	colorTime : "getColorTime"
 };
 // map particle functions to handler method names
 const particleDeviceFunctionNames = {
-	setLEDParams: "fnSetLEDParams",
-	resetAll: "fnResetAll"
+	setLEDParams : "fnSetLEDParams",
+	resetAll : "fnResetAll"
 };
 
 /**
@@ -39,22 +39,22 @@ const LedwaxDeviceController = () => {
 	for (let varName in particleDeviceVariableNames) {
 		dynamicControllerFunctions[particleDeviceVariableNames[varName]] = (request, reply) => {
 			// particle variables are GET routes
-	    let authToken = request.query.authtoken;
-	    let deviceId = request.query.deviceId;
+			let authToken = request.query.authtoken;
+			let deviceId = request.query.deviceId;
 			let fnProm = particle.getVariable({
-					deviceId: deviceId,
-					name: varName,
-					auth: authToken
-				});
+				deviceId : deviceId,
+				name : varName,
+				auth : authToken
+			});
 			if (!fnProm) {
 				return reply(boom.expectationFailed('unable to get particle variable - unknown error'));
 			}
 			fnProm.then(
 				(data) => {
-				  request.server.log(['info', 'LedwaxDeviceController#' + varName], 'Device variable retrieved successfully:', data);
-		    	return reply(data);
+					request.server.log([ 'info', 'LedwaxDeviceController#' + varName ], 'Device variable retrieved successfully:', data);
+					return reply(data);
 				}, (err) => {
-				  request.server.log(['info', 'LedwaxDeviceController#' + varName], 'An error occurred while getting var:', err);
+					request.server.log([ 'info', 'LedwaxDeviceController#' + varName ], 'An error occurred while getting var:', err);
 					return reply(boom.expectationFailed(err));
 				});
 		};
@@ -64,20 +64,25 @@ const LedwaxDeviceController = () => {
 	for (let funcName in particleDeviceFunctionNames) {
 		dynamicControllerFunctions[particleDeviceFunctionNames[funcName]] = (request, reply) => {
 			// particle variables are GET routes
-	    let authToken = request.payload.authtoken;
-	    let deviceId = request.payload.deviceId;
-	    let arg = request.payload.arg;
-	    let iotFn = funcName;
-			let fnProm = particle.callFunction({ deviceId: deviceId, name: iotFn, argument: arg, auth: authToken });
+			let authToken = request.payload.authtoken;
+			let deviceId = request.payload.deviceId;
+			let arg = request.payload.arg;
+			let iotFn = funcName;
+			let fnProm = particle.callFunction({
+				deviceId : deviceId,
+				name : iotFn,
+				argument : arg,
+				auth : authToken
+			});
 			if (!fnProm) {
 				return reply(boom.expectationFailed('unable to call particle function - unknown error'));
 			}
 			fnProm.then(
 				(data) => {
-				  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'Device function retrieved successfully:', data);
-		    	return reply(data);
+					request.server.log([ 'info', 'LedwaxDeviceController#' + funcName ], 'Device function retrieved successfully:', data);
+					return reply(data);
 				}, (err) => {
-				  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'An error occurred while getting function:', err);
+					request.server.log([ 'info', 'LedwaxDeviceController#' + funcName ], 'An error occurred while getting function:', err);
 					return reply(boom.expectationFailed(err));
 				});
 		};
@@ -87,18 +92,23 @@ const LedwaxDeviceController = () => {
 	 * Generic function calls for convenience methods.
 	 */
 	const genericParticleFunctionCall = (request, reply, arg) => {
-    let authToken = request.payload.authtoken;
-    let deviceId = request.payload.deviceId;
-		let fnProm = particle.callFunction({ deviceId: deviceId, name: iotFn, argument: arg, auth: authToken });
+		let authToken = request.payload.authtoken;
+		let deviceId = request.payload.deviceId;
+		let fnProm = particle.callFunction({
+			deviceId : deviceId,
+			name : iotFn,
+			argument : arg,
+			auth : authToken
+		});
 		if (!fnProm) {
 			return reply(boom.expectationFailed('unable to call particle function - unknown error'));
 		}
 		fnProm.then(
 			(data) => {
-			  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'Device function retrieved successfully:', data);
-	    	return reply(data);
+				request.server.log([ 'info', 'LedwaxDeviceController#' + funcName ], 'Device function retrieved successfully:', data);
+				return reply(data);
 			}, (err) => {
-			  request.server.log(['info', 'LedwaxDeviceController#' + funcName], 'An error occurred while getting function:', err);
+				request.server.log([ 'info', 'LedwaxDeviceController#' + funcName ], 'An error occurred while getting function:', err);
 				return reply(boom.expectationFailed(err));
 			});
 	};
@@ -107,8 +117,8 @@ const LedwaxDeviceController = () => {
 	 * Set current LED strip being controlled.
 	 */
 	const setCurrentStrip = (request, reply) => {
-    let stripIndex = request.payload.stripIndex;
-    let iotFn = 'setLEDParams';
+		let stripIndex = request.payload.stripIndex;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'idx;' + stripIndex;
@@ -119,8 +129,8 @@ const LedwaxDeviceController = () => {
 	 * Set LED strip brightness.
 	 */
 	const setBrightness = (request, reply) => {
-    let brightness = request.payload.brightness;
-    let iotFn = 'setLEDParams';
+		let brightness = request.payload.brightness;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'brt;' + brightness;
@@ -131,8 +141,8 @@ const LedwaxDeviceController = () => {
 	 * Set LED strip display mode.
 	 */
 	const setDispMode = (request, reply) => {
-    let dispMode = request.payload.dispMode;
-    let iotFn = 'setLEDParams';
+		let dispMode = request.payload.dispMode;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'mod;' + dispMode;
@@ -143,9 +153,9 @@ const LedwaxDeviceController = () => {
 	 * Set LED strip color.
 	 */
 	const setColor = (request, reply) => {
-    let modeColorIndex = request.payload.modeColorIndex;
-    let color24Bit = request.payload.color24Bit;
-    let iotFn = 'setLEDParams';
+		let modeColorIndex = request.payload.modeColorIndex;
+		let color24Bit = request.payload.color24Bit;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		//	[mode-color-index],[24-bit-integer]
@@ -160,8 +170,8 @@ const LedwaxDeviceController = () => {
 	 * See (firmware docs)[https://github.com/tenaciousRas/ledwax-photon-firmware].
 	 */
 	const setMultiColorHoldTime = (request, reply) => {
-    let holdTime = request.payload.holdTime;
-    let iotFn = 'setLEDParams';
+		let holdTime = request.payload.holdTime;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'mht;' + holdTime;
@@ -173,8 +183,8 @@ const LedwaxDeviceController = () => {
 	 * See (firmware docs)[https://github.com/tenaciousRas/ledwax-photon-firmware].
 	 */
 	const setLEDFadeMode = (request, reply) => {
-    let fadeMode = request.payload.fadeMode;
-    let iotFn = 'setLEDParams';
+		let fadeMode = request.payload.fadeMode;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'lfm;' + fadeMode;
@@ -186,8 +196,8 @@ const LedwaxDeviceController = () => {
 	 * The LED-fade-mode time-interval defines the duration of the LED color transition, in milliseconds.
 	 */
 	const setLEDFadeTimeInterval = (request, reply) => {
-    let fadeTimeInterval = request.payload.fadeTimeInterval;
-    let iotFn = 'setLEDParams';
+		let fadeTimeInterval = request.payload.fadeTimeInterval;
+		let iotFn = 'setLEDParams';
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'lfti;' + fadeTimeInterval;
@@ -208,11 +218,20 @@ const LedwaxDeviceController = () => {
 };
 
 module.exports.controller = LedwaxDeviceController();
-let dynamicFuncNames = { iotVars: [], iotFns: [] };
+let dynamicFuncNames = {
+	iotVars : [],
+	iotFns : []
+};
 for (let varName in particleDeviceVariableNames) {
-	dynamicFuncNames.iotVars.push({ iotVarName: varName, handlerFuncName: particleDeviceVariableNames[varName] });
+	dynamicFuncNames.iotVars.push({
+		iotVarName : varName,
+		handlerFuncName : particleDeviceVariableNames[varName]
+	});
 }
 for (let funcName in particleDeviceFunctionNames) {
-	dynamicFuncNames.iotFns.push({ iotFnName: funcName, handlerFuncName: particleDeviceFunctionNames[funcName] });
+	dynamicFuncNames.iotFns.push({
+		iotFnName : funcName,
+		handlerFuncName : particleDeviceFunctionNames[funcName]
+	});
 }
 module.exports.dynamicFuncNames = dynamicFuncNames;

@@ -4,7 +4,7 @@ const authController = require('../controllers/auth');
 const userController = require('../controllers/user');
 const ledwaxDeviceController = require('../controllers/ledwax_device');
 const ledwaxCloudDeviceController = require('../controllers/ledwax_cloud_device');
-const	validations = require('../validations');
+const validations = require('../validations');
 
 let routeConfig = [
 	{
@@ -15,7 +15,7 @@ let routeConfig = [
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
 			tags : [ 'api' ],
-			validate: validations.auth.loginGet
+			validate : validations.auth.loginGet
 		}
 	}, {
 		method : 'POST',
@@ -25,7 +25,7 @@ let routeConfig = [
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
 			tags : [ 'api' ],
-			validate: validations.auth.loginPost
+			validate : validations.auth.loginPost
 		}
 	}, {
 		method : 'GET',
@@ -35,7 +35,7 @@ let routeConfig = [
 			description : 'Find a stored user in DB by session ID.',
 			notes : 'Return a user object.',
 			tags : [ 'api' ],
-			validate: validations.user.find
+			validate : validations.user.find
 		}
 	}, {
 		method : 'POST',
@@ -45,7 +45,7 @@ let routeConfig = [
 			description : 'Create a new persistent user.',
 			notes : 'Returns the persistent user object.',
 			tags : [ 'api' ],
-			validate: validations.user.insert
+			validate : validations.user.insert
 		}
 	}, {
 		method : 'POST',
@@ -55,7 +55,7 @@ let routeConfig = [
 			description : 'Set current strip being controlled for given device.',
 			notes : 'Returns the persistent user object.',
 			tags : [ 'api' ],
-			validate: validations.user.insert
+			validate : validations.user.insert
 		}
 	}, {
 		method : 'POST',
@@ -65,7 +65,7 @@ let routeConfig = [
 			description : 'Set current strip being controlled for given device.',
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevicesConvenience.setCurrentStrip
+			validate : validations.ledwaxDevicesConvenience.setCurrentStrip
 		}
 	}, {
 		method : 'POST',
@@ -75,7 +75,7 @@ let routeConfig = [
 			description : 'Set brightness for current strip being controlled for given device.',
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevicesConvenience.setBrightness
+			validate : validations.ledwaxDevicesConvenience.setBrightness
 		}
 	}, {
 		method : 'POST',
@@ -85,7 +85,7 @@ let routeConfig = [
 			description : 'Set LED display mode for current strip being controlled for given device.',
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevicesConvenience.setDispMode
+			validate : validations.ledwaxDevicesConvenience.setDispMode
 		}
 	}, {
 		method : 'POST',
@@ -95,7 +95,7 @@ let routeConfig = [
 			description : 'Set LED strip color for given mode-color-index, for current strip being controlled for given device.',
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevicesConvenience.setColor
+			validate : validations.ledwaxDevicesConvenience.setColor
 		}
 	}, {
 		method : 'POST',
@@ -105,7 +105,7 @@ let routeConfig = [
 			description : 'Set LED multi-color hold time for current strip being controlled for given device.',
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevicesConvenience.setMultiColorHoldTime
+			validate : validations.ledwaxDevicesConvenience.setMultiColorHoldTime
 		}
 	}, {
 		method : 'POST',
@@ -115,7 +115,7 @@ let routeConfig = [
 			description : 'Set LED fade time interval for current strip being controlled for given device.',
 			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevicesConvenience.setLEDFadeTimeInterval
+			validate : validations.ledwaxDevicesConvenience.setLEDFadeTimeInterval
 		}
 	}, {
 		method : 'GET',
@@ -125,7 +125,7 @@ let routeConfig = [
 			description : 'Get all devices in persistent storage.',
 			notes : 'Returns an array of device objects or empty array',
 			tags : [ 'api' ],
-			validate: validations.ledwaxCloudDevices.retrieveAllStoredDevices
+			validate : validations.ledwaxCloudDevices.retrieveAllStoredDevices
 		}
 	}, {
 		method : 'GET',
@@ -135,7 +135,7 @@ let routeConfig = [
 			description : 'Get all devices in persistent storage.',
 			notes : 'Returns a single device objects or an empty object',
 			tags : [ 'api' ],
-			validate: validations.ledwaxCloudDevices.retrieveStoredDevice
+			validate : validations.ledwaxCloudDevices.retrieveStoredDevice
 		}
 	}, {
 		method : 'POST',
@@ -145,7 +145,7 @@ let routeConfig = [
 			description : 'Save device to persistent storage.',
 			notes : 'Performs insert or update.  Returns the saved object.',
 			tags : [ 'api' ],
-			validate: validations.ledwaxCloudDevices.saveDevice
+			validate : validations.ledwaxCloudDevices.saveDevice
 		}
 	}
 ];
@@ -162,7 +162,7 @@ const addDynamicRoute = (key, method, notes) => {
 			description : 'Dynamically generated path.',
 			notes : notes,
 			tags : [ 'api' ],
-			validate: validations.ledwaxDevices[key]
+			validate : validations.ledwaxDevices[key]
 		}
 	});
 };

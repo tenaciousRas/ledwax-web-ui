@@ -7,13 +7,15 @@ const boom = require('boom');
 
 describe('api', () => {
 
-	let server, db, particleConfig;
+	let server,
+		db,
+		particleConfig;
 
 	beforeAll((done) => {
 		server = require('../mockserver.js').createServer();
 		particleConfig = server.methods.particle.config();
-    // https://github.com/hapijs/hapi/issues/3017
-    setTimeout(done, 1000);
+		// https://github.com/hapijs/hapi/issues/3017
+		setTimeout(done, 1000);
 	});
 
 	let dynFuncNames = require('../../../src/modules/middleware/controllers/ledwax_device').dynamicFuncNames;
@@ -83,8 +85,8 @@ describe('api', () => {
 				server.inject(options, (response) => {
 					expect(response.statusCode).toBe(417);
 					expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
-							response.request.server.methods.particle.config().baseUrl +
-							'/v1/devices/360043000a47343432313031/' + varName);
+						response.request.server.methods.particle.config().baseUrl +
+						'/v1/devices/360043000a47343432313031/' + varName);
 					done();
 				});
 			});
@@ -99,16 +101,16 @@ describe('api', () => {
 					expect(response.statusCode).toBe(200);
 					let payLoadJSON = JSON.parse(response.payload).body;
 					if (payLoadJSON.name == 'int32') {
-						expect(payLoadJSON.result).toBe(77);	// nonsense val
+						expect(payLoadJSON.result).toBe(77); // nonsense val
 					} else if (payLoadJSON.name == 'string') {
-						expect(payLoadJSON.result).toBe('emulator v1_device_variables route');	// nonsense val
+						expect(payLoadJSON.result).toBe('emulator v1_device_variables route'); // nonsense val
 					}
 					done();
 				});
 			});
 
 		});
-	}	// end loop
+	} // end loop
 
 	dynFuncNames = require('../../../src/modules/middleware/controllers/ledwax_device').dynamicFuncNames;
 	for (let i = 0; i < dynFuncNames.iotFns.length; i++) {
@@ -120,7 +122,7 @@ describe('api', () => {
 				let options = {
 					method : 'POST',
 					url : '/devices/' + funcName,
-					payload: {}
+					payload : {}
 				};
 
 				server.inject(options, (response) => {
@@ -135,7 +137,7 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
-						authtoken: '254406f79c1999af65a7df4388971354f85cfee9'
+						authtoken : '254406f79c1999af65a7df4388971354f85cfee9'
 					}
 				};
 
@@ -151,7 +153,7 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
-						deviceId: '360043000a47343432313031'
+						deviceId : '360043000a47343432313031'
 					}
 				};
 
@@ -167,16 +169,16 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
-						deviceId: '360043000a47343432313031',
-						authtoken: 'foobar'
+						deviceId : '360043000a47343432313031',
+						authtoken : 'foobar'
 					}
 				};
 
 				server.inject(options, (response) => {
 					expect(response.statusCode).toBe(417);
 					expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
-							response.request.server.methods.particle.config().baseUrl +
-							'/v1/devices/360043000a47343432313031/' + varName);
+						response.request.server.methods.particle.config().baseUrl +
+						'/v1/devices/360043000a47343432313031/' + varName);
 					done();
 				});
 			});
@@ -186,8 +188,8 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
-						deviceId: '360043000a47343432313031',
-						authtoken: '254406f79c1999af65a7df4388971354f85cfee9'
+						deviceId : '360043000a47343432313031',
+						authtoken : '254406f79c1999af65a7df4388971354f85cfee9'
 					}
 				};
 
@@ -204,9 +206,9 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
-						deviceId: '360043000a47343432313031',
-						authtoken: '254406f79c1999af65a7df4388971354f85cfee9',
-						args: 'foobar'
+						deviceId : '360043000a47343432313031',
+						authtoken : '254406f79c1999af65a7df4388971354f85cfee9',
+						args : 'foobar'
 					}
 				};
 
@@ -219,6 +221,6 @@ describe('api', () => {
 			});
 
 		});
-	}	// end loop
+	} // end loop
 
 });
