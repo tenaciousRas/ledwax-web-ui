@@ -1,10 +1,99 @@
-**/logs/*
-!.gitkeep
-**/node_modules/
-**/bower_components/
-**/tmp
+# Put files/directories that should be ignored in this file when uploading
+# to a chef-server or supermarket.
+# Lines that start with '# ' are comments.
+
+# OS generated files #
+######################
 **/.???DS_Store
-**/.idea
-**/.settings
-**/.project
+Icon?
+nohup.out
+ehthumbs.db
+Thumbs.db
+._*
+
+# SASS #
+########
+.sass-cache
+
+# EDITORS #
+###########
+**/#*
+**/.#*
+**/*~
+**/*.sw[a-z]
+**/*.[bB][aA][kK]
+REVISION
+TAGS*
+tmtags
+*_flymake.*
+*_flymake
+*.tmproj
+## .settings
+mkmf.log
+
+# IDEs #
+########
+**/.settings/org.eclipse.*.prefs
+
+## COMPILED ##
+##############
+**/a.out
+*.o
+*.pyc
+*.so
+*.com
+*.class
+*.dll
+*.exe
+*/rdoc/
+
+# Testing #
+###########
+.watchr
+.rspec
+.kitchen*
+.rubocop.yml
+#.travis.yml
+.foodcritic
+.codeclimate.yml
+
+# SCM #
+#######
+.svn
+*/.bzr/*
+*/.hg/*
+*/.svn/*
+!.gitkeep
+
+# vagrant/chef #
+#############
+**/*.lock
+cookbooks/*
+.vagrant
+
+# Policyfile #
+##############
+# Policyfile.rb
+# Policyfile.lock.json
+
+# Strainer #
+############
+.colander
+.strainer
+
+# NodeJS #
+##########
+**/node_modules
+
+# Project Specific #
+####################
+**/*.tmp
+**/*tmp
+**/*cache
+**/*logs
+**/.gradle
+**/build/**
+
+# Testing #
+###########
 Firefox_*/**
