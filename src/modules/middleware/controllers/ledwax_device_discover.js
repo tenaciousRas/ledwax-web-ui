@@ -65,9 +65,10 @@ const LedwaxDeviceDiscoverController = () => {
 								auth : authToken
 							});
 							if (!fnProm) {
+								let errMsg = 'unable to retrieve device variable from cloud for device:' + device.id;
 								request.server.log([ 'warn', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
-									'unable to retrieve device variable from cloud for device:', device.id);
-								return callback(new Error('unable to retrieve device variable from cloud for device:' + device.id));
+									errMsg);
+								return callback(new Error(errMsg));
 							}
 							fnProm.then((data) => {
 								lwDvList.push(device);
@@ -108,7 +109,7 @@ const LedwaxDeviceDiscoverController = () => {
 		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDeviceCapabilities';
 		let authToken = request.query.authtoken;
 		let deviceId = request.query.deviceId;
-		const prom = particle.particle.getDevice({
+		const prom = particle.getDevice({
 			deviceId : deviceId,
 			auth : authToken
 		});
@@ -117,53 +118,25 @@ const LedwaxDeviceDiscoverController = () => {
 				+ 'are you sure the cloud is up and running?'));
 		}
 		prom.then(
-			(attrs) => {
+			(resp) => {
+				let attrs = resp.body;
 				request.server.log([ 'debug', logTag ],
-					'Device attributes retrieved successfully:', attrs);
-				if (!device.name || !device.name.startsWith('ledwax')) {
-					let err = 'oops - somehow this doesn\'t appear to be a LEDWax device. The device ID is ' + deviceId;
+					'Device attributes retrieved successfully: ' + JSON.stringify(attrs));
+				if (!attrs.name || !attrs.name.startsWith('ledwax')) {
+					let err = 'oops - somehow this doesn\'t appear to be a LEDWax device. The device ID is ' + attrs.id;
 					request.server.log([ 'error', logTag ],
 						err);
 					return reply(boom.expectationFailed(err));
 				}
 				if (!attrs.variables && !attrs.functions.length < 1) {
-					let err = 'oops - a LEDWax device was discovered with no capabilities. The device ID is ' + deviceId;
+					let err = 'oops - a LEDWax device was discovered with no capabilities. The device ID is ' + attrs.id;
 					request.server.log([ 'error', logTag ],
 						err);
 					return reply(boom.expectationFailed(err));
 				}
-				const lwDevVar = (varName) => {
-					const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDeviceCapabilities#lwDevVar';
-					let ret = {
-						name : varName,
-						vall : null
-					};
-					let fnProm = particle.getVariable({
-						deviceId : device.deviceId,
-						name : n,
-						auth : authToken
-					});
-					if (!fnProm) {
-						request.server.log([ 'warn', logTag ],
-							'unable to retrieve device variable from cloud for device:', device.deviceId);
-					}
-					fnProm.then((data) => {
-						request.server.log([ 'error', logTag ],
-							'successfully retrieved device variable from cloud for device: ' + device.deviceId +
-							', var name: ' + varName +
-							', with val: ' + data);
-						ret.val = data;
-						caps.vrs.push(ret);
-					}, (err) => {
-						request.server.log([ 'error', logTag ],
-							'unable to retrieve device variable from cloud for device: ' + device.deviceId +
-							', var name: ' + varName);
-					});
-					return fnProm;
-				};
 				// cache capabilities
-				let c = {
-					dvcId : deviceId,
+				let caps = {
+					dvcId : attrs.id,
 					vrs : [],
 					fns : []
 				};
@@ -171,20 +144,24 @@ const LedwaxDeviceDiscoverController = () => {
 				for (let i = 0; i < attrs.functions.length; i++) {
 					caps.fns.push(attrs.functions[i]);
 				}
+				// handle variables with REST calls
 				async.eachOf(attrs.variables, (value, key, callback) => {
 					try {
+						request.server.log([ 'info', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+							'retrieving device variable ' + key + ' from cloud for device:', attrs.id);
 						let fnProm = particle.getVariable({
-							deviceId : device.id,
-							name : signatureVarName,
+							deviceId : attrs.id,
+							name : key,
 							auth : authToken
 						});
 						if (!fnProm) {
+							let errMsg = 'unable to retrieve device variable ' + key + ' from cloud for device:' + attrs.id;
 							request.server.log([ 'warn', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
-								'unable to retrieve device variable from cloud for device:', device.id);
-							return callback(new Error('unable to retrieve device variable from cloud for device:' + device.id));
+								errMsg);
+							return callback(new Error(errMsg));
 						}
 						fnProm.then((data) => {
-							caps.push(value);
+							caps.vrs.push(key);
 							callback();
 						}, (err) => {
 							// no error to keep looping
@@ -196,16 +173,16 @@ const LedwaxDeviceDiscoverController = () => {
 				}, (err) => {
 					if (err) {
 						request.server.log([ 'error', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
-							'An error occurred while getting device signature:', err);
-						if (lwDvList.length < 1) {
-							return reply(boom.notFound(err, devices));
+							'An error occurred while getting device capabilities: ', err);
+						if (caps.vrs.length < 1 && caps.fns.length < 1) {
+							return reply(boom.notFound(err, deviceId));
 						}
 					}
 					return reply(caps);
 				});
 			}, (err) => {
 				request.server.log([ 'error', logTag ],
-					'An error occurred while getting function:', err);
+					'An error occurred while getting device description:', err);
 				return reply(boom.expectationFailed(err));
 			});
 	};
