@@ -3,7 +3,7 @@
 
 const config = {
 	dev : {
-		baseUrl : 'http://vagrant-ubuntu-trusty-64:3001',
+		baseUrl : 'http://192.168.4.124',
 		clientSecret : 'particle-api',
 		clientId : 'particle-api',
 		tokenDuration : 7776000 // 90 days
