@@ -4,6 +4,7 @@ const authController = require('../controllers/auth');
 const userController = require('../controllers/user');
 const ledwaxDeviceController = require('../controllers/ledwax_device');
 const ledwaxCloudDeviceController = require('../controllers/ledwax_cloud_device');
+const ledwaxDeviceDiscoverController = require('../controllers/ledwax_device_discover');
 const validations = require('../validations');
 
 let routeConfig = [
@@ -146,6 +147,26 @@ let routeConfig = [
 			notes : 'Performs insert or update.  Returns the saved object.',
 			tags : [ 'api' ],
 			validate : validations.ledwaxCloudDevices.saveDevice
+		}
+	}, {
+		method : 'GET',
+		path : '/devices/discoverDevices',
+		handler : ledwaxDeviceDiscoverController.discoverLEDWaxDevices,
+		config : {
+			description : 'Discover LEDWax devices registered with the particle cloud for authenticated user.',
+			notes : 'Performs insert or update.  Returns the saved object.',
+			tags : [ 'api' ],
+			validate : validations.ledwaxCloudDeviceDiscover.discoverDevices
+		}
+	}, {
+		method : 'GET',
+		path : '/devices/discoverCaps',
+		handler : ledwaxDeviceDiscoverController.discoverLEDWaxDeviceCaps,
+		config : {
+			description : 'Discover LEDWax device capabilities registered with the particle cloud for authenticated user.',
+			notes : 'Performs insert or update.  Returns the saved object.',
+			tags : [ 'api' ],
+			validate : validations.ledwaxCloudDeviceDiscover.discoverCaps
 		}
 	}
 ];

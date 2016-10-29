@@ -1,0 +1,18 @@
+{
+	"particleDeviceVariableNames": {
+		"numStrips": "getNumStrips",
+		"stripIndex": "getStripIndex",
+		"stripType": "getStripType",
+		"dispMode": "getDispMode",
+		"modeColor": "getModeColor",
+		"modeColorIdx": "getModeColorIdx",
+		"brightness": "getBrightness",
+		"fadeMode": "getFadeMode",
+		"fadeTime": "getFadeTime",
+		"colorTime": "getColorTime"
+	},
+	"particleDeviceFunctionNames": {
+		"setLEDParams": "fnSetLEDParams",
+		"resetAll": "fnResetAll"
+	}
+}

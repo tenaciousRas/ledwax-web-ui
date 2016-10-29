@@ -9,32 +9,21 @@ const particlewrap = require('particle-api-js');
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
 let particle = new particlewrap(particle_config);
-
+const ledwax_iot_config = require('../../../particle-config/iotdef_ledwax.json');
 // map particle variable to handler method names
-const particleDeviceVariableNames = {
-	numStrips : "getNumStrips",
-	stripIndex : "getStripIndex",
-	stripType : "getStripType",
-	dispMode : "getDispMode",
-	modeColor : "getModeColor",
-	modeColorIdx : "getModeColorIdx",
-	brightness : "getBrightness",
-	fadeMode : "getFadeMode",
-	fadeTime : "getFadeTime",
-	colorTime : "getColorTime"
-};
+const particleDeviceVariableNames = ledwax_iot_config.particleDeviceVariableNames;
 // map particle functions to handler method names
-const particleDeviceFunctionNames = {
-	setLEDParams : "fnSetLEDParams",
-	resetAll : "fnResetAll"
-};
+const particleDeviceFunctionNames = ledwax_iot_config.particleDeviceFunctionNames;
 
 /**
  * LedwaxDevice controller
  */
 const LedwaxDeviceController = () => {
-	// create handler functions with name of get[variable-name]
-	// where variable-name in particleDeviceVariableNames
+
+	/**
+	 * create handler functions with name of get[variable-name]
+	 * where variable-name in particleDeviceVariableNames
+	 */
 	let dynamicControllerFunctions = {};
 	for (let varName in particleDeviceVariableNames) {
 		dynamicControllerFunctions[particleDeviceVariableNames[varName]] = (request, reply) => {
@@ -59,8 +48,11 @@ const LedwaxDeviceController = () => {
 				});
 		};
 	}
-	// create handler functions with name of get[function-name]
-	// where function-name in particleDeviceFunctionNames
+
+	/**
+	 * create handler functions with name of get[function-name]
+	 * where function-name in particleDeviceFunctionNames
+	 */
 	for (let funcName in particleDeviceFunctionNames) {
 		dynamicControllerFunctions[particleDeviceFunctionNames[funcName]] = (request, reply) => {
 			// particle variables are GET routes
@@ -90,8 +82,9 @@ const LedwaxDeviceController = () => {
 
 	/**
 	 * Generic function calls for convenience methods.
+	 * @private
 	 */
-	const genericParticleFunctionCall = (request, reply, arg) => {
+	const genericParticleFunctionCall = (request, reply, iotFn,  arg) => {
 		let authToken = request.payload.authtoken;
 		let deviceId = request.payload.deviceId;
 		let fnProm = particle.callFunction({
@@ -122,7 +115,7 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'idx;' + stripIndex;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	/**
@@ -134,7 +127,7 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'brt;' + brightness;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	/**
@@ -146,7 +139,7 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'mod;' + dispMode;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	/**
@@ -162,7 +155,7 @@ const LedwaxDeviceController = () => {
 		//	where mode-color-index is the index of the mode color (family 1 display mode) to set
 		//	valid color values are 0 - 16777215 (24-bit integer)
 		let arg = 'col;' + modeColorIndex + ',' + color24Bit;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	/**
@@ -175,7 +168,7 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'mht;' + holdTime;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	/**
@@ -188,7 +181,7 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'lfm;' + fadeMode;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	/**
@@ -201,7 +194,7 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'lfti;' + fadeTimeInterval;
-		return genericParticleFunctionCall(request, reply, arg);
+		return genericParticleFunctionCall(request, reply, iotFn, arg);
 	};
 
 	// expose public methods

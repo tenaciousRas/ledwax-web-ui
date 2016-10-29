@@ -152,6 +152,21 @@ module.exports.ledwaxCloudDevices = {
 	}
 }
 
+module.exports.ledwaxCloudDeviceDiscover = {
+	discoverDevices : {
+		query : {
+			authtoken : Joi.string().trim().min(3).max(100).required()
+		},
+		failAction : failActDelegate('custom')
+	},
+	discoverCaps : {
+		query : {
+			authtoken : Joi.string().trim().min(3).max(100).required(),
+			deviceId : Joi.string().trim().min(3).max(100).required()
+		},
+		failAction : failActDelegate('custom')
+	}
+}
 // add routes for dynamically created iot vars and iot FNs
 const buildDynamicValidationsForController = () => {
 	let dynamic_ledwax_devices = {};

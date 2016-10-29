@@ -37,7 +37,7 @@ const LedwaxCloudDeviceController = () => {
 		} catch (e) {
 			return reply(boom.badImplementation('exception while executing find all devices: ', e));
 		}
-	}
+	};
 
 	/**
 	 * Find a device in persistent storage.
@@ -66,7 +66,7 @@ const LedwaxCloudDeviceController = () => {
 		} catch (e) {
 			return reply(boom.badImplementation('exception while executing find device: ', e));
 		}
-	}
+	};
 
 	/**
 	 * Save a device to persistent storage.
@@ -133,7 +133,7 @@ const LedwaxCloudDeviceController = () => {
 				'DB call complete - save device error, exception =:' + e);
 			return reply(boom.badImplementation('unable to create device', e));
 		}
-	}
+	};
 
 	// expose public methods
 	return {
