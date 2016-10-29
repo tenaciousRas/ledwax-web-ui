@@ -85,6 +85,10 @@ cookbooks/*
 ##########
 **/node_modules
 
+# Bower #
+#########
+**/bower_components
+
 # Project Specific #
 ####################
 **/*.tmp
