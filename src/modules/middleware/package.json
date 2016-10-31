@@ -1,5 +1,6 @@
 {
-	"name": "LEDWax Web UI Middleware",
-	"version": "0.0.1",
-	"dependencies": "mongoose-config"
+	"name": "ledwax-web-ui-rest-api",
+	"version": "0.5.0",
+	"author": "Free Beachler",
+	"description": "LEDWax middleware module, REST API"
 }

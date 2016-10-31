@@ -9,6 +9,13 @@ const validations = require('../validations');
 
 let routeConfig = [
 	{
+		method : [ 'POST', 'GET' ],
+		path : '/',
+		handler : (request, reply) => {
+			// return heartbeat
+			return reply('LEDWAX REST API running at ' + request.server.uri + '!');
+		}
+	}, {
 		method : 'GET',
 		path : '/user/login',
 		handler : authController.login,
