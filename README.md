@@ -9,18 +9,15 @@ This project runs on NodeJS and comes with a built-in webserver.  This makes it 
 
 This project is known to work on systems which meet the requirements for Raspbian Wheezy, Debian 8+, Ubuntu 14+, Windows 7+, and Mac OSX 10.10+ (it may work on earlier versions).  It probably runs fine on CentOS 6.5+ but this is untested.
 
+
 ## Getting Started
-
-To get you started:
-1. Download or clone this repository and install the dependencies listed in prerequisites.
-2. Install dependencies (npm install).
-3. Configure the REST API for your Particle Cloud by running [TBD].  This will configure the settings in src/middleware/particle-config/
-4. Run the application (npm start).
-5. Login to the Web-UI using your existing Particle Cloud login.
-6. Setup and discover LEDWax devices on the Particle Cloud.
-7. Control your LEDWax lights!
-
 ### Prerequisites
+This is a NodeJS project.  To run the Web-UI you need the following:
+- git
+- npm
+- NodeJS
+- A Particle cloud with attached LEDWax hardware and LED strips you can control (or the LEDWax emulator)
+- A LEDWax-Web-UI (this) server configured for your Paticle Cloud (above).
 
 You need git to clone this repository. You can get git from
 [http://git-scm.com/](http://git-scm.com/).
@@ -31,22 +28,17 @@ LEDWax-Web-UI uses a number of node.js tools to initialize and test ledwax-web-u
 
 This project is tested to work with NodeJS version 5 or higher.  Fortunately, Particle offers support for NodeJS v5, which means you can run this project and host a private particle cloud on a single RPi.
 
-### Cloud Configuration
-Configuration details for the particle cloud are stored in particle-config/index.js.  You need to set the HOST IP
-
-``` javascript
-{
-	baseUrl : '[host-IP]',
-	clientSecret : '[particle-cloud-client-secret]',
-	clientId : '[particle-cloud-client-id]',
-	tokenDuration : 7776000 // 90 days
-}
-```
-
-NOTE:  I think the 'particle-api' is the default value for the public Particle Cloud clientSecret and clientId.  These values are set on the particle cloud when it is configured.
+## Overview of Initial Setup
+0. Setup a Particle Cloud or setup your account on the public Particle cloud.
+1. Setup your LEDWax lights on your particle cloud.
+2. Download or clone this repository and install the dependencies listed in prerequisites.
+3. Configure the REST API for your Particle Cloud by running [TBD].  This will configure the settings in src/middleware/particle-config/
+4. Run the application (npm start).  This will install the necessary dependencies.
+5. Login to the Web-UI using your existing Particle Cloud login.
+6. Setup and discover LEDWax devices on the Particle Cloud.
+7. Control your LEDWax lights!
 
 ### Clone LEDWax Web UI
-
 Clone this repository without commit history using [git][git]:
 
 ```bash
@@ -62,7 +54,57 @@ If you want to start a new project based on ledwax-web-ui with the complete comm
 git clone https://github.com/tenaciouRas/ledwax-web-ui.git
 ```
 
-### Install Dependencies
+### LEDWax Particle Cloud Configuration
+Configuration details for the particle cloud are stored in particle-config/index.js.  You need to set the HOST IP.  If you have a custom port you can set it in baseUrl.
+
+``` javascript
+{
+	baseUrl : '[host-IP]',
+	clientSecret : '[particle-cloud-client-secret]',
+	clientId : '[particle-cloud-client-id]',
+	tokenDuration : 7776000 // 90 days
+}
+```
+
+NOTE:  I think the 'particle-api' is the default value for the public Particle Cloud clientSecret and clientId.  These values are set on the particle cloud when it is configured.
+
+## Start/Run LEDWax-Web-UI REST API and Web-UI Servers
+We have pre-configured LEDWax Web-UI with its own web server.  The simplest way to start this server is:
+
+```bash
+cd ledwax-photon-web-ui
+npm start
+```
+
+Now browse to the Web UI at `http://localhost:8000/app/index.html`.
+
+You can verify the REST API is running by browsing to its heartbeat page at `http://localhost:3000/`.
+
+## Contributing
+
+This application is built upon the HapiJS framework.  The Web-UI is an AngularJS application.  The middleware is a pure REST backend with no UI.
+
+### Directory Layout
+
+```
+src/
+config/                   --> HapiJS app-configuration files
+mongoose-config/          --> configuration for mongoose (unused)
+particle-config/          --> configuration for Particle IoT Cloud (private/public server)
+postgresql-config/        --> configuration for POSTGRES DB (active)
+modules/                  --> middleware and web-ui sources
+  middleware/             --> source files for REST API
+    index.js              --> entry point for middleware app
+  web-ui/                 --> source files for Web UI
+    index.js              --> entry point for web-ui app
+test/                     --> jasmine middleware tests
+test-e2e/                 --> end-to-end web-ui tests
+  protractor-conf.js      --> Protractor config file
+  scenarios.js            --> end-to-end scenarios to be run by Protractor
+karma.web.conf.js         --> config file for running Web UIunit tests with Karma
+```
+
+### Installing Dependencies
 
 There are two kinds of dependencies in this project: tools and angular framework code.  The tools help
 manage and test the application.
@@ -85,43 +127,6 @@ folders in your project.
 *Note that the `bower_components` folder would normally be installed in the root folder but
 angular-seed changes this location through the `.bowerrc` file.  Putting it in the app folder makes
 it easier to serve the files by a webserver.*
-
-### Run the Application
-
-We have pre-configured LEDWax Web-UI with its own web server.  The simplest way to start this server is:
-
-```
-npm start
-```
-
-Now browse to the Web UI at `http://localhost:8000/app/index.html`.
-
-You can verify the REST API is running by browsing to its heartbeat page at `http://localhost:3000/`.
-
-## Contributing
-
-This application is built upon the HapiJS framework.  The Web-UI is an AngularJS application.  The middleware is a pure REST backend with no UI.
-
-## Directory Layout
-
-
-```
-src/
-config/                   --> HapiJS app-configuration files
-mongoose-config/          --> configuration for mongoose (unused)
-particle-config/          --> configuration for Particle IoT Cloud (private/public server)
-postgresql-config/        --> configuration for POSTGRES DB (active)
-modules/                  --> middleware and web-ui sources
-  middleware/             --> source files for REST API
-    index.js              --> entry point for middleware app
-  web-ui/                 --> source files for Web UI
-    index.js              --> entry point for web-ui app
-test/                     --> jasmine middleware tests
-test-e2e/                 --> end-to-end web-ui tests
-  protractor-conf.js      --> Protractor config file
-  scenarios.js            --> end-to-end scenarios to be run by Protractor
-karma.web.conf.js         --> config file for running Web UIunit tests with Karma
-```
 
 ## Testing
 
