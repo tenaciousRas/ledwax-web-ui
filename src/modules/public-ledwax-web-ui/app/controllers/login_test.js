@@ -38,10 +38,13 @@ describe('LEDWAXW3.login module', function() {
 	}
 
 	describe('login controller', function() {
-		var scope, ctrl, configService, restService;
+		var scope,
+			ctrl,
+			configService,
+			restService;
 
 		it('should load controller ...', inject(function($controller,
-				$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
+			$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;
@@ -58,7 +61,7 @@ describe('LEDWAXW3.login module', function() {
 		}));
 
 		it('should reset and clear scope and form cache vars', inject(function($controller,
-				$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
+			$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;
@@ -112,11 +115,14 @@ describe('LEDWAXW3.login module', function() {
 			});
 		}));
 
-		var scope, ctrl, configService, restService;
+		var scope,
+			ctrl,
+			configService,
+			restService;
 
 		it('should not set user session and clear cookies', inject(function(
-				$controller, $rootScope, $cookies, $sanitize, $translate,
-				Config, REST_IoT) {
+			$controller, $rootScope, $cookies, $sanitize, $translate,
+			Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;
@@ -160,10 +166,13 @@ describe('LEDWAXW3.login module', function() {
 			});
 		}));
 
-		var scope, ctrl, configService, restService;
+		var scope,
+			ctrl,
+			configService,
+			restService;
 
 		it('should set user session and cookie', inject(function($controller,
-				$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
+			$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;

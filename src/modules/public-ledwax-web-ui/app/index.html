@@ -85,9 +85,6 @@
 		<div>
 			LEDWax Web UI v<span app-version></span>
 		</div>
-		<!-- In production use:
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
-  -->
 		<!-- build:js(.) js/vendor.js -->
 		<!-- bower:js -->
 		<script src="bower_components/angular/angular.js"></script>
@@ -102,7 +99,7 @@
 		<script
 			src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
 		<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-		<script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+		<!-- <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script> -->
 		<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 		<script src="bower_components/html5-boilerplate/dist/js/main.js"></script>
 		<script src="bower_components/ng-bootstrap-alerts/dist/index.js"></script>
@@ -111,14 +108,18 @@
 		<!-- endbuild -->
 		<!-- build:js({.tmp,app}) js/app.js -->
 		<script src="app.js"></script>
-		<script src="directives/directives.js"></script>
-		<script src="filters/filters.js"></script>
 		<script src="services/services.js"></script>
 		<script src="controllers/ledwaxapp.js"></script>
 		<script src="controllers/login.js"></script>
 		<script src="controllers/leds.js"></script>
 		<script src="controllers/setup.js"></script>
 		<script src="controllers/about.js"></script>
+		<script src="components/characters/characters.js"></script>
+		<script src="components/characters/characters-filter.js"></script>
+		<script
+			src="components/human-readable-bytecount/human-readable-bytecount.js"></script>
+		<script
+			src="components/human-readable-bytecount/human-readable-bytecount-filter.js"></script>
 		<script src="components/version/version.js"></script>
 		<script src="components/version/version-directive.js"></script>
 		<script src="components/version/interpolate-filter.js"></script>

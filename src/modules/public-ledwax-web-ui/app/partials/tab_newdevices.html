@@ -1,0 +1,31 @@
+<div id="wrap_newdevices">
+	<div class="wrap-devices-table" class="">
+		<div class="row">
+			<div class="col-sm-12">
+				<table class="devices-table">
+					<thead>
+						<tr>
+							<th scope="col"><a href
+								ng:click="sortBy('name', freshDevices, 'pagedFreshDevices')">Name</a></th>
+							<th scope="col"><a href
+								ng:click="sortBy('type', freshDevices, 'pagedFreshDevices')">Type</a></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng:click=""
+							ng:repeat="device in pagedFreshDevices[currentPage - 1] | filter:query">
+							<td>{{device.name}}</td>
+							<td>{{device.type}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<p>
+					<pagination total-items="totalItems" page="currentPage"
+						items-per-page="pageSize" class="pagination-sm"
+						boundary-links="true" rotate="false"></pagination>
+				</p>
+				<pre class="pagination-footer">Page: {{currentPage}} of {{pagedFreshDevices.length}}</pre>
+			</div>
+		</div>
+	</div>
+</div>

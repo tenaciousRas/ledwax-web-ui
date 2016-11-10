@@ -15,9 +15,9 @@ var appDependencies = ['ngRoute',
 	'LEDWAXW3.leds',
 	'LEDWAXW3.setup',
 	'LEDWAXW3.about',
-	'LEDWAXW3.filters',
 	'LEDWAXW3.services',
-	'LEDWAXW3.directives'
+	'LEDWAXW3.characters',
+	'LEDWAXW3.humanReadableByteCount'
 ];
 /**
  * Start of block required for e2e tests

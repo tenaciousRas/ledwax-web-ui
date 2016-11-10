@@ -1,16 +1,89 @@
+const DEFAULT_IOT_HOST_IP = '127.0.0.1';
+const DEFAULT_IOT_HOST_PORT = '3000';
+
 var services = angular.module('LEDWAXW3.services', []);
 
-services.factory('Config', [ function() {
+services.value('version', '1.0');
+
+services.factory('Settings', [ '$http', function($http) {
 	var service = {
-		iot_host_ip : '127.0.0.1',
-		iot_host_port : '3000'
+		dateFormat : 'M/d/yy h:mm:ss a',
+		appConfig : {
+		},
+		uiState : {
+			httpConnected : false,
+			socketioConnected : false,
+			uploadStatus : { uploading : false },
+			currNav : null,
+			currTab : null
+		},
+		settings : {
+			iot_host_ip : DEFAULT_IOT_HOST_IP,
+			iot_host_port : DEFAULT_IOT_HOST_PORT
+		}
+	};
+	service.retrieveAppConfig = function() {
+		var config = {
+			method : 'GET',
+			url : 'rest/appconfig',
+			data : {}
+		};
+		var promise = $http(config);
+		promise.success = function(data) {
+			service.appConfig = data.data;
+		};
+		promise.error = function(data) {
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		};
+		promise.then(promise.success, promise.error);
+		return promise;
+	};
+	service.retrieveSettings = function() {
+		var config = {
+			method : 'GET',
+			url : 'rest/user/settings',
+			data : {}
+		};
+		var promise = $http(config);
+		promise.success = function(data) {
+			service.settings = data.data;
+		};
+		promise.error = function(data) {};
+		promise.then(promise.success, promise.error);
+		return promise;
+	};
+	service.putSettings = function(settings) {
+		var config = {
+			method : 'POST',
+			url : 'rest/settings/user/update',
+			data : settings
+		};
+		var promise = $http(config);
+		promise.success = function(data) {};
+		promise.error = function(data) {};
+		promise.then(promise.success, promise.error);
+		return promise;
+	};
+	service.saveSettings = function(settings) {
+		service.settings = settings;
+		return service.putSettings(service.settings);
 	};
 	service.getIoTURL = function() {
 		var ret = 'http://';
-		ret += (service.iot_host_ip == null ? '' : service.iot_host_ip);
-		ret += (service.iot_host_port == null ? '' : ':' + service.iot_host_port);
+		ret += (service.settings.iot_host_ip == null ? '' : service.settings.iot_host_ip);
+		ret += (service.settings.iot_host_port == null ? '' : ':' + service.settings.iot_host_port);
 		return ret;
 	}
+	service.setIoTURL = function(ip, port) {
+		if (angular.isDefined(ip)) {
+			service.settings.iot_host_ip = ip;
+		}
+		if (angular.isDefined(port)) {
+			service.settings.iot_host_port = port;
+		}
+	}
+
 	return service;
 } ]);
 
@@ -19,10 +92,10 @@ services
 		'REST_IoT',
 		[
 			'$http',
-			'Config',
-			function($http, Config) {
+			'Settings',
+			function($http, Settings) {
 				var service = {
-					hostURL : Config.getIoTURL()
+					hostURL : Settings.getIoTURL()
 				};
 				service.init = function() {
 					if (service.hostURL == null) {

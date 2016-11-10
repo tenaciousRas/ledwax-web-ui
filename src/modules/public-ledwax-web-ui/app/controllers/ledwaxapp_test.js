@@ -3,11 +3,12 @@
 describe(
 	'LEDWAXW3.ledwaxapp module',
 	function() {
-		var mockConfig,
+		var mockSettings,
 			mockREST_IoT;
 
 		// mock controller
 		beforeEach(module('LEDWAXW3.app'));
+		// mock REST_IoT
 		beforeEach(module(function($provide) {
 			$provide.service('REST_IoT', function($http) {
 				var ret = {};
@@ -40,17 +41,16 @@ describe(
 		describe('ledwaxapp controller', function() {
 			var scope,
 				ctrl,
-				configService,
+				settingsService,
 				restService;
 
-			it('should load controller...', inject(function($controller,
-				$rootScope, $route, $window, $location, $routeParams,
-				$cookies, $filter, $sanitize, $translate, Config,
-				REST_IoT) {
-				scope = $rootScope.$new();
-				configService = Config;
-				restService = REST_IoT;
-				inject(function(Config, REST_IoT) {
+			it('should load controller...', inject(function($rootScope, $scope, $route, $window, $location,
+				$routeParams, $cookies, $filter, $sanitize, $translate,
+				Settings, REST_IoT) {
+				var scope = $rootScope.$new(),
+					settingsService = Settings,
+					restService = REST_IoT;
+				inject(function(Settings, REST_IoT) {
 					ctrl = $controller('AppCtrl', {
 						$rootScope : $rootScope,
 						$scope : scope,
@@ -62,7 +62,7 @@ describe(
 						$filter : $filter,
 						$sanitize : $sanitize,
 						$translate : $translate,
-						Config : configService,
+						Settings : settingsService,
 						REST_IoT : restService
 					});
 				});
@@ -85,14 +85,13 @@ describe(
 			}));
 
 			it('updateNavState should set active nav state',
-				inject(function($controller, $rootScope, $route,
-					$window, $location, $routeParams, $cookies,
-					$filter, $sanitize, $translate, Config,
-					REST_IoT) {
-					scope = $rootScope.$new();
-					configService = Config;
-					restService = REST_IoT;
-					inject(function(Config, REST_IoT) {
+				inject(function($rootScope, $scope, $route, $window, $location,
+					$routeParams, $cookies, $filter, $sanitize, $translate,
+					Settings, REST_IoT) {
+					var scope = $rootScope.$new(),
+						settingsService = Settings,
+						restService = REST_IoT;
+					inject(function(Settings, REST_IoT) {
 						ctrl = $controller('AppCtrl', {
 							$rootScope : $rootScope,
 							$scope : scope,
@@ -104,7 +103,7 @@ describe(
 							$filter : $filter,
 							$sanitize : $sanitize,
 							$translate : $translate,
-							Config : configService,
+							Settings : settingsService,
 							REST_IoT : restService
 						});
 					});
@@ -126,18 +125,17 @@ describe(
 			function() {
 				var scope,
 					ctrl,
-					configService,
+					settingsService,
 					restService;
 				it(
 					'should not set user session authenticated if cookie present',
-					inject(function($controller, $rootScope,
-						$route, $window, $location,
-						$routeParams, $cookies, $filter,
-						$sanitize, $translate, Config, REST_IoT) {
-						scope = $rootScope.$new();
-						configService = Config;
-						restService = REST_IoT;
-						inject(function(Config, REST_IoT) {
+					inject(function($rootScope, $scope, $route, $window, $location,
+						$routeParams, $cookies, $filter, $sanitize, $translate,
+						Settings, REST_IoT) {
+						var scope = $rootScope.$new(),
+							settingsService = Settings,
+							restService = REST_IoT;
+						inject(function(Settings, REST_IoT) {
 							ctrl = $controller('AppCtrl', {
 								$rootScope : $rootScope,
 								$scope : scope,
@@ -149,7 +147,7 @@ describe(
 								$filter : $filter,
 								$sanitize : $sanitize,
 								$translate : $translate,
-								Config : configService,
+								Settings : settingsService,
 								REST_IoT : restService
 							});
 						});
@@ -164,15 +162,14 @@ describe(
 
 				it(
 					'should set user session authenticated if cookie present',
-					inject(function($controller, $rootScope,
-						$route, $window, $location,
-						$routeParams, $cookies, $filter,
-						$sanitize, $translate, Config, REST_IoT) {
-						scope = $rootScope.$new();
-						configService = Config;
-						restService = REST_IoT;
+					inject(function($rootScope, $scope, $route, $window, $location,
+						$routeParams, $cookies, $filter, $sanitize, $translate,
+						Settings, REST_IoT) {
+						var scope = $rootScope.$new(),
+							settingsService = Settings,
+							restService = REST_IoT;
 						$cookies.put('auth_token', 'foo_bar_baz');
-						inject(function(Config, REST_IoT) {
+						inject(function(Settings, REST_IoT) {
 							ctrl = $controller('AppCtrl', {
 								$rootScope : $rootScope,
 								$scope : scope,
@@ -184,7 +181,7 @@ describe(
 								$filter : $filter,
 								$sanitize : $sanitize,
 								$translate : $translate,
-								Config : configService,
+								Settings : settingsService,
 								REST_IoT : restService
 							});
 						});

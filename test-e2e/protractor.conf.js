@@ -1,13 +1,14 @@
+/**
+ * @see @link https://github.com/SeleniumHQ/selenium/blob/master/java/CHANGELOG
+ * @see @link http://stackoverflow.com/questions/25743869/how-can-i-configure-the-firefox-binary-location-in-protractor
+ * @see @link https://github.com/angular/protractor/blob/master/lib/config.ts
+ * @see @link https://github.com/angular/protractor/blob/master/docs/toc.md
+ */
 exports.config = {
-	/**
-	 * @see @link https://github.com/SeleniumHQ/selenium/blob/master/java/CHANGELOG
-	 * @see @link http://stackoverflow.com/questions/25743869/how-can-i-configure-the-firefox-binary-location-in-protractor
-	 * @see @link https://github.com/angular/protractor/blob/master/lib/config.ts
-	 */
 	allScriptsTimeout : 11000,
 
 	specs : [
-		'*.js'
+		'leds/*.js', 'login/*.js', 'setup/*.js'
 	],
 
 	capabilities : {

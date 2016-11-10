@@ -5,11 +5,11 @@
   "homepage": "https://github.com/angular/angular-seed",
   "license": "MIT",
   "private": true,
+  "directory": "src/modules/public-ledwax-web-ui/app/bower_components",
   "ignore": [
     "**/.*",
     "**/node_modules",
-    "public-ledwax-web-ui/app/bower_components",
-    "/bower_components",
+    "**/bower_components",
     "**/test*",
     "**/*_test*",
     "**/e2e*",
@@ -39,7 +39,6 @@
     "angular-translate-storage-cookie": "^2.11.0",
     "html5-boilerplate": "^5.3.0",
     "bootstrap-css": "^3.3.6",
-    "ng-bootstrap-alerts": "^1.1.1",
-    "q": "^2.0.2"
+    "ng-bootstrap-alerts": "^1.1.1"
   }
 }

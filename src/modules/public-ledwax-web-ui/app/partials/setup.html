@@ -1,5 +1,24 @@
 <div ng-controller="SetupCtrl">
 	<div id="wrap_devices" class="">
-		<button id="btn_reset" ng-click="">Reset</button>
+		<div class="row">
+			<div class="row-sm-12">
+				<progressbar class="progress-striped active {{pBarClass}}"
+					value="uploadProgress" type="info"> <span
+					class="pbar-text">{{uploadFileName |
+					characters:27}}&nbsp;::&nbsp;{{uploadProgress}}%&nbsp;finished</span></progressbar>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div ng-controller="SetupTabsCtrl">
+					<uib-tabset> <uib-tab ng-repeat="tab in tabs"
+						heading="{{tab.title}}" active="tab.active"
+						disabled="tab.disabled">
+					<div ng-include="tab.include"></div>
+					</tab>
+					</tabset>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

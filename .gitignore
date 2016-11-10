@@ -6,7 +6,8 @@
 ######################
 **/.???DS_Store
 Icon?
-nohup.out
+**/*.out
+**/*.log
 ehthumbs.db
 Thumbs.db
 ._*

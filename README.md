@@ -29,6 +29,7 @@ LEDWax-Web-UI uses a number of node.js tools to initialize and test ledwax-web-u
 This project is tested to work with NodeJS version 5 or higher.  Fortunately, Particle offers support for NodeJS v5, which means you can run this project and host a private particle cloud on a single RPi.
 
 ## Overview of Initial Setup
+
 0. Setup a Particle Cloud or setup your account on the public Particle cloud.
 1. Setup your LEDWax lights on your particle cloud.
 2. Download or clone this repository and install the dependencies listed in prerequisites.
@@ -72,13 +73,22 @@ NOTE:  I think the 'particle-api' is the default value for the public Particle C
 We have pre-configured LEDWax Web-UI with its own web server.  The simplest way to start this server is:
 
 ```bash
-cd ledwax-photon-web-ui
+cd web-ui
 npm start
 ```
 
-Now browse to the Web UI at `http://localhost:8000/app/index.html`.
+Upon successful start you will see a message like:
+```bash
+LEDWax running in dev mode; using [hapi] server v15.2.0 running at: http://lsoft-linux-mint-17-3:8000, http://lsoft-linux-mint-17-3:3000
+```
 
-You can verify the REST API is running by browsing to its heartbeat page at `http://localhost:3000/`.
+Now browse to the Web UI at `http://localhost:8000/app/index.html`.  You can verify the REST API is running by browsing to its heartbeat page at `http://localhost:3000/`.
+
+### Start/Run in Development/Testing Modes
+When using the LEDWax-Photon Vagrant VM, then the above command should be executed from within the VM, i.e. a vagrant ssh session.  Also, if using a Vagrant VM please see the section (below) installing dependencies.
+
+### Execution Environment
+The `LEDWAX_ENVIRO` variable is used by the application to infer the application configuration.  It can take the values `dev`, `test`, and `production`.  
 
 ## Contributing
 
@@ -112,21 +122,27 @@ manage and test the application.
 * We get the tools we depend upon via `npm`, the [node package manager][npm].
 * We get the angular code and other HTML dependencies via `bower`, a [client-side code package manager][bower].
 
-We have preconfigured `npm` to automatically run `bower` so we can simply do:
-
+```bash
+vagrant ssh
+./scripts/install_deps.sh
 ```
-npm install
-```
-
 Behind the scenes this will call `bower install`.  You should find that you have two new
 folders in your project.
 
 * `node_modules` - contains the npm packages for the tools we need
 * `app/bower_components` - contains the angular framework files
 
-*Note that the `bower_components` folder would normally be installed in the root folder but
-angular-seed changes this location through the `.bowerrc` file.  Putting it in the app folder makes
-it easier to serve the files by a webserver.*
+*The `bower_components` folder would normally be installed in the root folder but
+LEDWax-Web-UI changes this location through the `.bowerrc` file.
+
+**NOTE:  Unfortunately, due to issue https://github.com/bower/bower/issues/1492, you may ave problems trying to install all of the project dependencies from within a VM (if you're using that for development).  The above script is intended to take care of this for you, but if you have problems you may want to execute the following from the _VM host_ *before executing npm start*.  If you're not using a VM then npm start should do the trick for you.**
+
+```bash
+vagrant ssh
+cd vagrant-host/web-ui
+npm install
+./node_modules/.bin/bower install
+```
 
 ## Testing
 
@@ -138,9 +154,8 @@ The middleware has E2E tests which require a LEDWax Particle Photon Emulator or 
 
 ### Running Unit Tests
 
-LEDWax Web UI comes with unit tests. These are written in
-[Jasmine][jasmine], which we run with the [Karma Test Runner][karma]. We provide a Karma
-configuration file to run them.
+LEDWax Web UI comes with unit tests.  The unit tests are pure JavaScript unit tests against the Angular-JS Web-UI frontend.  These are written in [Jasmine][jasmine], which we run with the [Karma Test Runner][karma]. A Karma
+configuration file is provided to run them.
 
 * the configuration is found at `karma.conf.js`
 * the unit tests are found next to the code they are testing and are named as `..._test.js`.
@@ -151,14 +166,9 @@ The easiest way to run the Karma Web-UI unit tests is to use the supplied npm sc
 npm run karma-test
 ```
 
-This script will start the Karma test runner to execute the unit tests. Karma will sit and
-watch the source and test files for changes and then re-run the tests whenever any of them change.
-This is the recommended strategy; if your unit tests are being run every time you save a file then
-you receive instant feedback on any changes that break the expected code functionality.
+This script will start the Karma test runner to execute the unit tests. Karma will monitor the source and test files for changes and then re-run the tests whenever any of them change. This is the recommended strategy; if your unit tests are being run every time you save a file then you receive instant feedback on any changes that break the expected code functionality.
 
-You can also ask Karma to do a single run of the tests and then exit.  This is useful if you want to
-check that a particular version of the code is operating as expected.  The project contains a
-predefined script to do this:
+You can also ask Karma to do a single run of the tests and then exit.  This is useful if you want to check that a particular version of the code is operating as expected.  The project contains a predefined script to do this:
 
 ```
 npm run karma-test-single-run
@@ -166,32 +176,45 @@ npm run karma-test-single-run
 
 
 ### End to end testing
-The angular-seed app comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
-are run with the [Protractor][protractor] End-to-End test runner.  It uses native events and has
-special features for Angular applications.
+LEDWax Web-UI comes with two kinds of end-to-end tests, again written in [Jasmine][jasmine] leveraging a [Protractor][protractor] End-to-End test runner.  Protractor uses native events and has special features for Angular applications.
+
 
 * the configuration is found at `e2e-tests/protractor-conf.js`
-* the end-to-end tests are found in `e2e-tests/scenarios.js`
+* the end-to-end tests are found in `e2e-tests/*/scenarios.js`
 
-Protractor simulates interaction with our web app and verifies that the application responds
-correctly. Therefore, our web server needs to be serving up the application, so that Protractor
-can interact with it.
-
-```
-npm start
-```
-
-In addition, since Protractor is built upon WebDriver we need to install this.  The angular-seed
-project comes with a predefined script to do this:
+#### First Time Setup - Protractor
+Since Protractor is built upon Selenium WebDriver we need to install this.  LEDWax-WebUI comes with a predefined script to do this:
 
 ```
 npm run update-webdriver
 ```
 
-This will download and install the latest version of the stand-alone WebDriver tool.
+This will download and install the latest version of the stand-alone Selenium WebDriver tool.
 
-Once you have ensured that the development web server hosting our application is up and running
-and WebDriver is updated, you can run the end-to-end tests using the supplied npm script:
+
+#### Run protractor tests.
+Protractor will launch a Firefox browser and load the LEDWax Web UI in a test configuration (eg. using emulator), then simulate actual user interaction such as typing and clicks.  Therefore the web server and emulator must be running so Protractor can run tests.  Again there are scripts to facilitate this.
+
+```
+vagrant ssh
+cd vagrant-host/web-ui
+npm run start-emulator
+npm run start-protractor-web
+```
+
+The above commands can be run from a vagrant ssh session.  These commands will run the emulator and middleware+webui applications in the background.
+
+NOTE:  You may need to wait 10-15 seconds or more for the emulator and web-ui applicaions to start.  Console output is (over)written to `vagrant-host/emulator/emulator.out` and `vagrant-host/web-u/web-ui.out`.  Monitor them by running the "tail" command.
+
+You can point the tests at a Particle cloud server by editing `particle-config/index.js`.
+
+Once you have ensured that the development web server hosting the app is up and running,
+the web server serving the emulator is running, and WebDriver is updated, you can run 
+the end-to-end tests using the supplied npm script.
+
+- Login to the VM if you haven't done so already.
+- Open a terminal (command line) from *within the VM
+- Type the following command:
 
 ```
 npm run protractor
@@ -200,12 +223,14 @@ npm run protractor
 This script will execute the end-to-end tests against the application being hosted on the
 development server.
 
-#### REST API
-The easiest way to run the jasmine middleware tests is to use the supplied npm script:
+#### REST API E2E Tests
+The REST API comes with a set of jasmine middleware test coverage.  The easiest way to run the jasmine middleware tests is to use the supplied npm script:
 
 ```
 npm test
 ```
+
+This can be run from a vagrant ssh session.
 
 ## Serving the Application Files
 
@@ -248,7 +273,7 @@ reverse-proxying the backend server(s) and webserver(s).
 
 ### Travis CI
 
-Integration between Travis and GitHub is forthcoming.
+Integration between Travis and GitHub is TBD.
 
 ## Contact
 
