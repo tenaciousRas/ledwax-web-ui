@@ -10,6 +10,49 @@ const boom = require('boom');
 const UserController = () => {
 
 	/**
+	 * Returns a user given username, auth token, and cloud id
+	 */
+	const retrieveByAuthToken = (request, reply) => {
+		let un = request.payload.username;
+		let at = request.payload ? request.payload.authtoken : request.query.authtoken;
+		let cid = request.payload.cloudid;
+		let db = request.getDb('apidb');
+		let webuser = db.getModel('webuser');
+		let particleCloud = db.getModel('particle_cloud');
+		let userPCAT = db.getModel('webuser_particle_cloud_auth_tokens');
+		try {
+			let cloudInstance = particleCloud.build({
+				id : cid
+			});
+			webuser.findOne({
+				where : {
+					username : un
+				},
+				include : [
+					{
+						model : particleCloud,
+						where : {
+							id : cid
+						}
+					}, {
+						model : userPCAT,
+						where : {
+							authtoken : at
+						}
+					}
+				]
+			}).then((user) => {
+				if (null == user) {
+					return reply(boom.notFound(ct));
+				}
+				return reply(user);
+			});
+		} catch (e) {
+			return reply(boom.badImplementation('unable to find user by authtoken', e));
+		}
+	};
+
+	/**
 	 * Returns a user given session token
 	 */
 	const retrieveBySession = (request, reply) => {
@@ -30,7 +73,7 @@ const UserController = () => {
 				return reply(user);
 			});
 		} catch (e) {
-			return reply(boom.badImplementation('unable to find user', e));
+			return reply(boom.badImplementation('unable to find user by session token', e));
 		}
 	};
 
@@ -61,7 +104,7 @@ const UserController = () => {
 				return reply(user);
 			});
 		} catch (e) {
-			request.server.log([ 'debug', 'user.contoller#create' ],
+			request.server.log([ 'error', 'user.contoller#create' ],
 				'DB call complete - create user error, exception =:' + e);
 			return reply(boom.badImplementation('unable to create user', e));
 		}
@@ -120,6 +163,7 @@ const UserController = () => {
 	};
 
 	return {
+		findAuth : retrieveByAuthToken,
 		find : retrieveBySession,
 		insert : create,
 		update : update

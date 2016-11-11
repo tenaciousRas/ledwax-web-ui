@@ -19,7 +19,7 @@ describe('my app', function() {
 			expect(table.getText()).toMatch(/bar wax/);
 		});
 
-		it('should sort by name and type', function() {
+		it('should sort device list by name and type', function() {
 			let table = element.all(by.css('.devices-table tbody tr')).first();
 			element(by.css('.devices-table thead tr th:nth-child(2)')).click();
 			expect(table.getText()).toMatch(/quux unknown/);

@@ -5,8 +5,25 @@ const Path = require('path');
 const Sequelize = require('sequelize');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
+const sequelConfig = require('./sequelize.config.json')[rt_ctx_env];
 let internals = {
-	db : require('./sequelize.config.json')[rt_ctx_env],
+	db : {
+		"username": sequelConfig.username,
+		"password": sequelConfig.password,
+		"database": sequelConfig.database,
+		"connStr": sequelConfig.connStr,
+		"sequelize": {
+			"host": sequelConfig.host,
+			"port": sequelConfig.port,
+			"dialect": sequelConfig.dialect,
+			"pool": {
+				"max": sequelConfig.pool.max,
+				"min": sequelConfig.pool.min,
+				"idle": sequelConfig.pool.idle
+			}
+		}
+	}
+,
 	staticContentPath : '../modules/public-ledwax-web-ui'
 };
 
@@ -91,7 +108,7 @@ module.exports = {
 						internals.db.password,
 						internals.db.sequelize), // sequelize instance
 					sync : true, // sync models - default false
-					forceSync : true // force sync (drops tables) - default false
+					forceSync : false // force sync (drops tables) - default false
 				} ]
 			},
 			options : {

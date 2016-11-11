@@ -1,5 +1,6 @@
 "use strict";
 
+const configController = require('../controllers/config');
 const authController = require('../controllers/auth');
 const userController = require('../controllers/user');
 const ledwaxDeviceController = require('../controllers/ledwax_device');
@@ -14,6 +15,24 @@ let routeConfig = [
 		handler : (request, reply) => {
 			// return heartbeat
 			return reply('LEDWAX REST API running at ' + request.server.uri + '!');
+		}
+	}, {
+		method : [ 'POST', 'GET' ],
+		path : '/config',
+		handler : configController.getConfig,
+		config : {
+			description : 'Retrieve application configuration.',
+			notes : 'Returns HTTP status code 200 and json config object.',
+			tags : [ 'api' ]
+		}
+	}, {
+		method : [ 'POST', 'GET' ],
+		path : '/user/settings',
+		handler : (request, reply) => {
+			// return hardcoded response
+			return reply({
+				"foo" : "bar"
+			});
 		}
 	}, {
 		method : 'GET',
