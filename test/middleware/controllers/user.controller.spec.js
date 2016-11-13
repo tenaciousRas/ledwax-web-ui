@@ -27,8 +27,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -40,8 +44,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -53,8 +61,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(404);
-				expect(JSON.parse(response.payload).message).toBe('foobar');
+				try {
+					expect(response.statusCode).toBe(404);
+					expect(JSON.parse(response.payload).message).toBe('foobar');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -66,8 +78,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(404);
-				expect(JSON.parse(response.payload).message).toBe('foobar');
+				try {
+					expect(response.statusCode).toBe(404);
+					expect(JSON.parse(response.payload).message).toBe('foobar');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -87,8 +103,12 @@ describe('api', () => {
 					};
 
 					server.inject(options, (response) => {
-						expect(response.statusCode).toBe(200);
-						expect(JSON.parse(response.payload).sessiontoken).toBe(expectedToken);
+						try {
+							expect(response.statusCode).toBe(200);
+							expect(JSON.parse(response.payload).sessiontoken).toBe(expectedToken);
+						} catch (e) {
+							fail('unexpected error:\n' + e);
+						}
 						done();
 					});
 				});
@@ -106,8 +126,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).error).toBe('Unprocessable Entity');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).error).toBe('Unprocessable Entity');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -124,9 +148,13 @@ describe('api', () => {
 					payload : jsObj
 				};
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					if (i == (parmNames.length - 1)) {
-						done();
+					try {
+						expect(response.statusCode).toBe(422);
+						if (i == (parmNames.length - 1)) {
+							done();
+						}
+					} catch (e) {
+						fail('unexpected error:\n' + e);
 					}
 				});
 			}
@@ -169,8 +197,8 @@ describe('api', () => {
 						};
 
 						server.inject(options, (response) => {
-							expect(response.statusCode).toBe(200);
-							if (response.statusCode == 200) {
+							try {
+								expect(response.statusCode).toBe(200);
 								webuser.findOne({
 									where : {
 										username : options.payload.username
@@ -185,11 +213,11 @@ describe('api', () => {
 									]
 								}).then((user) => {
 									expect(user.sessiontoken).toBe('quux');
-									done();
 								});
-							} else {
-								done();
+							} catch (e) {
+								fail('unexpected error:\n' + e);
 							}
+							done();
 						});
 					});
 				});
@@ -207,8 +235,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).error).toBe('Unprocessable Entity');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).error).toBe('Unprocessable Entity');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -225,10 +257,15 @@ describe('api', () => {
 					payload : jsObj
 				};
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					if (i == (parmNames.length - 1)) {
-						done();
+					try {
+						expect(response.statusCode).toBe(422);
+						if (i == (parmNames.length - 1)) {
+							done();
+						}
+					} catch (e) {
+						fail('unexpected error:\n' + e);
 					}
+					done();
 				});
 			}
 		});
@@ -280,8 +317,8 @@ describe('api', () => {
 							};
 							// make request
 							server.inject(options, (response) => {
-								expect(response.statusCode).toBe(200);
-								if (response.statusCode == 200) {
+								try {
+									expect(response.statusCode).toBe(200);
 									let pl = JSON.parse(response.payload);
 									expect(pl.sessiontoken).toBe(options.payload.sessiontoken);
 									// sequelize doesn't update return value from transaction
@@ -303,9 +340,10 @@ describe('api', () => {
 										expect(user.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken).toBe(options.payload.authtoken);
 										done();
 									});
-								} else {
-									done();
+								} catch (e) {
+									fail('unexpected error:\n' + e);
 								}
+								done();
 							});
 						});
 					});

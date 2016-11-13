@@ -28,9 +28,13 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
-				done();
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+					done();
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 			});
 		});
 
@@ -41,8 +45,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -64,8 +72,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(200);
-					expect(JSON.parse(response.payload).length).toBe(0);
+					try {
+						expect(response.statusCode).toBe(200);
+						expect(JSON.parse(response.payload).length).toBe(0);
+					} catch (e) {
+						fail('there was an unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -111,20 +123,24 @@ describe('api', () => {
 							url : '/devices/retrieveAllStoredDevices?sessiontoken=foobar&particleCloudId=' + particleCloud.id
 						};
 						server.inject(options, (response) => {
-							expect(response.statusCode).toBe(200);
-							console.log(response.payload);
-							let ret = JSON.parse(response.payload)[0];
-							expect(ret.deviceId).toBe(vals.deviceId);
-							expect(ret.numStrips).toBe(vals.numStrips);
-							expect(ret.stripIndex).toBe(vals.stripIndex);
-							expect(ret.stripType).toBe(vals.stripType);
-							expect(ret.dispMode).toBe(vals.dispMode);
-							expect(ret.modeColor).toBe(vals.modeColor);
-							expect(ret.modeColorIdx).toBe(vals.modeColorIdx);
-							expect(ret.brightness).toBe(vals.brightness);
-							expect(ret.fadeMode).toBe(vals.fadeMode);
-							expect(ret.fadeTime).toBe(vals.fadeTime);
-							expect(ret.colorTime).toBe(vals.colorTime);
+							try {
+								expect(response.statusCode).toBe(200);
+								// console.log(response.payload);
+								let ret = JSON.parse(response.payload)[0];
+								expect(ret.deviceId).toBe(vals.deviceId);
+								expect(ret.numStrips).toBe(vals.numStrips);
+								expect(ret.stripIndex).toBe(vals.stripIndex);
+								expect(ret.stripType).toBe(vals.stripType);
+								expect(ret.dispMode).toBe(vals.dispMode);
+								expect(ret.modeColor).toBe(vals.modeColor);
+								expect(ret.modeColorIdx).toBe(vals.modeColorIdx);
+								expect(ret.brightness).toBe(vals.brightness);
+								expect(ret.fadeMode).toBe(vals.fadeMode);
+								expect(ret.fadeTime).toBe(vals.fadeTime);
+								expect(ret.colorTime).toBe(vals.colorTime);
+							} catch (e) {
+								fail('there was an unexpected error:\n' + e);
+							}
 							done();
 						});
 					});
@@ -142,8 +158,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -155,8 +175,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -168,8 +192,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "particleCloudId" fails because ["particleCloudId" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "particleCloudId" fails because ["particleCloudId" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -181,8 +209,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "deviceId" fails because ["deviceId" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "deviceId" fails because ["deviceId" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -204,8 +236,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(200);
-					expect(response.payload).toBe('{}');
+					try {
+						expect(response.statusCode).toBe(200);
+						expect(response.payload).toBe('{}');
+					} catch (e) {
+						fail('there was an unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -251,20 +287,24 @@ describe('api', () => {
 							url : '/devices/retrieveStoredDevice?sessiontoken=foobar&deviceId=foobar&particleCloudId=' + particleCloud.id
 						};
 						server.inject(options, (response) => {
-							expect(response.statusCode).toBe(200);
-							expect(JSON.parse(response.payload).message).toBe(undefined);
-							let ret = JSON.parse(response.payload);
-							expect(ret.deviceId).toBe(vals.deviceId);
-							expect(ret.numStrips).toBe(vals.numStrips);
-							expect(ret.stripIndex).toBe(vals.stripIndex);
-							expect(ret.stripType).toBe(vals.stripType);
-							expect(ret.dispMode).toBe(vals.dispMode);
-							expect(ret.modeColor).toBe(vals.modeColor);
-							expect(ret.modeColorIdx).toBe(vals.modeColorIdx);
-							expect(ret.brightness).toBe(vals.brightness);
-							expect(ret.fadeMode).toBe(vals.fadeMode);
-							expect(ret.fadeTime).toBe(vals.fadeTime);
-							expect(ret.colorTime).toBe(vals.colorTime);
+							try {
+								expect(response.statusCode).toBe(200);
+								expect(JSON.parse(response.payload).message).toBe(undefined);
+								let ret = JSON.parse(response.payload);
+								expect(ret.deviceId).toBe(vals.deviceId);
+								expect(ret.numStrips).toBe(vals.numStrips);
+								expect(ret.stripIndex).toBe(vals.stripIndex);
+								expect(ret.stripType).toBe(vals.stripType);
+								expect(ret.dispMode).toBe(vals.dispMode);
+								expect(ret.modeColor).toBe(vals.modeColor);
+								expect(ret.modeColorIdx).toBe(vals.modeColorIdx);
+								expect(ret.brightness).toBe(vals.brightness);
+								expect(ret.fadeMode).toBe(vals.fadeMode);
+								expect(ret.fadeTime).toBe(vals.fadeTime);
+								expect(ret.colorTime).toBe(vals.colorTime);
+							} catch (e) {
+								fail('there was an unexpected error:\n' + e);
+							}
 							done();
 						});
 					});
@@ -283,8 +323,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -299,8 +343,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -315,8 +363,12 @@ describe('api', () => {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					expect(JSON.parse(response.payload).message).toBe('Error: child "sessiontoken" fails because ["sessiontoken" is required]');
+				} catch (e) {
+					fail('there was an unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -369,15 +421,18 @@ describe('api', () => {
 							}
 						};
 						server.inject(options, (response) => {
-							expect(response.statusCode).toBe(200);
-							let ret = JSON.parse(response.payload);
-							if (typeof ret.error != 'undefined') {
-								fail('there was an error in the response\n' + response.payload);
-								done();
-							} else {
-								expect(ret.length).toBe(1);
-								done();
+							try {
+								expect(response.statusCode).toBe(200);
+								let ret = JSON.parse(response.payload);
+								if (typeof ret.error != 'undefined') {
+									fail('there was an error in the response\n' + response.payload);
+								} else {
+									expect(ret.length).toBe(1);
+								}
+							} catch (e) {
+								fail('there was an unexpected error:\n' + e);
 							}
+							done();
 						});
 					});
 				});
@@ -424,14 +479,14 @@ describe('api', () => {
 					};
 
 					server.inject(options, (response) => {
-						expect(response.statusCode).toBe(200);
-						let ret = JSON.parse(response.payload);
-						if (typeof ret.error != 'undefined') {
-							fail('there was an error in the response\n' + response.payload);
-							done();
-						} else {
-							// check the saved device
-							try {
+						try {
+							expect(response.statusCode).toBe(200);
+							let ret = JSON.parse(response.payload);
+							if (typeof ret.error != 'undefined') {
+								fail('there was an error in the response\n' + response.payload);
+								done();
+							} else {
+								// check the saved device
 								ledwaxDevice.find({
 									where : {
 										id : ret.id
@@ -451,10 +506,9 @@ describe('api', () => {
 									expect(device.colorTime).toBe(options.payload.colorHoldTime);
 									done();
 								});
-							} catch (e) {
-								fail(e);
-								done();
 							}
+						} catch (e) {
+							fail('there was an unexpected error:\n' + e);
 						}
 					});
 				});

@@ -9,10 +9,25 @@ const routes = require('../../src/modules/middleware/routes/index.routes');
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'test';
 const particleConfig = require('../../src/particle-config').attributes[rt_ctx_env];
 
+let sequelConfig = require('../../src/config/sequelize.config.json')[rt_ctx_env];
 let internals = {
-	dbConfig : require('../../src/config/sequelize.config.json')[rt_ctx_env]
+	dbConfig : {
+		"username" : sequelConfig.username,
+		"password" : sequelConfig.password,
+		"database" : sequelConfig.database,
+		"connStr" : sequelConfig.connStr,
+		"sequelize" : {
+			"host" : sequelConfig.host,
+			"port" : sequelConfig.port,
+			"dialect" : sequelConfig.dialect,
+			"pool" : {
+				"max" : sequelConfig.pool.max,
+				"min" : sequelConfig.pool.min,
+				"idle" : sequelConfig.pool.idle
+			}
+		}
+	}
 };
-let db;
 
 module.exports.createServer = (done) => {
 

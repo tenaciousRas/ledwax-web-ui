@@ -34,7 +34,9 @@ function ConfigController() {
 				if (null == clouds) {
 					return reply(boom.notFound('no cloud records found'));
 				}
-				return reply(clouds);
+				return reply({
+					"cloudHosts" : clouds
+				});
 			});
 		} catch (e) {
 			return reply(boom.badImplementation('unable to find clouds', e));

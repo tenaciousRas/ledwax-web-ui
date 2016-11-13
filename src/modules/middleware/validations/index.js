@@ -15,6 +15,7 @@ module.exports.auth = {
 	loginPost : {
 		payload : {
 			username : Joi.string().trim().min(3).max(100).required(),
+			cloudid : Joi.number().integer().min(0).required(),
 			password : Joi.string().trim().min(2).max(35).required()
 		},
 		failAction : failActDelegate('custom')
@@ -22,6 +23,7 @@ module.exports.auth = {
 	loginGet : {
 		query : {
 			username : Joi.string().trim().min(3).max(100).required(),
+			cloudid : Joi.number().integer().min(0).required(),
 			password : Joi.string().trim().min(2).max(35).required()
 		},
 		failAction : failActDelegate('custom')

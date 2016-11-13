@@ -67,7 +67,7 @@ let routeConfig = [
 	}, {
 		method : 'POST',
 		path : '/users/create',
-		handler : userController.insert,
+		handler : userController.create,
 		config : {
 			description : 'Create a new persistent user.',
 			notes : 'Returns the persistent user object.',
@@ -218,18 +218,16 @@ const addDynamicRoute = (key, method, notes) => {
  * Build dynamic routes for dynamic handler functions in controller.
  */
 const buildDynamicRoutesForController = () => {
+	let fn = (method, desc, funcNames) => {
+		for (let i = 0; i < funcNames.length; i++) {
+			let key = funcNames[i].handlerFuncName;
+			addDynamicRoute(key, method, desc);
+		}
+	};
 	// routes for iot vars
-	let dynFuncNames = ledwaxDeviceController.dynamicFuncNames.iotVars;
-	for (let i = 0; i < dynFuncNames.length; i++) {
-		let key = dynFuncNames[i].handlerFuncName;
-		addDynamicRoute(key, 'GET', 'Returns a ledwax return value.');
-	}
+	fn.apply(this, ['GET', 'Returns a ledwax return value.', ledwaxDeviceController.dynamicFuncNames.iotVars]);
 	// routes for iot FNs
-	dynFuncNames = ledwaxDeviceController.dynamicFuncNames.iotFns;
-	for (let i = 0; i < dynFuncNames.length; i++) {
-		let key = dynFuncNames[i].handlerFuncName;
-		addDynamicRoute(key, 'POST', 'Returns a ledwax function.');
-	}
+	fn.apply(this, ['POST', 'Returns a ledwax return function.', ledwaxDeviceController.dynamicFuncNames.iotFns]);
 };
 buildDynamicRoutesForController();
 

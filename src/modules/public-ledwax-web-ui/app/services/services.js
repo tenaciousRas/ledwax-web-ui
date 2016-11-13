@@ -1,9 +1,29 @@
-const DEFAULT_REST_HOST_IP = '127.0.0.1';
+const DEFAULT_REST_HOST_NAME = '127.0.0.1';
 const DEFAULT_REST_HOST_PORT = '3000';
 
 var services = angular.module('LEDWAXW3.services', []);
 
 services.value('version', '1.0');
+
+services.factory('AppAlerts', [ '$rootScope', '$timeout',
+	function($rootScope, $timeout) {
+		$rootScope.appAlerts = [];
+		$rootScope.addAlert = function(type, msg) {
+			$rootScope.appAlerts.push({
+				type : type,
+				msg : msg
+			});
+			$timeout(function() {
+				$rootScope.closeAlert($rootScope.appAlerts.length - 1);
+			}, 1250, false);
+		};
+		$rootScope.closeAlert = function(index) {
+			$rootScope.appAlerts.splice(index, 1);
+		// console.log('closed alert, remaining = '
+		// + $rootScope.appAlerts.length);
+		};
+		return $rootScope;
+	} ]);
 
 services.factory('Settings', [ '$http', function($http) {
 	var service = {
@@ -20,14 +40,34 @@ services.factory('Settings', [ '$http', function($http) {
 			currTab : null
 		},
 		settings : {
-			rest_host_ip : DEFAULT_REST_HOST_IP,
+			rest_host_name : DEFAULT_REST_HOST_NAME,
 			rest_host_port : DEFAULT_REST_HOST_PORT
 		}
 	};
+	service.buildURL = function(host, port, secure) {
+		var ret = '';
+		ret += (typeof host != undefined ? host : '');
+		ret += (typeof port != undefined ? ':' + port : '');
+		if (ret.length > 0) {
+			ret = (secure ? 'https' : 'http') + '://' + ret;
+		}
+		return ret;
+	};
+	service.getRESTHostURL = function() {
+		return service.buildURL(service.settings.rest_host_name, service.settings.rest_host_port, false);
+	};
+	service.setRESTHostURL = function(host, port) {
+		if (angular.isDefined(host)) {
+			service.settings.rest_host_name = host;
+		}
+		if (angular.isDefined(port)) {
+			service.settings.rest_host_port = port;
+		}
+	}
 	service.retrieveAppConfig = function() {
 		var config = {
 			method : 'GET',
-			url : 'config',
+			url : service.getRESTHostURL() + '/config',
 			data : {}
 		};
 		var promise = $http(config);
@@ -43,7 +83,7 @@ services.factory('Settings', [ '$http', function($http) {
 	service.retrieveSettings = function() {
 		var config = {
 			method : 'GET',
-			url : 'user/settings',
+			url : service.getRESTHostURL() + '/user/settings',
 			data : {}
 		};
 		var promise = $http(config);
@@ -56,7 +96,7 @@ services.factory('Settings', [ '$http', function($http) {
 	service.putSettings = function(settings) {
 		var config = {
 			method : 'POST',
-			url : 'settings/user/update',
+			url : service.getRESTHostURL() + '/settings/user/update',
 			data : settings
 		};
 		var promise = $http(config);
@@ -68,232 +108,211 @@ services.factory('Settings', [ '$http', function($http) {
 		service.settings = settings;
 		return service.putSettings(service.settings);
 	};
-	service.getIoTURL = function() {
-		var ret = 'http://';
-		ret += (service.settings.iot_host_ip == null ? '' : service.settings.iot_host_ip);
-		ret += (service.settings.iot_host_port == null ? '' : ':' + service.settings.iot_host_port);
-		return ret;
-	}
-	service.setIoTURL = function(ip, port) {
-		if (angular.isDefined(ip)) {
-			service.settings.iot_host_ip = ip;
-		}
-		if (angular.isDefined(port)) {
-			service.settings.iot_host_port = port;
-		}
-	}
-
 	return service;
 } ]);
 
-services
-	.factory(
-		'REST_IoT',
-		[
-			'$http',
-			'Settings',
-			function($http, Settings) {
-				var service = {
-					hostURL : Settings.getIoTURL()
-				};
-				service.init = function() {
-					if (service.hostURL == null) {
-						service.hostURL = '';
-					}
-				};
-				service.init();
-				service.setHostURL = function(url) {
-					if (!angular.isDefined(url)) {
-						throw 'missing param: url';
-					}
-					service.hostURL = url;
-				};
-				service.serverLogin = function(username, password) {
-					var ret = {
-						code : 511,
+services.factory('REST_IoT', [ '$http', 'Settings',
+	function($http, Settings) {
+		var service = {
+			hostURL : Settings.getRESTHostURL()
+		};
+		service.init = function() {
+			if (service.hostURL == null) {
+				service.hostURL = '';
+			}
+		};
+		service.init();
+		service.setHostURL = function(url) {
+			if (!angular.isDefined(url)) {
+				throw 'missing param: url';
+			}
+			service.hostURL = url;
+		};
+		service.serverLogin = function(cloudid, username, password) {
+			var ret = {
+				code : 511,
+				error : true,
+				error_description : "unknown error"
+			};
+			if (!angular.isDefined(userName)) {
+				ret.error_description = 'missing param: username';
+				return ret;
+			}
+			if (!angular.isDefined(password)) {
+				ret.error_description = 'missing param: password';
+				return ret;
+			}
+			if (!angular.isDefined(cloudid)) {
+				ret.error_description = 'missing param: cloudid';
+				return ret;
+			}
+			var successCallback = function(response) {
+				if (angular.isDefined(response.body.error)) {
+					ret = {
+						code : response.body.code,
 						error : true,
-						error_description : "unknown error"
+						error_description : response.body.error_description
 					};
-					if (!angular.isDefined(userName)) {
-						ret.error_description = 'missing param: username';
-						return ret;
-					}
-					if (!angular.isDefined(password)) {
-						ret.error_description = 'missing param: password';
-						return ret;
-					}
-					var successCallback = function(response) {
-						if (angular.isDefined(response.body.error)) {
-							ret = {
-								code : response.body.code,
-								error : true,
-								error_description : response.body.error_description
-							};
-						} else {
-							ret = {
-								code : 200,
-								error : false,
-								auth_token : null
-							};
-						}
-						return ret;
+				} else {
+					ret = {
+						code : 200,
+						error : false,
+						cookietoken : response.body.data.cookietoken
 					};
-					var errorCallback = function(response) {
-						ret = {
-							code : 511,
-							error : true,
-							auth_token : null
-						};
-						return ret;
-					};
-					$http.defaults.headers.post = {
-						username : username,
-						password : password
-					};
-					$http.post(service.hostURL + '/user/login').then(
-						successCallback, errorCallback);
+				}
+				return ret;
+			};
+			var errorCallback = function(response) {
+				ret = {
+					code : 511,
+					error : true,
+					auth_token : null
 				};
-				service.discoverDevices = function(authToken) {
-					var ret = {
-						code : 511,
+				return ret;
+			};
+			$http.defaults.headers.post = {
+				cloudid : cloudid,
+				username : username,
+				password : password
+			};
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/user/login',
+				data : {
+					username : username,
+					password : password,
+					cloudid : cloudid
+				}
+			};
+			return $http(config).then(
+				successCallback, errorCallback);
+		};
+		service.discoverDevices = function() {
+			var ret = {
+				code : 511,
+				error : true,
+				error_description : "unknown error"
+			};
+			var successCallback = function(response) {
+				if (angular.isDefined(response.body.error)) {
+					ret = {
+						code : response.body.code,
 						error : true,
-						error_description : "unknown error"
+						error_description : response.body.error_description
 					};
-					if (!angular.isDefined(authToken)) {
-						ret.error_description = "The access token was not found";
-						return ret;
-					}
-					var successCallback = function(response) {
-						if (angular.isDefined(response.body.error)) {
-							ret = {
-								code : response.body.code,
-								error : true,
-								error_description : response.body.error_description
-							};
-						} else {
-							ret = {
-								code : response.body.code,
-								data : response.body.data,
-								error : false,
-								error_description : response.body.error_description
-							};
-						}
+				} else {
+					ret = {
+						code : response.body.code,
+						data : response.body.data,
+						error : false,
+						error_description : response.body.error_description
 					};
-					var errorCallback = function(response) {
-						ret = {
-							code : response.body.code,
-							error : true,
-							error_description : response.body.error_description
-						};
-						return ret;
-					};
-					$http.defaults.headers.get = {
-						Authorization : authToken
-					};
-					$http.get(service.hostURL + '/devices/discoverDevices').then(successCallback,
-						errorCallback);
+				}
+				return ret;
+			};
+			var errorCallback = function(response) {
+				ret = {
+					code : response.body.code,
+					error : true,
+					error_description : response.body.error_description
 				};
-				service.getDeviceCaps = function(authToken,
-					deviceId) {
-					var ret = {
-						code : 511,
+				return ret;
+			};
+			var config = {
+				method : 'GET',
+				url : service.hostURL + '/devices/discoverDevices'
+			};
+			return $http(config).then(
+				successCallback, errorCallback);
+		};
+		service.getDeviceCaps = function(authToken,
+			deviceId) {
+			var ret = {
+				code : 511,
+				error : true,
+				error_description : "unknown error"
+			};
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "The device id was not found";
+				return ret;
+			}
+			var successCallback = function(response) {
+				if (angular.isDefined(response.body.error)) {
+					ret = {
+						code : response.body.code,
 						error : true,
-						error_description : "unknown error"
+						error_description : response.body.error_description
 					};
-					if (!angular.isDefined(authToken)) {
-						ret.error_description = "The access token was not found";
-						return ret;
-					}
-					if (!angular.isDefined(deviceId)) {
-						ret.error_description = "The device id was not found";
-						return ret;
-					}
-					var successCallback = function(response) {
-						if (angular.isDefined(response.body.error)) {
-							ret = {
-								code : response.body.code,
-								error : true,
-								error_description : response.body.error_description
-							};
-						} else {
-							ret = {
-								code : response.body.code,
-								data : response.body.data,
-								error : false,
-								error_description : response.body.error_description
-							};
-						}
-						return ret;
+				} else {
+					ret = {
+						code : response.body.code,
+						data : response.body.data,
+						error : false,
+						error_description : response.body.error_description
 					};
-					var errorCallback = function(response) {
-						ret = {
-							code : response.body.code,
-							error : true,
-							error_description : response.body.error_description
-						};
-						return ret;
-					};
-					$http.defaults.headers.get = {
-						Authorization : authToken
-					};
-					$http.get(service.hostURL + '/devices/discoverCaps' + deviceId).then(
-						successCallback, errorCallback);
+				}
+				return ret;
+			};
+			var errorCallback = function(response) {
+				ret = {
+					code : response.body.code,
+					error : true,
+					error_description : response.body.error_description
 				};
-				service.getNumberOfStrips = function(authToken,
-					deviceId) {
-					var ret = {
-						code : 511,
+				return ret;
+			};
+			var config = {
+				method : 'GET',
+				url : service.hostURL + '/devices/discoverCaps?deviceId=' + deviceId
+			};
+			return $http(config).then(
+				successCallback, errorCallback);
+		};
+		service.getNumberOfStrips = function(deviceId) {
+			var ret = {
+				code : 511,
+				error : true,
+				error_description : "unknown error"
+			};
+			if (!angular.isDefined(deviceId)) {
+				ret = {
+					code : 511,
+					error : true,
+					error_description : "The device id was not found"
+				};
+				return ret;
+			}
+			var successCallback = function(response) {
+				if (angular.isDefined(response.body.error)) {
+					ret = {
+						code : response.body.code,
 						error : true,
-						error_description : "unknown error"
+						error_description : response.body.error_description
 					};
-					if (!angular.isDefined(authToken)) {
-						ret = {
-							code : 511,
-							error : true,
-							error_description : "The access token was not found"
-						};
-						return ret;
-					}
-					if (!angular.isDefined(deviceId)) {
-						ret = {
-							code : 511,
-							error : true,
-							error_description : "The device id was not found"
-						};
-						return ret;
-					}
-					var successCallback = function(response) {
-						if (angular.isDefined(response.body.error)) {
-							ret = {
-								code : response.body.code,
-								error : true,
-								error_description : response.body.error_description
-							};
-						} else {
-							ret = {
-								code : response.body.code,
-								data : response.body.data,
-								error : false,
-								error_description : response.body.error_description
-							};
-						}
-						return ret;
+				} else {
+					ret = {
+						code : response.body.code,
+						data : response.body.data,
+						error : false,
+						error_description : response.body.error_description
 					};
-					var errorCallback = function(response) {
-						ret = {
-							code : response.body.code,
-							error : true,
-							error_description : response.body.error_description
-						};
-						return ret;
-					};
-					$http.defaults.headers.get = {
-						Authorization : authToken
-					};
-					$http.get(
-						service.hostURL + '/v1/devices/' + deviceId
-						+ '/numStrips').then(
-						successCallback, errorCallback);
+				}
+				return ret;
+			};
+			var errorCallback = function(response) {
+				ret = {
+					code : response.body.code,
+					error : true,
+					error_description : response.body.error_description
 				};
-				return service;
-			} ]);
+				return ret;
+			};
+			var config = {
+				method : 'GET',
+				url : service.hostURL + '/devices/getNumStrips?deviceId=' + deviceId
+			};
+			return $http(config).then(
+				successCallback, errorCallback);
+		};
+		return service;
+	} ]);

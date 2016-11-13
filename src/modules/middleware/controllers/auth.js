@@ -10,7 +10,6 @@ const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
 let particle = new particlewrap(particle_config);
 
-const user_controller = require('./user');
 const secure_random = require('secure-random');
 
 const DEFAULT_SESSION_TOKEN_LENGTH = 16;
@@ -24,7 +23,13 @@ const AuthController = () => {
 		if (typeof tokenLength != 'number' || tokenLength < 0) {
 			tokenLength = DEFAULT_SESSION_TOKEN_LENGTH;
 		}
-		return secure_random.secureRandom(tokenLength);
+		let ret = null;
+		try {
+			ret = secure_random(tokenLength);
+		} catch (e) {
+			console.log(e);
+		}
+		return ret;
 	};
 
 	/**
@@ -67,25 +72,54 @@ const AuthController = () => {
 			(data) => {
 				request.server.log([ 'info', 'auth.contoller' ],
 					'API call complete - promise success:\n' + data.body.access_token);
-				let sessToken = generateSessionToken();
-				request.payload.sessiontoken = sessToken;
-				request.payload.authtoken = data.body.access_token;
-				request.payload.username = un;
-				request.payload.cloudid = cid;
-				let tRep = user_controller.update(request, reply);
-				if (tRep.code == 404) {
-					// create new user
-					tRep = user_controller.create(request, reply);
-					if (tRep.code != 200) {
-						// error
-						request.server.log([ 'error', 'auth.contoller#login' ],
-							'DB call complete - create user error, exception =:' + reply.error);
-						return reply(boom.badImplementation('unable to create user post-login', reply.error));
-					}
+				try {
+					let sessToken = generateSessionToken();
+					sessToken = sessToken.join("");
+					// attempt update
+					let options = {
+						method : 'POST',
+						url : '/users/update',
+						payload : {
+							username : un,
+							sessiontoken : sessToken,
+							authtoken : data.body.access_token,
+							cloudid : cid
+						}
+					};
+					request.server.inject(options, (response) => {
+						switch (response.statusCode) {
+						case 404:
+							// create new user
+							options.url = '/users/create';
+							request.server.inject(options, (response) => {
+								console.log(response.statusCode);
+								if (response.statusCode == 200) {
+									return reply({
+										"userid" : JSON.parse(response.payload).id,
+										"sessiontoken" : sessToken
+									});
+								} else {
+									// error
+									request.server.log([ 'error', 'auth.contoller#login' ],
+										'DB call complete - create user error, exception =:' + reply.error);
+									return reply(boom.badImplementation('unable to create user post-login', e));
+								}
+							});
+							break;
+						case 200:
+							return reply({
+								"userid" : JSON.parse(response.payload).id,
+								"sessiontoken" : sessToken
+							});
+							break;
+						default:
+							return reply(boom.badImplementation('successful cloud login but unable to update/create user record to login'));
+							break;
+						}
+					});
+				} catch (e) {
+					return reply(boom.badImplementation('there was an unexpected error', e));
 				}
-				return reply({
-					"cookietoken" : sessToken.quote()
-				});
 			},
 			(err) => {
 				request.server.log([ 'error', 'auth.contoller' ],

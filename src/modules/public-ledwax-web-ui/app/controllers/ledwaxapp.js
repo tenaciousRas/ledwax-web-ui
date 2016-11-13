@@ -17,11 +17,12 @@ angular.module(
 			'$filter',
 			'$sanitize',
 			'$translate',
+			'AppAlerts',
 			'Settings',
 			'REST_IoT',
 			function($rootScope, $scope, $route, $window, $location,
 				$routeParams, $cookies, $filter, $sanitize, $translate,
-				Settings, REST_IoT) {
+				AppAlerts, Settings, REST_IoT) {
 				$scope.topnav = [ {
 					active : false,
 					path : '/leds',
@@ -58,6 +59,26 @@ angular.module(
 				$rootScope.$on('$routeChangeSuccess', function() {
 					$scope.updateNavState($location.url().split("/")[1]);
 				});
+				// app alerts
+				$scope.informUser = function(msg) {
+					AppAlerts.addAlert('success', msg);
+				};
+				$scope.alertUser = function(msg) {
+					AppAlerts.addAlert('danger', msg);
+				};
+				var p = Settings.retrieveAppConfig();
+				p.then(function() {
+					$scope.appConfig = Settings.appConfig;
+					Settings.uiState.httpConnected = true;
+					if (!angular.isDefined($scope.appConfig.cloudHosts) || $scope.appConfig.cloudHosts.length < 1) {
+						$scope.alertUser("No cloud hosts are configured.  Are you sure the REST API is setup?");
+					} else {
+						$scope.informUser("Got application configuration from web server.");
+						$scope.cloudHosts = $scope.appConfig.cloudHosts;
+						// FIXME should be stored in user settings or cookie
+						$scope.currentCloudHost = $scope.cloudHosts[0];
+					}
+				});
 				$scope.randomLogo = function() {
 					$scope.logoSrc = 'img/ledwax_logo_'
 						+ Math.floor(Math.random() * 4) + '.png';
@@ -76,7 +97,7 @@ angular.module(
 				$scope.userSession = {
 					username : null,
 					password : null,
-					auth_token : null,
+					cookietoken : null,
 					from_login : false,
 					persist : false
 				};
@@ -85,9 +106,9 @@ angular.module(
 						cache : {}
 					}
 				};
-				let cookAuthToken = $cookies.get('auth_token');
+				let cookAuthToken = $cookies.get('cookietoken');
 				if (cookAuthToken) {
-					$scope.userSession.auth_token = cookAuthToken;
+					$scope.userSession.cookietoken = cookAuthToken;
 					$scope.userSession.persist = true;
 					$scope.userSession.from_login = false;
 					$scope.topnav.push({

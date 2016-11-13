@@ -21,31 +21,33 @@ angular
 				$scope.forms.login.login = function(user) {
 					$scope.forms.login.cache = angular.copy(user);
 					$scope.userSession.from_login = true;
-					var loginResult = REST_IoT.serverLogin(
-						user.username, user.password);
-					if (!loginResult.error) {
-						$scope.userSession.auth_token = loginResult.auth_token;
-						// set cookie expiration
-						var expiry = new Date();
-						if (user.persist) {
-							$scope.userSession.persist = true;
-							expiry.setDate(expiry.getYear() + 1000);
-						}
-						// set cookie
-						$cookies.put('auth_token',
-							loginResult.auth_token, {
+					var p = REST_IoT.serverLogin($scope.currentCloudHost.id, user.username, user.password);
+					p.then(function(data) {
+						var loginResult = data;
+						if (!loginResult.error) {
+							$scope.userSession.cookietoken = loginResult.cookietoken;
+							// set cookie expiration
+							var expiry = new Date();
+							if (user.persist) {
+								$scope.userSession.persist = true;
+								expiry.setDate(expiry.getYear() + 1000);
+							}
+							// set cookie
+							$cookies.put('cookietoken',
+								loginResult.cookietoken, {
+									expires : expiry
+								});
+						} else {
+							// login failed
+							$scope.userSession.cookietoken = null;
+							$scope.userSession.persist = false;
+							var expiry = new Date();
+							expiry.setDate(expiry.getDate() - 1);
+							$cookies.put('cookietoken', '', {
 								expires : expiry
 							});
-					} else {
-						// login failed
-						$scope.userSession.auth_token = null;
-						$scope.userSession.persist = false;
-						var expiry = new Date();
-						expiry.setDate(expiry.getDate() - 1);
-						$cookies.put('auth_token', '', {
-							expires : expiry
-						});
-					}
+						}
+					});
 				};
 				$scope.forms.login.clear = function(user) {
 					$scope.userSession.username = '';

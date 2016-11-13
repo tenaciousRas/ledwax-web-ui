@@ -14,7 +14,9 @@ describe('api', function() {
 	beforeAll(function(done) {
 		server = require('../mockserver.js').createServer();
 		particleConfig = server.methods.particle.config();
-		done();
+		setTimeout(() => {
+			done();
+		}, 2000);
 	});
 
 	describe('auth controller', () => {
@@ -27,8 +29,13 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "username" fails because ["username" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message).toBe('Error: child "username" fails because ["username" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -38,29 +45,63 @@ describe('api', function() {
 				method : 'POST',
 				url : '/user/login',
 				payload : {
+					username : 'bar',
+					cloudid : 1
+				}
+			};
+
+			server.inject(options, (response) => {
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message).toBe('Error: child "password" fails because ["password" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
+				done();
+			});
+		});
+
+		it('login with empty username respond with 422 NOT OK', (done) => {
+			let options = {
+				method : 'POST',
+				url : '/user/login',
+				payload : {
+					password : 'foo',
+					cloudid : 1
+				}
+			};
+
+			server.inject(options, (response) => {
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message).toBe('Error: child "username" fails because ["username" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
+				done();
+			});
+		});
+
+		it('login with empty cloudid respond with 422 NOT OK', (done) => {
+			let options = {
+				method : 'POST',
+				url : '/user/login',
+				payload : {
+					password : 'foo',
 					username : 'bar'
 				}
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "password" fails because ["password" is required]');
-				done();
-			});
-		});
-
-		it('logins with empty username respond with 422 NOT OK', (done) => {
-			let options = {
-				method : 'POST',
-				url : '/user/login',
-				payload : {
-					password : 'foo'
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message).toBe('Error: child "cloudid" fails because ["cloudid" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
 				}
-			};
-
-			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message).toBe('Error: child "username" fails because ["username" is required]');
 				done();
 			});
 		});
@@ -71,15 +112,21 @@ describe('api', function() {
 				url : '/user/login',
 				payload : {
 					username : 'foo',
-					password : 'bar'
+					password : 'bar',
+					cloudid : 1
 				}
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(417);
-				expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 417 from ' +
-					response.request.server.methods.particle.config().baseUrl +
-					'/oauth/token');
+				try {
+					expect(response.statusCode).toBe(417);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message).toBe('Error: HTTP error 417 from ' +
+						particleConfig.baseUrl +
+						'/oauth/token');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 
@@ -91,14 +138,21 @@ describe('api', function() {
 				url : '/user/login',
 				payload : {
 					username : 'user',
-					password : 'password'
+					password : 'password',
+					cloudid : 1
 				}
 			};
 
 			server.inject(options, (response) => {
 				expect(response.statusCode).toBe(200);
-				expect(JSON.parse(response.payload).body.access_token)
-					.toBe('254406f79c1999af65a7df4388971354f85cfee9');
+				try {
+					let pl = JSON.parse(response.payload);
+					expect(typeof pl.sessiontoken).not.toBe('undefined');
+					expect(pl.sessiontoken.length).toBeGreaterThan(0);
+					expect(typeof pl.userid).not.toBe('undefined');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});

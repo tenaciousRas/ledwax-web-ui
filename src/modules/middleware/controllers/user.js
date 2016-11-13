@@ -114,8 +114,8 @@ const UserController = () => {
 	 * Updates a user's sessiontoken and authtoken given username, cloudId, authtoken and sessiontoken.
 	 */
 	const update = (request, reply) => {
-		let ct = request.payload.sessiontoken;
 		let at = request.payload.authtoken;
+		let ct = request.payload.sessiontoken;
 		let un = request.payload.username;
 		let cid = request.payload.cloudid;
 		let db = request.getDb('apidb');
@@ -165,7 +165,7 @@ const UserController = () => {
 	return {
 		findAuth : retrieveByAuthToken,
 		find : retrieveBySession,
-		insert : create,
+		create : create,
 		update : update
 	};
 

@@ -39,6 +39,9 @@ module.exports = {
 								// validate them
 								allowUnknown : false
 							}
+						},
+						cors : {
+							origin : [ '*' ]
 						}
 					}
 				} ],
@@ -77,6 +80,9 @@ module.exports = {
 								// validate them
 								allowUnknown : false
 							}
+						},
+						cors : {
+							origin : [ '*' ]
 						}
 					}
 				} ],
@@ -115,6 +121,9 @@ module.exports = {
 								// validate them
 								allowUnknown : false
 							}
+						},
+						cors : {
+							origin : [ '*' ]
 						}
 					}
 				} ],
@@ -153,6 +162,9 @@ module.exports = {
 								// validate them
 								allowUnknown : true
 							}
+						},
+						cors : {
+							origin : [ '*' ]
 						}
 					}
 				} ],

@@ -2,7 +2,7 @@
 /**
  * Module dependencies
  */
-var appDependencies = ['ngRoute',
+var appDependencies = [ 'ngRoute',
 	'ngSanitize',
 	'ngCookies',
 	'ngAnimate',
@@ -33,21 +33,38 @@ var dependencies = (mocks ? mocks : []).concat(appDependencies);
  */
 // Declare app level module which depends on filters, and services
 var ledwaxApp = angular.module('LEDWAXW3', appDependencies);
-ledwaxApp.config(['$routeProvider', '$translateProvider',
-		function($routeProvider, $translateProvider) {
-	$routeProvider.when('/setup', {templateUrl: 'partials/setup.html', controller: 'SetupCtrl'});
-	$routeProvider.when('/about', {templateUrl: 'partials/about.html', controller: 'AboutCtrl'});
-	$routeProvider.when('/devicedetail/:deviceId', {templateUrl: 'partials/devicedetail.html', controller: 'LEDsCtrl'});
-	$routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'LoginCtrl'});
-	$routeProvider.when('/leds', {templateUrl: 'partials/leds.html', controller: 'LEDsCtrl'});
-	$routeProvider.otherwise({redirectTo: '/login'});
-	$translateProvider.useStaticFilesLoader({
-		prefix : 'l10n/',
-		suffix : '.json'
-	});
-	$translateProvider.preferredLanguage('en_US');
-	$translateProvider.useCookieStorage();
-}]);
+ledwaxApp.config([ '$routeProvider', '$translateProvider',
+	function($routeProvider, $translateProvider) {
+		$routeProvider.when('/setup', {
+			templateUrl : 'partials/setup.html',
+			controller : 'SetupCtrl'
+		});
+		$routeProvider.when('/about', {
+			templateUrl : 'partials/about.html',
+			controller : 'AboutCtrl'
+		});
+		$routeProvider.when('/devicedetail/:deviceId', {
+			templateUrl : 'partials/devicedetail.html',
+			controller : 'LEDsCtrl'
+		});
+		$routeProvider.when('/login', {
+			templateUrl : 'partials/login.html',
+			controller : 'LoginCtrl'
+		});
+		$routeProvider.when('/leds', {
+			templateUrl : 'partials/leds.html',
+			controller : 'LEDsCtrl'
+		});
+		$routeProvider.otherwise({
+			redirectTo : '/login'
+		});
+		$translateProvider.useStaticFilesLoader({
+			prefix : 'l10n/',
+			suffix : '.json'
+		});
+		$translateProvider.preferredLanguage('en_US');
+		$translateProvider.useCookieStorage();
+	} ]);
 /**
  * Start of block required for e2e tests
  */

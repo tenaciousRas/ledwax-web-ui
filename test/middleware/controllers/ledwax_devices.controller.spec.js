@@ -15,7 +15,9 @@ describe('api', () => {
 		server = require('../mockserver.js').createServer();
 		particleConfig = server.methods.particle.config();
 		// https://github.com/hapijs/hapi/issues/3017
-		setTimeout(done, 1000);
+		setTimeout(() => {
+			done();
+		}, 1500);
 	});
 
 	let dynFuncNames = require('../../../src/modules/middleware/controllers/ledwax_device').dynamicFuncNames;
@@ -31,8 +33,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -44,8 +50,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -57,8 +67,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "deviceId" fails because ["deviceId" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "deviceId" fails because ["deviceId" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -70,8 +84,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -83,10 +101,14 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(417);
-					expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
-						response.request.server.methods.particle.config().baseUrl +
-						'/v1/devices/360043000a47343432313031/' + varName);
+					try {
+						expect(response.statusCode).toBe(417);
+						expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
+							response.request.server.methods.particle.config().baseUrl +
+							'/v1/devices/360043000a47343432313031/' + varName);
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -98,12 +120,16 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(200);
-					let payLoadJSON = JSON.parse(response.payload).body;
-					if (payLoadJSON.name == 'int32') {
-						expect(payLoadJSON.result).toBe(77); // nonsense val
-					} else if (payLoadJSON.name == 'string') {
-						expect(payLoadJSON.result).toBe('emulator v1_device_variables route'); // nonsense val
+					try {
+						expect(response.statusCode).toBe(200);
+						let payLoadJSON = JSON.parse(response.payload).body;
+						if (payLoadJSON.name == 'int32') {
+							expect(payLoadJSON.result).toBe(77); // nonsense val
+						} else if (payLoadJSON.name == 'string') {
+							expect(payLoadJSON.result).toBe('emulator v1_device_variables route'); // nonsense val
+						}
+					} catch (e) {
+						fail('unexpected error:\n' + e);
 					}
 					done();
 				});
@@ -126,8 +152,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -142,8 +172,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "deviceId" fails because ["deviceId" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "deviceId" fails because ["deviceId" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -158,8 +192,12 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(422);
-					expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					try {
+						expect(response.statusCode).toBe(422);
+						expect(JSON.parse(response.payload).message).toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -175,10 +213,14 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(417);
-					expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
-						response.request.server.methods.particle.config().baseUrl +
-						'/v1/devices/360043000a47343432313031/' + varName);
+					try {
+						expect(response.statusCode).toBe(417);
+						expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
+							response.request.server.methods.particle.config().baseUrl +
+							'/v1/devices/360043000a47343432313031/' + varName);
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -194,9 +236,13 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(200);
-					let payLoadJSON = JSON.parse(response.payload).body;
-					expect(payLoadJSON.return_value).toBe(1);
+					try {
+						expect(response.statusCode).toBe(200);
+						let payLoadJSON = JSON.parse(response.payload).body;
+						expect(payLoadJSON.return_value).toBe(1);
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});
@@ -213,9 +259,13 @@ describe('api', () => {
 				};
 
 				server.inject(options, (response) => {
-					expect(response.statusCode).toBe(200);
-					let payLoadJSON = JSON.parse(response.payload).body;
-					expect(payLoadJSON.return_value).toBe(1);
+					try {
+						expect(response.statusCode).toBe(200);
+						let payLoadJSON = JSON.parse(response.payload).body;
+						expect(payLoadJSON.return_value).toBe(1);
+					} catch (e) {
+						fail('unexpected error:\n' + e);
+					}
 					done();
 				});
 			});

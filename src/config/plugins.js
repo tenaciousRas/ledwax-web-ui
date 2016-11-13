@@ -39,6 +39,7 @@ module.exports = {
 						reporter : require('good-console'),
 						events : {
 							error : '*',
+							debug : '*',
 							log : '*',
 							response : '*',
 							request : '*'

@@ -18,7 +18,9 @@ describe('api', function() {
 	beforeAll(function(done) {
 		server = require('../mockserver.js').createServer();
 		particleConfig = server.methods.particle.config();
-		done();
+		setTimeout(() => {
+			done();
+		}, 2000);
 	});
 
 	describe('ledwax device discover controller discoverDevices', () => {
@@ -30,9 +32,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message)
-					.toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message)
+						.toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -44,9 +51,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message)
-					.toBe('Error: child "authtoken" fails because ["authtoken" is not allowed to be empty]');
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message)
+						.toBe('Error: child "authtoken" fails because ["authtoken" is not allowed to be empty]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -58,12 +70,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(417);
-				let pl = JSON.parse(response.payload);
-				if (pl.message) {
+				try {
+					expect(response.statusCode).toBe(417);
+					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 422 from ' +
 						response.request.server.methods.particle.config().baseUrl +
 						'/v1/devices');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
 				}
 				done();
 			});
@@ -77,13 +91,13 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(200);
-				let pl = JSON.parse(response.payload);
-				if (pl && typeof pl.length != 'undefined') {
+				try {
+					expect(response.statusCode).toBe(200);
+					let pl = JSON.parse(response.payload);
 					expect(pl.length).toBe(1);
 					expect(pl[0].name).toBe('ledwax_2');
-				} else {
-					fail('no payload returned');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
 				}
 				done();
 			});
@@ -100,9 +114,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message)
-					.toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message)
+						.toBe('Error: child "authtoken" fails because ["authtoken" is required]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -114,9 +133,13 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(422);
-				expect(JSON.parse(response.payload).message)
-					.toBe('Error: child "authtoken" fails because ["authtoken" is not allowed to be empty]');
+				try {
+					expect(response.statusCode).toBe(422);
+					let pl = JSON.parse(response.payload);
+					expect(pl.message).toBe('Error: child "authtoken" fails because ["authtoken" is not allowed to be empty]');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
+				}
 				done();
 			});
 		});
@@ -128,12 +151,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(417);
-				let pl = JSON.parse(response.payload);
-				if (pl.message) {
+				try {
+					expect(response.statusCode).toBe(417);
+					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 422 from ' +
 						response.request.server.methods.particle.config().baseUrl +
 						'/v1/devices/' + hcDeviceId);
+				} catch (e) {
+					fail('unexpected error:\n' + e);
 				}
 				done();
 			});
@@ -147,12 +172,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(417);
-				let pl = JSON.parse(response.payload);
-				if (pl.message) {
+				try {
+					expect(response.statusCode).toBe(417);
+					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 404 from ' +
 						response.request.server.methods.particle.config().baseUrl +
 						'/v1/devices/foobar');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
 				}
 				done();
 			});
@@ -166,14 +193,14 @@ describe('api', function() {
 			};
 
 			server.inject(options, (response) => {
-				expect(response.statusCode).toBe(200);
-				let pl = JSON.parse(response.payload);
-				if (typeof pl != 'undefined') {
+				try {
+					expect(response.statusCode).toBe(200);
+					let pl = JSON.parse(response.payload);
 					expect(pl.dvcId).toBe(hcDeviceId);
 					expect(pl.vrs.length).toBe(10);
 					expect(pl.fns.length).toBe(2);
-				} else {
-					fail('no payload returned');
+				} catch (e) {
+					fail('unexpected error:\n' + e);
 				}
 				done();
 			});
