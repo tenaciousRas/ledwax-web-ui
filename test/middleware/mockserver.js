@@ -7,7 +7,9 @@ const Path = require('path');
 const api = require('../../src/modules/middleware/index.js');
 const routes = require('../../src/modules/middleware/routes/index.routes');
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'test';
-const particleConfig = require('../../src/particle-config').attributes[rt_ctx_env];
+const default_particle_config = require('../../src/particle-config').attributes[rt_ctx_env];
+const particlewrap = require('particle-api-js');
+const particle = new particlewrap(default_particle_config);
 
 let sequelConfig = require('../../src/config/sequelize.config.json')[rt_ctx_env];
 let internals = {
@@ -61,13 +63,16 @@ module.exports.createServer = (done) => {
 	prom.then(
 		(data) => {
 			server.log([ 'info', 'mockserver' ], 'registered hapi-sequelize module');
+			server.ext('onPreHandler', (request, reply) => {
+				request.app.particle = {};
+				request.app.particle.config = default_particle_config;
+				request.app.particle.api = particle;
+				return reply.continue();
+			});
 		},
 		(err) => {
 			server.log([ 'error', 'mockserver' ], 'there was an error registering hapi-sequelize module\n' + err);
 		}
 	);
-	server.method('particle.config', () => {
-		return particleConfig;
-	});
 	return server;
 };

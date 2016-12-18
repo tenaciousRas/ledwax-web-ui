@@ -8,12 +8,10 @@ const boom = require('boom');
 describe('api', () => {
 
 	let server,
-		db,
-		particleConfig;
+		db;
 
 	beforeAll((done) => {
 		server = require('../mockserver.js').createServer();
-		particleConfig = server.methods.particle.config();
 		// https://github.com/hapijs/hapi/issues/3017
 		setTimeout(() => {
 			done();
@@ -29,7 +27,7 @@ describe('api', () => {
 			it('empty params returns 422 NOT OK', (done) => {
 				let options = {
 					method : 'GET',
-					url : '/devices/' + funcName
+					url : '/devices/' + funcName + '?particleCloudId=1'
 				};
 
 				server.inject(options, (response) => {
@@ -46,7 +44,7 @@ describe('api', () => {
 			it('missing params returns 422 NOT OK', (done) => {
 				let options = {
 					method : 'GET',
-					url : '/devices/' + funcName + '?foo=bar'
+					url : '/devices/' + funcName + '?particleCloudId=1' + '&foo=bar'
 				};
 
 				server.inject(options, (response) => {
@@ -63,7 +61,7 @@ describe('api', () => {
 			it('missing deviceId param returns 422 NOT OK', (done) => {
 				let options = {
 					method : 'GET',
-					url : '/devices/' + funcName + '?authtoken=foobar'
+					url : '/devices/' + funcName + '?particleCloudId=1' + '&authtoken=foobar'
 				};
 
 				server.inject(options, (response) => {
@@ -80,7 +78,7 @@ describe('api', () => {
 			it('missing authtoken param returns 422 NOT OK', (done) => {
 				let options = {
 					method : 'GET',
-					url : '/devices/' + funcName + '?deviceId=foobar'
+					url : '/devices/' + funcName + '?particleCloudId=1' + '&deviceId=foobar'
 				};
 
 				server.inject(options, (response) => {
@@ -97,14 +95,14 @@ describe('api', () => {
 			it('invalid authtoken returns 417 Bad Expectation', (done) => {
 				let options = {
 					method : 'GET',
-					url : '/devices/' + funcName + '?deviceId=360043000a47343432313031&authtoken=bar'
+					url : '/devices/' + funcName + '?particleCloudId=1' + '&deviceId=360043000a47343432313031&authtoken=bar'
 				};
 
 				server.inject(options, (response) => {
 					try {
 						expect(response.statusCode).toBe(417);
 						expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
-							response.request.server.methods.particle.config().baseUrl +
+							response.request.app.particle.config.baseUrl +
 							'/v1/devices/360043000a47343432313031/' + varName);
 					} catch (e) {
 						fail('unexpected error:\n' + e);
@@ -116,7 +114,7 @@ describe('api', () => {
 			it('valid request returns 200 and numStrips value', (done) => {
 				let options = {
 					method : 'GET',
-					url : '/devices/' + funcName + '?deviceId=360043000a47343432313031&authtoken=254406f79c1999af65a7df4388971354f85cfee9'
+					url : '/devices/' + funcName + '?particleCloudId=1' + '&deviceId=360043000a47343432313031&authtoken=254406f79c1999af65a7df4388971354f85cfee9'
 				};
 
 				server.inject(options, (response) => {
@@ -167,6 +165,7 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
+						particleCloudId : 1,
 						authtoken : '254406f79c1999af65a7df4388971354f85cfee9'
 					}
 				};
@@ -187,6 +186,7 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
+						particleCloudId : 1,
 						deviceId : '360043000a47343432313031'
 					}
 				};
@@ -202,11 +202,12 @@ describe('api', () => {
 				});
 			});
 
-			it('invalid authtoken returns 417 Bad Expectation', (done) => {
+			it('invalid sessiontoken returns 417 Bad Expectation', (done) => {
 				let options = {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
+						particleCloudId : 1,
 						deviceId : '360043000a47343432313031',
 						authtoken : 'foobar'
 					}
@@ -216,7 +217,7 @@ describe('api', () => {
 					try {
 						expect(response.statusCode).toBe(417);
 						expect(JSON.parse(response.payload).message).toBe('Error: HTTP error 422 from ' +
-							response.request.server.methods.particle.config().baseUrl +
+							response.request.app.particle.config.baseUrl +
 							'/v1/devices/360043000a47343432313031/' + varName);
 					} catch (e) {
 						fail('unexpected error:\n' + e);
@@ -230,6 +231,7 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
+						particleCloudId : 1,
 						deviceId : '360043000a47343432313031',
 						authtoken : '254406f79c1999af65a7df4388971354f85cfee9'
 					}
@@ -252,6 +254,7 @@ describe('api', () => {
 					method : 'POST',
 					url : '/devices/' + funcName,
 					payload : {
+						particleCloudId : 1,
 						deviceId : '360043000a47343432313031',
 						authtoken : '254406f79c1999af65a7df4388971354f85cfee9',
 						args : 'foobar'

@@ -8,12 +8,10 @@ const boom = require('boom');
 describe('api', function() {
 
 	let server,
-		db,
-		particleConfig;
+		db;
 
 	beforeAll(function(done) {
 		server = require('../mockserver.js').createServer();
-		particleConfig = server.methods.particle.config();
 		setTimeout(() => {
 			done();
 		}, 2000);
@@ -122,7 +120,7 @@ describe('api', function() {
 					expect(response.statusCode).toBe(417);
 					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 417 from ' +
-						particleConfig.baseUrl +
+						response.request.app.particle.config.baseUrl +
 						'/oauth/token');
 				} catch (e) {
 					fail('unexpected error:\n' + e);

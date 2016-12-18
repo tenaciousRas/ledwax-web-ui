@@ -5,10 +5,6 @@ const boom = require('boom');
 const util = require('../../../util');
 const particlewrap = require('particle-api-js');
 
-const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
-const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
-let particle = new particlewrap(particle_config);
-
 /**
  * Config controller
  */
@@ -27,6 +23,9 @@ function ConfigController() {
 					id : {
 						$gt : 0
 					}
+				},
+				attributes : {
+					exclude : [ 'client_secret', 'client_id', 'token_duration' ]
 				}
 			}).then((clouds) => {
 				request.server.log([ 'debug', 'config.contoller' ],

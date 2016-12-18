@@ -9,12 +9,10 @@ describe('api', () => {
 
 	let server,
 		db,
-		particleConfig,
 		particleCloud;
 
 	beforeAll((done) => {
 		server = require('../mockserver.js').createServer();
-		particleConfig = server.methods.particle.config();
 		// https://github.com/hapijs/hapi/issues/3017
 		setTimeout(done, 2000);
 	});

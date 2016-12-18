@@ -166,7 +166,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				ret = {
 					code : 511,
 					error : true,
-					auth_token : null
+					cookietoken : null
 				};
 				return ret;
 			};
@@ -187,7 +187,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			return $http(config).then(
 				successCallback, errorCallback);
 		};
-		service.discoverDevices = function() {
+		service.discoverDevices = function(cloudId, authToken) {
 			var ret = {
 				code : 511,
 				error : true,
@@ -220,7 +220,8 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			};
 			var config = {
 				method : 'GET',
-				url : service.hostURL + '/devices/discoverDevices'
+				url : service.hostURL + '/devices/discoverDevices?cloudId=' + cloudId
+					+ '&authtoken=' + authToken
 			};
 			return $http(config).then(
 				successCallback, errorCallback);
@@ -264,6 +265,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			var config = {
 				method : 'GET',
 				url : service.hostURL + '/devices/discoverCaps?deviceId=' + deviceId
+					+ '&authtoken=' + authToken
 			};
 			return $http(config).then(
 				successCallback, errorCallback);

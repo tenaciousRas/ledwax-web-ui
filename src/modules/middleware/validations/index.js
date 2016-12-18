@@ -157,13 +157,15 @@ module.exports.ledwaxCloudDevices = {
 module.exports.ledwaxCloudDeviceDiscover = {
 	discoverDevices : {
 		query : {
-			authtoken : Joi.string().trim().min(3).max(100).required()
+			authtoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required()
 		},
 		failAction : failActDelegate('custom')
 	},
 	discoverCaps : {
 		query : {
 			authtoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required()
 		},
 		failAction : failActDelegate('custom')
@@ -179,6 +181,7 @@ const buildDynamicValidationsForController = () => {
 		dynamic_ledwax_devices[key] = {
 			query : {
 				authtoken : Joi.string().trim().min(3).max(100).required(),
+				particleCloudId : Joi.number().integer().required(),
 				deviceId : Joi.string().trim().min(3).max(50).required()
 			},
 			failAction : failActDelegate('custom')
@@ -191,6 +194,7 @@ const buildDynamicValidationsForController = () => {
 		dynamic_ledwax_devices[key] = {
 			payload : {
 				authtoken : Joi.string().trim().min(3).max(100).required(),
+				particleCloudId : Joi.number().integer().required(),
 				deviceId : Joi.string().trim().min(3).max(50).required(),
 				args : Joi.any().optional()
 			},

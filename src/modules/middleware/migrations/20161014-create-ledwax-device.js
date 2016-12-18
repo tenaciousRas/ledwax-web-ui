@@ -8,23 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id: {
-        type: Sequelize.INT
-      },
       device_id: {
         type: Sequelize.STRING
       },
-      created: {
-        type: Sequelize.DATE
-      },
-      modified: {
-        type: Sequelize.DATE
-      },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

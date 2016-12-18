@@ -7,8 +7,6 @@ const util = require('../../../util');
 const particlewrap = require('particle-api-js');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
-const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
-let particle = new particlewrap(particle_config);
 const ledwax_iot_config = require('../../../particle-config/iotdef_ledwax.json');
 // map particle variable to handler method names
 const particleDeviceVariableNames = ledwax_iot_config.particleDeviceVariableNames;
@@ -30,6 +28,7 @@ const LedwaxDeviceController = () => {
 			// particle variables are GET routes
 			let authToken = request.query.authtoken;
 			let deviceId = request.query.deviceId;
+			let particle = request.app.particle.api;
 			let fnProm = particle.getVariable({
 				deviceId : deviceId,
 				name : varName,
@@ -55,6 +54,7 @@ const LedwaxDeviceController = () => {
 	 */
 	for (let funcName in particleDeviceFunctionNames) {
 		dynamicControllerFunctions[particleDeviceFunctionNames[funcName]] = (request, reply) => {
+			let particle = request.app.particle.api;
 			// particle variables are GET routes
 			let authToken = request.payload.authtoken;
 			let deviceId = request.payload.deviceId;
@@ -85,6 +85,7 @@ const LedwaxDeviceController = () => {
 	 * @private
 	 */
 	const genericParticleFunctionCall = (request, reply, iotFn,  arg) => {
+		let particle = request.app.particle.api;
 		let authToken = request.payload.authtoken;
 		let deviceId = request.payload.deviceId;
 		let fnProm = particle.callFunction({

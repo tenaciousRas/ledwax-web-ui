@@ -2,11 +2,6 @@
 'use strict';
 
 const boom = require('boom');
-const particlewrap = require('particle-api-js');
-
-const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
-const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
-let particle = new particlewrap(particle_config);
 
 /**
  * Auth controller

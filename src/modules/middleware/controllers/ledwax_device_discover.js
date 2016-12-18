@@ -5,11 +5,8 @@ const _ = require('lodash');
 const async = require('async');
 const boom = require('boom');
 const util = require('../../../util');
-const particlewrap = require('particle-api-js');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
-const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
-let particle = new particlewrap(particle_config);
 const ledwax_iot_config = require('../../../particle-config/iotdef_ledwax.json');
 //map particle variable to handler method names
 const particleDeviceVariableNames = ledwax_iot_config.particleDeviceVariableNames;
@@ -39,6 +36,8 @@ const LedwaxDeviceDiscoverController = () => {
 	const discoverLEDWaxDevices = (request, reply) => {
 		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices';
 		let authToken = request.query.authtoken;
+		let cloudId = request.query.particleCloudId;
+		let particle = request.app.particle.api;
 		const prom = particle.listDevices({
 			auth : authToken
 		});
@@ -50,13 +49,13 @@ const LedwaxDeviceDiscoverController = () => {
 			(resp) => {
 				let lwDvList = [];
 				let devices = resp.body;
-				request.server.log([ 'debug', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+				request.server.log([ 'debug', logTag ],
 					"device list from cloud: " + devices);
 				async.eachOf(devices, (value, key, callback) => {
 					let device = value;
 					if (device.name && device.name.startsWith('ledwax')) {
 						// it's probably a LEDWax device!
-						request.server.log([ 'info', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+						request.server.log([ 'info', logTag ],
 							'retrieving device variable from cloud for device:', device.id);
 						try {
 							let fnProm = particle.getVariable({
@@ -66,7 +65,7 @@ const LedwaxDeviceDiscoverController = () => {
 							});
 							if (!fnProm) {
 								let errMsg = 'unable to retrieve device variable from cloud for device:' + device.id;
-								request.server.log([ 'warn', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+								request.server.log([ 'warn', logTag ],
 									errMsg);
 								return callback(new Error(errMsg));
 							}
@@ -85,7 +84,7 @@ const LedwaxDeviceDiscoverController = () => {
 					}
 				}, (err) => {
 					if (err) {
-						request.server.log([ 'error', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+						request.server.log([ 'error', logTag ],
 							'An error occurred while getting device signature:', err);
 						if (lwDvList.length < 1) {
 							return reply(boom.notFound(err, devices));
@@ -94,7 +93,7 @@ const LedwaxDeviceDiscoverController = () => {
 					return reply(lwDvList);
 				});
 			}, (err) => {
-				request.server.log([ 'error', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+				request.server.log([ 'error', logTag ],
 					'An error occurred while accessing cloud device list:', err);
 				return reply(boom.expectationFailed(err));
 			});
@@ -109,6 +108,7 @@ const LedwaxDeviceDiscoverController = () => {
 		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDeviceCapabilities';
 		let authToken = request.query.authtoken;
 		let deviceId = request.query.deviceId;
+		let particle = request.app.particle.api;
 		const prom = particle.getDevice({
 			deviceId : deviceId,
 			auth : authToken
@@ -147,7 +147,7 @@ const LedwaxDeviceDiscoverController = () => {
 				// handle variables with REST calls
 				async.eachOf(attrs.variables, (value, key, callback) => {
 					try {
-						request.server.log([ 'info', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+						request.server.log([ 'info', logTag ],
 							'retrieving device variable ' + key + ' from cloud for device:', attrs.id);
 						let fnProm = particle.getVariable({
 							deviceId : attrs.id,
@@ -156,7 +156,7 @@ const LedwaxDeviceDiscoverController = () => {
 						});
 						if (!fnProm) {
 							let errMsg = 'unable to retrieve device variable ' + key + ' from cloud for device:' + attrs.id;
-							request.server.log([ 'warn', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+							request.server.log([ 'warn', logTag ],
 								errMsg);
 							return callback(new Error(errMsg));
 						}
@@ -172,7 +172,7 @@ const LedwaxDeviceDiscoverController = () => {
 					}
 				}, (err) => {
 					if (err) {
-						request.server.log([ 'error', 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices' ],
+						request.server.log([ 'error', logTag ],
 							'An error occurred while getting device capabilities: ', err);
 						if (caps.vrs.length < 1 && caps.fns.length < 1) {
 							return reply(boom.notFound(err, deviceId));

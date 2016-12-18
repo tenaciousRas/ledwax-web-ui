@@ -17,7 +17,6 @@ angular.module(
 		'REST_IoT',
 		function($rootScope, $scope, $cookies, $sanitize, $translate, $filter,
 			Settings, REST_IoT) {
-
 			$scope.getDeviceList = function() {
 				let devList = REST_IoT
 					.getDevices($scope.userSession.auth_token);

@@ -5,7 +5,10 @@ module.exports = (sequelize, DataTypes) => {
 	var particle_cloud = sequelize.define('particle_cloud', {
 		name : DataTypes.STRING,
 		ip : DataTypes.STRING,
-		port : DataTypes.INTEGER
+		port : DataTypes.INTEGER,
+		client_secret : DataTypes.STRING,
+		client_id : DataTypes.STRING,
+		token_duration : DataTypes.INTEGER
 	}, {
 		classMethods : {
 			associate : (models) => {

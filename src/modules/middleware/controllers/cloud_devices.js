@@ -2,11 +2,6 @@
 'use strict';
 
 const boom = require('boom');
-const particlewrap = require('particle-api-js');
-
-const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
-const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
-let particle = new particlewrap(particle_config);
 
 /**
  * Auth controller
@@ -18,6 +13,7 @@ function ParticleDevicesController() {
 	 */
 	const deviceList = (request, reply) => {
 		let token = request.payload.token;
+		let particle = request.app.particle.api;
 		let devicesPr = particle.listDevices({
 			auth : token
 		});
@@ -42,6 +38,7 @@ function ParticleDevicesController() {
 			fn = request.payload.fn,
 			token = request.payload.token,
 			arg = request.payload.arg;
+		let particle = request.app.particle.api;
 		let fnPr = particle.callFunction({
 			deviceId : deviceId,
 			name : fn,
@@ -65,6 +62,7 @@ function ParticleDevicesController() {
 	const cloudDeviceAttrs = (request, reply) => {
 		let deviceId = request.payload.deviceId,
 			token = request.payload.token;
+		let particle = request.app.particle.api;
 		let devicesPr = particle.getDevice({
 			deviceId : deviceId,
 			auth : token
@@ -88,6 +86,7 @@ function ParticleDevicesController() {
 		let deviceId = request.payload.deviceId,
 			varname = request.payload.varname,
 			token = request.payload.token;
+		let particle = request.app.particle.api;
 		particle.getVariable({
 			deviceId : deviceId,
 			name : varname,
@@ -109,6 +108,7 @@ function ParticleDevicesController() {
 		let deviceId = request.payload.deviceId,
 			signalOn = request.payload.signal,
 			token = request.payload.token;
+		let particle = request.app.particle.api;
 		particle.signalDevice({
 			deviceId : deviceId,
 			signal : signalOn,

@@ -54,24 +54,27 @@ const LedWaxPersistence = () => {
 		}
 	};
 
-	const getLEDWaxDevices = (db, cloudModel) => {
+	const getLEDWaxDevices = (db, cloudModel, log) => {
 		let ledwaxDevice = db.getModel('ledwax_device');
-	//    try {
-	//      cloudModel.getLEDWax_devices();
-	//        }).then((associated) => {
-	//  	    	log('debug', 'LedWaxPersistence#getLEDWaxDevices',
-	//  						'DB call complete - promise success, data =:' + associated);
-	//          if (null == associated) {
-	//            return null;
-	//          }
-	//  				return associated;
-	//        });
-	//    } catch (e) {
-	//      throw e;
-	//    }
+		try {
+			ledwaxDevice.findAll({
+				where : {
+					particleCloudId : cloudModel.id
+				},
+			}).then((devices) => {
+				request.server.log([ 'debug', 'LedwaxCloudDeviceController#retrieveAllStoredDevices' ],
+					'DB call complete - promise success, devices =:' + devices);
+				if (null == devices) {
+					return [];
+				}
+				return devices;
+			});
+		} catch (e) {
+			return e;
+		}
 	};
 
-	const persistLEDWaxDevice = (db, cloudModel, ledWaxDevice, log) => {
+	const persistLEDWaxDevice = (db, cloudModel, ledWaxDevice, vals, log) => {
 		try {
 			ledWaxDevice.build(vals);
 			ledWaxDevice.setParticle_Cloud(cloudModel);

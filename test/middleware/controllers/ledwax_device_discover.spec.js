@@ -13,11 +13,10 @@ describe('api', function() {
 
 	let server,
 		db,
-		particleConfig;
+		particle;
 
 	beforeAll(function(done) {
 		server = require('../mockserver.js').createServer();
-		particleConfig = server.methods.particle.config();
 		setTimeout(() => {
 			done();
 		}, 2000);
@@ -25,7 +24,7 @@ describe('api', function() {
 
 	describe('ledwax device discover controller discoverDevices', () => {
 
-		it('empty login responds with 422 NOT OK', (done) => {
+		it('empty params responds with 422 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
 				url : '/devices/discoverDevices'
@@ -63,10 +62,10 @@ describe('api', function() {
 			});
 		});
 
-		it('invalid credentials respond with 417 NOT OK', (done) => {
+		it('invalid sessiontoken respond with 417 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/discoverDevices?authtoken=foobar'
+				url : '/devices/discoverDevices?authtoken=foobar&particleCloudId=1'
 			};
 
 			server.inject(options, (response) => {
@@ -74,7 +73,7 @@ describe('api', function() {
 					expect(response.statusCode).toBe(417);
 					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 422 from ' +
-						response.request.server.methods.particle.config().baseUrl +
+						response.request.app.particle.config.baseUrl +
 						'/v1/devices');
 				} catch (e) {
 					fail('unexpected error:\n' + e);
@@ -84,10 +83,10 @@ describe('api', function() {
 
 		});
 
-		it('valid credentials should respond with 200 OK', (done) => {
+		it('valid sessiontoken should respond with 200 OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/discoverDevices?authtoken=' + hcAuthToken
+				url : '/devices/discoverDevices?particleCloudId=1&authtoken=' + hcAuthToken
 			};
 
 			server.inject(options, (response) => {
@@ -107,7 +106,7 @@ describe('api', function() {
 
 	describe('ledwax device discover controller discoverCaps', () => {
 
-		it('empty login responds with 422 NOT OK', (done) => {
+		it('empty params responds with 422 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
 				url : '/devices/discoverCaps'
@@ -126,10 +125,10 @@ describe('api', function() {
 			});
 		});
 
-		it('login with empty authtoken respond with 422 NOT OK', (done) => {
+		it('empty sessiontoken respond with 422 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/discoverCaps?authtoken='
+				url : '/devices/discoverCaps?particleCloudId=1&authtoken='
 			};
 
 			server.inject(options, (response) => {
@@ -144,10 +143,10 @@ describe('api', function() {
 			});
 		});
 
-		it('invalid credentials respond with 417 NOT OK', (done) => {
+		it('invalid sessiontoken respond with 417 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/discoverCaps?authtoken=foobar&deviceId=' + hcDeviceId
+				url : '/devices/discoverCaps?particleCloudId=1&authtoken=foobar&deviceId=' + hcDeviceId
 			};
 
 			server.inject(options, (response) => {
@@ -155,7 +154,7 @@ describe('api', function() {
 					expect(response.statusCode).toBe(417);
 					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 422 from ' +
-						response.request.server.methods.particle.config().baseUrl +
+						response.request.app.particle.config.baseUrl +
 						'/v1/devices/' + hcDeviceId);
 				} catch (e) {
 					fail('unexpected error:\n' + e);
@@ -165,10 +164,10 @@ describe('api', function() {
 
 		});
 
-		it('valid credentials, invalid device respond with 417-masked 404 NOT OK', (done) => {
+		it('valid sessiontoken, invalid device respond with 417-masked 404 NOT OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/discoverCaps?authtoken=' + hcAuthToken + '&deviceId=foobar'
+				url : '/devices/discoverCaps?particleCloudId=1&authtoken=' + hcAuthToken + '&deviceId=foobar'
 			};
 
 			server.inject(options, (response) => {
@@ -176,7 +175,7 @@ describe('api', function() {
 					expect(response.statusCode).toBe(417);
 					let pl = JSON.parse(response.payload);
 					expect(pl.message).toBe('Error: HTTP error 404 from ' +
-						response.request.server.methods.particle.config().baseUrl +
+						response.request.app.particle.config.baseUrl +
 						'/v1/devices/foobar');
 				} catch (e) {
 					fail('unexpected error:\n' + e);
@@ -186,10 +185,10 @@ describe('api', function() {
 
 		});
 
-		it('valid credentials should respond with 200 OK', (done) => {
+		it('valid sessiontoken should respond with 200 OK', (done) => {
 			let options = {
 				method : 'GET',
-				url : '/devices/discoverCaps?authtoken=' + hcAuthToken + '&deviceId=' + hcDeviceId
+				url : '/devices/discoverCaps?particleCloudId=1&authtoken=' + hcAuthToken + '&deviceId=' + hcDeviceId
 			};
 
 			server.inject(options, (response) => {
