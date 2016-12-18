@@ -60,7 +60,7 @@ const buildParticleConfigFromDB = (request, reply) => {
 		}).then((cloud) => {
 			request.server.log([ 'debug', logTag ],
 				'DB call complete - promise success, cloud =:' + cloud);
-			if (null == clouds) {
+			if (null == cloud) {
 				ret = default_particle_config;
 			} else {
 				let dbConfig = {};

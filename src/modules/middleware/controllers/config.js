@@ -30,7 +30,7 @@ function ConfigController() {
 			}).then((clouds) => {
 				request.server.log([ 'debug', 'config.contoller' ],
 					'DB call complete - promise success, clouds =:' + clouds);
-				if (null == clouds) {
+				if (null == clouds || clouds.length < 1) {
 					return reply(boom.notFound('no cloud records found'));
 				}
 				return reply({
