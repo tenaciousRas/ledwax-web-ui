@@ -1,31 +1,92 @@
 <div id="wrap_newdevices">
 	<div class="wrap-devices-table" class="">
-		<div class="row">
-			<div class="col-sm-12">
-				<table class="devices-table">
-					<thead>
-						<tr>
-							<th scope="col"><a href
-								ng:click="sortBy('name', freshDevices, 'pagedFreshDevices')">Name</a></th>
-							<th scope="col"><a href
-								ng:click="sortBy('type', freshDevices, 'pagedFreshDevices')">Type</a></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng:click=""
-							ng:repeat="device in pagedFreshDevices[currentPage - 1] | filter:query">
-							<td>{{device.name}}</td>
-							<td>{{device.type}}</td>
-						</tr>
-					</tbody>
-				</table>
-				<p>
-					<pagination total-items="totalItems" page="currentPage"
-						items-per-page="pageSize" class="pagination-sm"
-						boundary-links="true" rotate="false"></pagination>
-				</p>
-				<pre class="pagination-footer">Page: {{currentPage}} of {{pagedFreshDevices.length}}</pre>
+		<div class="devices-table">
+			<div class="row">
+				<div class="col-sm-6">
+					<a ng:click="sortBy('name', freshDevices, 'pagedFreshDevices')">Name&nbsp;<span
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
+						style="color: inherit;"></span></a>
+				</div>
+				<div class="col-sm-6">
+					<a ng:click="sortBy('type', freshDevices, 'pagedFreshDevices')">Type&nbsp;<span
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
+						style="color: inherit;"></span></a>
+				</div>
+			</div>
+			<div
+				ng:repeat="device in pagedFreshDevices[currentPageFresh - 1] | filter:query">
+				<div class="row" ng:click="toggleDeviceDetais(device)">
+					<div class="col-sm-6">{{device.name}}</div>
+					<div class="col-sm-5">{{device.type}}</div>
+					<div class="col-sm-1">
+						<button id="butt_toggle_dev_details_{{device.id}}"
+							ng:click="toggleDeviceDetais(device); return false"
+							class="btn btn-primary">
+							<span style="color: white;"
+								class="glyphicon glyphicon-collapse-{{device.toggleShowDetails
+							== true ? 'up' : 'down'}}"
+								aria-hidden="true"></span>
+						</button>
+					</div>
+				</div>
+				<div id="dev_details_{{device.id}}"
+					class="row {{device.toggleShowDetails == true ? 'show' : 'hide'}}">
+					<div class="wrap-device-details-vars col-sm-4">
+						<dl>
+							<dt></dt>
+							<dd>
+								<button id="butt_toggle_dev_details_{{device.id}}"
+									ng:click="saveDevice(device)" class="btn btn-primary">
+									<span style="color: white;" class="glyphicon glyphicon-save"
+										aria-hidden="true"></span>&nbsp;Store Device ({{device.name}})
+								</button>
+							</dd>
+							<dt>Device ID:</dt>
+							<dd>{{device.id}}</dd>
+							<dt>Last IP Address:</dt>
+							<dd>{{device.last_ip_address}}</dd>
+							<dt>Last Heard:</dt>
+							<dd>{{device.last_heard}}</dd>
+						</dl>
+					</div>
+					<div class="wrap-device-details-vars col-sm-4">
+						<dl>
+							<dt>
+								<span class="glyphicon glyphicon-flag" aria-hidden="true"></span>&nbsp;Variables:
+
+							</dt>
+							<dd>
+								<ul class="list-group">
+									<li class="list-group-item"
+										ng:repeat="deviceVar in device.caps.vrs">{{deviceVar.varname}}={{deviceVar.value}}({{deviceVar.type}})
+									</li>
+								</ul>
+							</dd>
+						</dl>
+					</div>
+					<div class="wrap-device-details-vars col-sm-4">
+						<dl>
+							<dt>
+								<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>&nbsp;Functions:
+
+							</dt>
+							<dd>
+								<ul class="list-group">
+									<li class="list-group-item"
+										ng:repeat="deviceFunc in device.caps.fns">{{deviceFunc}}</span>
+									</li>
+								</ul>
+					</div>
+				</div>
 			</div>
 		</div>
+		<p>
+			<pagination total-items="totalItemsFresh" page="currentPageFresh"
+				items-per-page="pageSizeFresh" class="pagination-sm"
+				boundary-links="true" rotate="false"></pagination>
+		</p>
+		<pre class="pagination-footer">Page: {{currentPageFresh}} of {{pagedFreshDevices.length}}</pre>
 	</div>
+</div>
+</div>
 </div>

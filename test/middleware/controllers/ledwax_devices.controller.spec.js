@@ -121,11 +121,11 @@ describe('api', () => {
 					try {
 						expect(response.statusCode).toBe(200);
 						let payLoadJSON = JSON.parse(response.payload).body;
-						if (payLoadJSON.name == 'int32') {
+						/* if (payLoadJSON.name == 'int32') {
 							expect(payLoadJSON.result).toBe(77); // nonsense val
 						} else if (payLoadJSON.name == 'string') {
 							expect(payLoadJSON.result).toBe('emulator v1_device_variables route'); // nonsense val
-						}
+						} */
 					} catch (e) {
 						fail('unexpected error:\n' + e);
 					}

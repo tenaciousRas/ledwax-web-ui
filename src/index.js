@@ -46,36 +46,42 @@ const addCorsHeaders = (request, reply) => {
 
 const buildParticleConfigFromDB = (request, reply) => {
 	const logTag = 'index#buildParticleConfigFromDB';
-	let ret = {};
 	let db = request.getDb('apidb');
 	let cloud = db.getModel('particle_cloud');
 	let cloudId = request.payload ? request.payload.particleCloudId : request.query.particleCloudId;
-	try {
-		cloud.findOne({
-			where : {
-				id : {
-					$eq : cloudId
+	let prom = {};
+	prom.then = (succCb, errCb) => {
+		try {
+			cloud.findOne({
+				where : {
+					id : {
+						$eq : cloudId
+					}
 				}
-			}
-		}).then((cloud) => {
-			request.server.log([ 'debug', logTag ],
-				'DB call complete - promise success, cloud =:' + cloud);
-			if (null == cloud) {
-				ret = default_particle_config;
-			} else {
-				let dbConfig = {};
-				dbConfig.name = cloud.name;
-				dbConfig.baseUrl = 'http://' + cloud.ip + (cloud.port ? ':' + cloud.port : '');
-				dbConfig.clientSecret = cloud.client_secret;
-				dbConfig.clientId = cloud.client_id;
-				dbConfig.tokenDuration = client_secret.token_duration;
-				ret = dbConfig;
-			}
-			return ret;
-		});
-	} catch (e) {
-		return e;
+			}).then((cloud) => {
+				let ret = {};
+				request.server.log([ 'debug', logTag ],
+					'DB call complete - promise success, cloud =:' + cloud);
+				if (null == cloud) {
+					ret = default_particle_config;
+				} else {
+					let dbConfig = {};
+					dbConfig.name = cloud.name;
+					dbConfig.baseUrl = 'http://' + cloud.ip + (cloud.port ? ':' + cloud.port : '');
+					dbConfig.clientSecret = cloud.client_secret;
+					dbConfig.clientId = cloud.client_id;
+					dbConfig.tokenDuration = cloud.token_duration;
+					ret = dbConfig;
+				}
+				request.server.log([ 'debug', logTag ],
+					'got DB config for cloud =:' + JSON.stringify(ret));
+				succCb(ret);
+			});
+		} catch (e) {
+			errCb(e);
+		}
 	}
+	return prom;
 };
 
 
@@ -86,6 +92,20 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 		throw err;
 	}
 	server.ext('onPreResponse', addCorsHeaders);
+	server.ext('onPreHandler', (request, reply) => {
+		request.app.particle = {};
+		let prom = buildParticleConfigFromDB(request, reply);
+		prom.then((cfg) => {
+			request.app.particle.config = cfg;
+			request.app.particle.api = new particlewrap(cfg);
+			request.server.log([ 'debug', 'index.js#onPreHandler' ],
+				"request.app.particle: " + JSON.stringify(request.app.particle));
+			return reply.continue();
+		}, (err) => {
+			request.server.log([ 'error', 'index.js#onPreHandler' ],
+				"there was an error getting particle api: " + e);
+		});
+	});
 	server.start(() => {
 		let connects = ' running at: ';
 		for (let i = 0; i < server.connections.length; i++) {
@@ -97,12 +117,6 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 		console.log('LEDWax running in ' + rt_ctx_env
 			+ ' mode; using [hapi] server v' + server.version
 			+ connects);
-	});
-	server.ext('onPreHandler', (request, reply) => {
-		request.app.particle = {};
-		request.app.particle.config = buildParticleConfigFromDB(request, reply);
-		request.app.particle.api = new particlewrap(request.app.particle.config);
-		return reply.continue();
 	});
 	// export the server for testing
 	module.exports.server = server;

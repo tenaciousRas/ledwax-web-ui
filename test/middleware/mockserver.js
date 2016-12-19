@@ -54,8 +54,8 @@ module.exports.createServer = (done) => {
 						internals.dbConfig.username,
 						internals.dbConfig.password,
 						internals.dbConfig.sequelize), // sequelize instance
-					sync : false, // sync models - default false
-					forceSync : true // force sync (drops tables) - default false
+					sync : true, // sync models - default false
+					forceSync : false // force sync (drops tables) - default false
 				}
 			]
 		}

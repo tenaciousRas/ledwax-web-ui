@@ -38,6 +38,8 @@ const LedwaxDeviceDiscoverController = () => {
 		let authToken = request.query.authtoken;
 		let cloudId = request.query.particleCloudId;
 		let particle = request.app.particle.api;
+		request.server.log([ 'info', logTag ],
+				'particle:' + JSON.stringify(request.app));
 		const prom = particle.listDevices({
 			auth : authToken
 		});
@@ -161,7 +163,7 @@ const LedwaxDeviceDiscoverController = () => {
 							return callback(new Error(errMsg));
 						}
 						fnProm.then((data) => {
-							caps.vrs.push(key);
+							caps.vrs.push({varname: key, value: data.body.result, type: data.body.name});
 							callback();
 						}, (err) => {
 							// no error to keep looping

@@ -2,6 +2,7 @@ const DEFAULT_REST_HOST_NAME = '127.0.0.1';
 const DEFAULT_REST_HOST_PORT = '3000';
 
 var services = angular.module('LEDWAXW3.services', []);
+const hcAuthToken = '254406f79c1999af65a7df4388971354f85cfee9';
 
 services.value('version', '1.0');
 
@@ -128,12 +129,38 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			}
 			service.hostURL = url;
 		};
-		service.serverLogin = function(cloudid, username, password) {
-			var ret = {
-				code : 511,
+		service.defaultRESTResp = {
+			code : 511,
+			error : true,
+			error_description : "unknown error"
+		};
+		service.defaultSuccessCallback = function(response) {
+			if (angular.isDefined(response.error)) {
+				ret = {
+					code : response.status,
+					error : true,
+					error_description : response.error_description
+				};
+			} else {
+				ret = {
+					code : response.status,
+					data : response.data,
+					error : false,
+					error_description : null
+				};
+			}
+			return ret;
+		};
+		service.defaultErrorCallback = function(response) {
+			ret = {
+				code : response.status,
 				error : true,
-				error_description : "unknown error"
+				error_description : response.status_text
 			};
+			return ret;
+		};
+		service.serverLogin = function(cloudid, username, password) {
+			var ret = service.defaultRESTResp;
 			if (!angular.isDefined(userName)) {
 				ret.error_description = 'missing param: username';
 				return ret;
@@ -171,7 +198,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				return ret;
 			};
 			$http.defaults.headers.post = {
-				cloudid : cloudid,
+				particleCloudId : cloudid,
 				username : username,
 				password : password
 			};
@@ -181,140 +208,137 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				data : {
 					username : username,
 					password : password,
-					cloudid : cloudid
+					particleCloudId : cloudid
 				}
 			};
 			return $http(config).then(
 				successCallback, errorCallback);
 		};
 		service.discoverDevices = function(cloudId, authToken) {
-			var ret = {
-				code : 511,
-				error : true,
-				error_description : "unknown error"
-			};
-			var successCallback = function(response) {
-				if (angular.isDefined(response.body.error)) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloudid";
+				return ret;
+			}
+			var successCallback = (response) => {
+				if (angular.isDefined(response.error)) {
 					ret = {
-						code : response.body.code,
+						code : response.status,
 						error : true,
-						error_description : response.body.error_description
+						error_description : response.error_description
 					};
 				} else {
 					ret = {
-						code : response.body.code,
-						data : response.body.data,
+						code : response.status,
+						data : response.data,
 						error : false,
-						error_description : response.body.error_description
+						error_description : null
 					};
+					for (var i = 0; i < ret.data.length; i++) {
+						if (ret.data[i].name.startsWith('ledwax')) {
+							ret.data[i].type = 'LedWax Device';
+						} else {
+							ret.data[i].type = 'Unknown';
+						}
+					}
 				}
 				return ret;
 			};
-			var errorCallback = function(response) {
-				ret = {
-					code : response.body.code,
-					error : true,
-					error_description : response.body.error_description
-				};
-				return ret;
-			};
+			var errorCallback = service.defaultErrorCallback;
 			var config = {
 				method : 'GET',
-				url : service.hostURL + '/devices/discoverDevices?cloudId=' + cloudId
-					+ '&authtoken=' + authToken
+				url : service.hostURL + '/devices/discoverDevices?particleCloudId=' + cloudId
+					+ '&authtoken=' + hcAuthToken
+			};
+			let prom = $http(config).then(successCallback, errorCallback);
+			return prom;
+		};
+		service.getStoredDevices = function(cloudId, sessionToken) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloudid";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'GET',
+				url : service.hostURL + '/devices/retrieveAllStoredDevices?particleCloudId=' + cloudId
+					+ '&sessiontoken=' + hcAuthToken
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.getDeviceCaps = function(cloudId, sessionToken, deviceId) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'GET',
+				url : service.hostURL + '/devices/discoverCaps?particleCloudId=' + cloudId + '&deviceId=' + deviceId
+					+ '&authtoken=' + hcAuthToken
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.getNumberOfStrips = function(authToken, deviceId) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'GET',
+				url : service.hostURL + '/devices/getNumStrips?particleCloudId=' + cloudId + '&deviceId=' + deviceId
+					+ '&authtoken=' + hcAuthToken
 			};
 			return $http(config).then(
 				successCallback, errorCallback);
 		};
-		service.getDeviceCaps = function(authToken,
-			deviceId) {
-			var ret = {
-				code : 511,
-				error : true,
-				error_description : "unknown error"
-			};
-			if (!angular.isDefined(deviceId)) {
-				ret.error_description = "The device id was not found";
+		service.storeDevice = function(cloudId, sessionToken, deviceId) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
 				return ret;
 			}
-			var successCallback = function(response) {
-				if (angular.isDefined(response.body.error)) {
-					ret = {
-						code : response.body.code,
-						error : true,
-						error_description : response.body.error_description
-					};
-				} else {
-					ret = {
-						code : response.body.code,
-						data : response.body.data,
-						error : false,
-						error_description : response.body.error_description
-					};
-				}
-				return ret;
-			};
-			var errorCallback = function(response) {
-				ret = {
-					code : response.body.code,
-					error : true,
-					error_description : response.body.error_description
-				};
-				return ret;
-			};
-			var config = {
-				method : 'GET',
-				url : service.hostURL + '/devices/discoverCaps?deviceId=' + deviceId
-					+ '&authtoken=' + authToken
-			};
-			return $http(config).then(
-				successCallback, errorCallback);
-		};
-		service.getNumberOfStrips = function(deviceId) {
-			var ret = {
-				code : 511,
-				error : true,
-				error_description : "unknown error"
-			};
-			if (!angular.isDefined(deviceId)) {
-				ret = {
-					code : 511,
-					error : true,
-					error_description : "The device id was not found"
-				};
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
 				return ret;
 			}
-			var successCallback = function(response) {
-				if (angular.isDefined(response.body.error)) {
-					ret = {
-						code : response.body.code,
-						error : true,
-						error_description : response.body.error_description
-					};
-				} else {
-					ret = {
-						code : response.body.code,
-						data : response.body.data,
-						error : false,
-						error_description : response.body.error_description
-					};
-				}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
 				return ret;
-			};
-			var errorCallback = function(response) {
-				ret = {
-					code : response.body.code,
-					error : true,
-					error_description : response.body.error_description
-				};
-				return ret;
-			};
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
 			var config = {
 				method : 'GET',
-				url : service.hostURL + '/devices/getNumStrips?deviceId=' + deviceId
+				url : service.hostURL + '/devices/discoverCaps?particleCloudId=' + cloudId + '&deviceId=' + deviceId
+					+ '&authtoken=' + hcAuthToken
 			};
-			return $http(config).then(
+			let prom = $http(config).then(
 				successCallback, errorCallback);
+			return prom;
 		};
 		return service;
 	} ]);

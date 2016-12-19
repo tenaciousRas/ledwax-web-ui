@@ -11,16 +11,15 @@ function ParticleDevicesController() {
 	/**
 	 * Returns a list of devices registered with the particle cloud.
 	 */
-	const deviceList = (request, reply) => {
+	const cloudDeviceList = (request, reply) => {
 		let token = request.payload.token;
 		let particle = request.app.particle.api;
 		let devicesPr = particle.listDevices({
 			auth : token
 		});
-
 		devicesPr.then(
 			(devices) => {
-				server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Devices: ', devices);
+				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Devices: ', devices);
 				return reply(data);
 			},
 			(err) => {
@@ -47,10 +46,10 @@ function ParticleDevicesController() {
 		});
 		fnPr.then(
 			(data) => {
-				server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Function called succesfully:', data);
+				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Function called succesfully:', data);
 				return reply(data);
 			}, (err) => {
-				server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'An error occurred:', err);
+				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'An error occurred:', err);
 				return reply(err);
 			}
 		);
@@ -69,11 +68,11 @@ function ParticleDevicesController() {
 		});
 		devicesPr.then(
 			(data) => {
-				server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device attrs retrieved successfully:', data);
+				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device attrs retrieved successfully:', data);
 				return reply(data);
 			},
 			(err) => {
-				server.log([ 'error', 'ParticleDevicesController#deviceList' ], 'API call failed: ', err);
+				request.server.log([ 'error', 'ParticleDevicesController#deviceList' ], 'API call failed: ', err);
 				return reply(boom.badImplementation(err));
 			}
 		);
@@ -93,10 +92,10 @@ function ParticleDevicesController() {
 			auth : token
 		}).then(
 			(data) => {
-				server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device variable retrieved successfully:', data);
+				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device variable retrieved successfully:', data);
 				return reply(data);
 			}, (err) => {
-				server.log([ 'error', 'ParticleDevicesController#deviceList' ], 'An error occurred while getting attrs:', err);
+				request.server.log([ 'error', 'ParticleDevicesController#deviceList' ], 'An error occurred while getting attrs:', err);
 				return reply(boom.badImplementation(err));
 			});
 	}
@@ -115,10 +114,10 @@ function ParticleDevicesController() {
 			auth : token
 		}).then(
 			(data) => {
-				server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device is' + (signalOn ? '' : ' not') + ' shouting rainbows:', data);
+				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device is' + (signalOn ? '' : ' not') + ' shouting rainbows:', data);
 				return reply(data);
 			}, (err) => {
-				server.log([ 'error', 'ParticleDevicesController#deviceList' ], 'Error sending a signal to the device:', err);
+				request.server.log([ 'error', 'ParticleDevicesController#deviceList' ], 'Error sending a signal to the device:', err);
 				return reply(boom.badImplementation(err));
 			});
 	}

@@ -131,7 +131,7 @@ angular.module(
 					disabled : false
 				}, {
 					title : 'Stored Devices',
-					include : 'partials/tab_newdevices.html',
+					include : 'partials/tab_storeddevices.html',
 					disabled : false
 				} ];
 			} ]);

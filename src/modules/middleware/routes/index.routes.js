@@ -175,6 +175,16 @@ let routeConfig = [
 			validate : validations.ledwaxCloudDevices.saveDevice
 		}
 	}, {
+		method : 'POST',
+		path : '/devices/saveDeviceANDLEDStrips',
+		handler : ledwaxCloudDeviceController.saveDeviceANDLEDStrips,
+		config : {
+			description : 'Save device to persistent storage and automatically save LED strips.',
+			notes : 'Performs insert or update.  Returns the saved LEDWax device and LED strips.',
+			tags : [ 'api' ],
+			validate : validations.ledwaxCloudDevices.saveDeviceANDLEDStrips
+		}
+	}, {
 		method : 'GET',
 		path : '/devices/discoverDevices',
 		handler : ledwaxDeviceDiscoverController.discoverLEDWaxDevices,

@@ -5,6 +5,9 @@ const assert = require('assert');
 let pg = require('pg');
 const boom = require('boom');
 
+const hcAuthToken = '254406f79c1999af65a7df4388971354f85cfee9';
+const hcDeviceId = '460043000a47343432319876';
+
 describe('api', () => {
 
 	let server,
@@ -59,9 +62,11 @@ describe('api', () => {
 			let device = db.getModel('ledwax_device');
 			device.destroy({
 				where : {
-					username : 'foo'
+					id : {
+						$gt : 0
+					}
 				},
-				truncate : true //ignore where and truncate the table instead
+				truncate : false //ignore where and truncate the table instead
 			}).then((affectedRows) => {
 				// inject request
 				let options = {
@@ -88,9 +93,11 @@ describe('api', () => {
 			let ledwaxDevice = db.getModel('ledwax_device');
 			ledwaxDevice.destroy({
 				where : {
-					id : 'foo'
+					id : {
+						$gt : 0
+					}
 				},
-				truncate : true //ignore where and truncate the table instead
+				truncate : false //ignore where and truncate the table instead
 			}).then((affectedRows) => {
 				let vals = {
 					name : 'testfoo',
@@ -127,15 +134,6 @@ describe('api', () => {
 								let ret = JSON.parse(response.payload)[0];
 								expect(ret.deviceId).toBe(vals.deviceId);
 								expect(ret.numStrips).toBe(vals.numStrips);
-								expect(ret.stripIndex).toBe(vals.stripIndex);
-								expect(ret.stripType).toBe(vals.stripType);
-								expect(ret.dispMode).toBe(vals.dispMode);
-								expect(ret.modeColor).toBe(vals.modeColor);
-								expect(ret.modeColorIdx).toBe(vals.modeColorIdx);
-								expect(ret.brightness).toBe(vals.brightness);
-								expect(ret.fadeMode).toBe(vals.fadeMode);
-								expect(ret.fadeTime).toBe(vals.fadeTime);
-								expect(ret.colorTime).toBe(vals.colorTime);
 							} catch (e) {
 								fail('there was an unexpected error:\n' + e);
 							}
@@ -223,9 +221,11 @@ describe('api', () => {
 			let device = db.getModel('ledwax_device');
 			device.destroy({
 				where : {
-					username : 'foo'
+					id : {
+						$gt : 0
+					}
 				},
-				truncate : true //ignore where and truncate the table instead
+				truncate : false //ignore where and truncate the table instead
 			}).then((affectedRows) => {
 				// inject request
 				let options = {
@@ -252,9 +252,11 @@ describe('api', () => {
 			let ledwaxDevice = db.getModel('ledwax_device');
 			ledwaxDevice.destroy({
 				where : {
-					id : 'foo'
+					id : {
+						$gt : 0
+					}
 				},
-				truncate : true //ignore where and truncate the table instead
+				truncate : false //ignore where and truncate the table instead
 			}).then((affectedRows) => {
 				let vals = {
 					name : 'testfoo',
@@ -291,15 +293,6 @@ describe('api', () => {
 								let ret = JSON.parse(response.payload);
 								expect(ret.deviceId).toBe(vals.deviceId);
 								expect(ret.numStrips).toBe(vals.numStrips);
-								expect(ret.stripIndex).toBe(vals.stripIndex);
-								expect(ret.stripType).toBe(vals.stripType);
-								expect(ret.dispMode).toBe(vals.dispMode);
-								expect(ret.modeColor).toBe(vals.modeColor);
-								expect(ret.modeColorIdx).toBe(vals.modeColorIdx);
-								expect(ret.brightness).toBe(vals.brightness);
-								expect(ret.fadeMode).toBe(vals.fadeMode);
-								expect(ret.fadeTime).toBe(vals.fadeTime);
-								expect(ret.colorTime).toBe(vals.colorTime);
 							} catch (e) {
 								fail('there was an unexpected error:\n' + e);
 							}
@@ -378,9 +371,11 @@ describe('api', () => {
 			let ledwaxDevice = db.getModel('ledwax_device');
 			ledwaxDevice.destroy({
 				where : {
-					id : 'foo'
+					id : {
+						$gt : 0
+					}
 				},
-				truncate : true //ignore where and truncate the table instead
+				truncate : false //ignore where and truncate the table instead
 			}).then((affectedRows) => {
 				let vals = {
 					name : 'testfoo',
@@ -444,9 +439,11 @@ describe('api', () => {
 			let ledwaxDevice = db.getModel('ledwax_device');
 			ledwaxDevice.destroy({
 				where : {
-					username : 'foo'
+					id : {
+						$gt : 0
+					}
 				},
-				truncate : true //ignore where and truncate the table instead
+				truncate : false //ignore where and truncate the table instead
 			}).then((affectedRows) => {
 				let vals = {
 					name : 'testfoo',
@@ -493,15 +490,6 @@ describe('api', () => {
 									expect(ret.deviceId).toBe(options.payload.deviceId);
 									expect(ret.particleCloudId).toBe(particleCloud.id);
 									expect(device.numStrips).toBe(options.payload.numStrips);
-									expect(device.stripIndex).toBe(options.payload.stripIndex);
-									expect(device.stripType).toBe(options.payload.stripType);
-									expect(device.dispMode).toBe(options.payload.dispMode);
-									expect(device.modeColor).toBe(options.payload.color24Bit);
-									expect(device.modeColorIdx).toBe(options.payload.modeColorIndex);
-									expect(device.brightness).toBe(options.payload.brightness);
-									expect(device.fadeMode).toBe(options.payload.fadeMode);
-									expect(device.fadeTime).toBe(options.payload.fadeTimeInterval);
-									expect(device.colorTime).toBe(options.payload.colorHoldTime);
 									done();
 								});
 							}
@@ -515,4 +503,77 @@ describe('api', () => {
 
 	});
 
+	describe('LedwaxCloudDeviceController#saveDeviceANDSaveLEDStrips', () => {
+		it('valid params, device not saved already, responds with 200 OK and saved device', (done) => {
+			// delete all devices
+			let db = server.plugins['hapi-sequelize']['apidb'];
+			let particleCloud = db.getModel('particle_cloud');
+			let ledwaxDevice = db.getModel('ledwax_device');
+			ledwaxDevice.destroy({
+				where : {
+					id : {
+						$gt : 0
+					}
+				},
+				truncate : false //ignore where and truncate the table instead
+			}).then((affectedRows) => {
+				let vals = {
+					name : 'testfoo',
+					ip : 'address.ip',
+					port : 20000
+				};
+				// insert base particle cloud
+				particleCloud.build(vals).save().then((particleCloud) => {
+					// inject request
+					let options = {
+						method : 'POST',
+						url : '/devices/saveDeviceANDLEDStrips',
+						payload : {
+							sessiontoken : hcAuthToken,
+							authtoken : hcAuthToken,
+							particleCloudId : particleCloud.id,
+							deviceId : hcDeviceId,
+							numStrips : 3,
+							stripIndex : 0,
+							stripType : 1,
+							dispMode : 2,
+							color24Bit : 234153,
+							modeColorIndex : 0,
+							brightness : 255,
+							fadeMode : 0,
+							fadeTimeInterval : 500,
+							colorHoldTime : 50000
+						}
+					};
+
+					server.inject(options, (response) => {
+						try {
+							expect(response.statusCode).toBe(200);
+							let ret = JSON.parse(response.payload);
+							if (typeof ret.error != 'undefined') {
+								fail('there was an error in the response\n' + response.payload);
+								done();
+							} else {
+								// check the saved device
+								ledwaxDevice.find({
+									where : {
+										id : ret.id
+									},
+								}).then((device) => {
+									expect(ret.deviceId).toBe(options.payload.deviceId);
+									expect(ret.particleCloudId).toBe(particleCloud.id);
+									expect(device.numStrips).toBe(options.payload.numStrips);
+									expect(ret.ledStrips.length).toBe(3);
+									done();
+								});
+							}
+						} catch (e) {
+							fail('there was an unexpected error:\n' + e);
+						}
+					});
+				});
+			});
+		});
+		
+	});
 });

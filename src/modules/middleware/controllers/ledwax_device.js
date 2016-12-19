@@ -4,7 +4,6 @@
 const boom = require('boom');
 const _ = require('lodash');
 const util = require('../../../util');
-const particlewrap = require('particle-api-js');
 
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
 const ledwax_iot_config = require('../../../particle-config/iotdef_ledwax.json');
@@ -81,30 +80,15 @@ const LedwaxDeviceController = () => {
 	}
 
 	/**
-	 * Generic function calls for convenience methods.
-	 * @private
+	 * Wrapper for util.genericParticleFunctionCall(particle, authToken, deviceId, log, iotFn, arg).
 	 */
-	const genericParticleFunctionCall = (request, reply, iotFn,  arg) => {
+	const doGenericParticleFunctionCall = (request, iotFn, arg) => {
 		let particle = request.app.particle.api;
 		let authToken = request.payload.authtoken;
 		let deviceId = request.payload.deviceId;
-		let fnProm = particle.callFunction({
-			deviceId : deviceId,
-			name : iotFn,
-			argument : arg,
-			auth : authToken
-		});
-		if (!fnProm) {
-			return reply(boom.expectationFailed('unable to call particle function - unknown error'));
-		}
-		fnProm.then(
-			(data) => {
-				request.server.log([ 'info', 'LedwaxDeviceController#' + funcName ], 'Device function retrieved successfully:', data);
-				return reply(data);
-			}, (err) => {
-				request.server.log([ 'info', 'LedwaxDeviceController#' + funcName ], 'An error occurred while getting function:', err);
-				return reply(boom.expectationFailed(err));
-			});
+		let log = request.server.log;
+		let prom = util.genericParticleFunctionCall(particle, authToken, deviceId, log, iotFn, arg);
+		return prom;
 	};
 
 	/**
@@ -116,7 +100,12 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'idx;' + stripIndex;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	/**
@@ -128,7 +117,12 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'brt;' + brightness;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	/**
@@ -140,7 +134,12 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'mod;' + dispMode;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	/**
@@ -156,7 +155,12 @@ const LedwaxDeviceController = () => {
 		//	where mode-color-index is the index of the mode color (family 1 display mode) to set
 		//	valid color values are 0 - 16777215 (24-bit integer)
 		let arg = 'col;' + modeColorIndex + ',' + color24Bit;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	/**
@@ -169,7 +173,12 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'mht;' + holdTime;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	/**
@@ -182,7 +191,12 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'lfm;' + fadeMode;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	/**
@@ -195,7 +209,12 @@ const LedwaxDeviceController = () => {
 		// The format for "command" is:
 		// > [command-name];[cmd-value]?[,cmd-value]*
 		let arg = 'lfti;' + fadeTimeInterval;
-		return genericParticleFunctionCall(request, reply, iotFn, arg);
+		let prom = doGenericParticleFunctionCall(request, iotFn, arg);
+		prom.then((data) => {
+			return reply(data);
+		}, (err) => {
+			return reply(boom.expectationFailed(err));
+		});
 	};
 
 	// expose public methods

@@ -151,6 +151,26 @@ module.exports.ledwaxCloudDevices = {
 			fadeTimeInterval : Joi.number().integer().min(0).max(65535).optional()
 		},
 		failAction : failActDelegate('custom')
+	},
+	saveDeviceANDLEDStrips : {
+		payload : {
+			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
+			authtoken : Joi.string().trim().min(3).max(100).optional(),
+			id : Joi.number().integer().optional(),
+			particleCloudId : Joi.number().integer().required(),
+			deviceId : Joi.string().trim().min(3).max(100).required(),
+			numStrips : Joi.number().integer().min(0).max(65535).optional(),
+			stripIndex : Joi.number().integer().min(0).max(65535).optional(),
+			stripType : Joi.number().integer().min(0).max(1).optional(),
+			brightness : Joi.number().integer().min(0).max(1024).optional(),
+			dispMode : Joi.number().integer().min(0).max(35).optional(),
+			modeColorIndex : Joi.number().integer().min(0).max(65535).optional(),
+			color24Bit : Joi.number().integer().min(0).max(16777215).optional(),
+			colorHoldTime : Joi.number().integer().min(0).max(65535).optional(),
+			fadeMode : Joi.number().integer().min(0).max(2).optional(),
+			fadeTimeInterval : Joi.number().integer().min(0).max(65535).optional()
+		},
+		failAction : failActDelegate('custom')
 	}
 }
 

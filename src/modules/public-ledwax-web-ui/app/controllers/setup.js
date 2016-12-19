@@ -3,8 +3,9 @@
 angular.module(
 	'LEDWAXW3.setup',
 	[ 'ngCookies', 'ngSanitize', 'pascalprecht.translate', 'LEDWAXW3.services' ])
-	.controller('SetupTabsCtrl', [ '$scope', function($scope) {
+	.controller('SetupTabsCtrl', [ '$rootScope', '$scope', function($rootScope, $scope) {
 		$scope.tabs = $scope.setupTabs;
+		$scope.getDeviceList(); // invoked twice if placed in SetupCtrl
 	} ]).controller(
 	'SetupCtrl',
 	[ '$rootScope',
@@ -17,40 +18,45 @@ angular.module(
 		'REST_IoT',
 		function($rootScope, $scope, $cookies, $sanitize, $translate, $filter,
 			Settings, REST_IoT) {
-			$scope.getDeviceList = function() {
-				let devList = REST_IoT
-					.getDevices($scope.userSession.auth_token);
-				return devList;
+			$scope.getDeviceList = () => {
+				let prom = REST_IoT
+					.discoverDevices($scope.currentCloudHost.id, $scope.userSession.auth_token);
+				prom.then((resp) => {
+					for (var i = 0; i < resp.data.length; i++) {
+						resp.data[i].toggleShowDetails = false;
+					}
+					$scope.freshDevices = resp.data;
+					$scope.pagedFreshDevices = $scope.groupToPages(
+						$scope.freshDevices, $scope.pageSizeFresh,
+						$scope.itemFilter, $scope.orderProp,
+						$scope.reverseSort, 'totalItemsFresh');
+					prom = REST_IoT.getStoredDevices($scope.currentCloudHost.id, 'foobar-sessiontoken');
+					prom.then((resp) => {
+						$scope.storedDevices = resp.data;
+						$scope.pagedStoredDevices = $scope.groupToPages(
+							$scope.storedDevices, $scope.pageSizeStored,
+							$scope.itemFilter, $scope.orderProp,
+							$scope.reverseSort, 'totalItemsStored');
+						$rootScope.setPhantomStatusReady();
+					}, (err) => {
+						$rootScope.setPhantomStatusReady();
+					});
+				}, (err) => {
+					$rootScope.setPhantomStatusReady();
+				});
 			};
 			// setup pagination 
-			$scope.totalItems = 0; // rest call is async
-			$scope.currentPage = 1;
-			$scope.pageSize = 8;
-			$scope.freshDevices = [
-				{
-					name : 'foo',
-					type : 'wax'
-				},
-				{
-					name : 'bar',
-					type : 'wax'
-				},
-				{
-					name : 'baz',
-					type : 'wax'
-				},
-				{
-					name : 'quux',
-					type : 'unknown'
-				},
-				{
-					name : 'cinegt',
-					type : 'wax'
-				}
-			];
+			$scope.totalItemsFresh = 0; // rest call is async
+			$scope.currentPageFresh = 1;
+			$scope.pageSizeFresh = 8;
+			$scope.totalItemsStored = 0; // rest call is async
+			$scope.currentPageStored = 1;
+			$scope.pageSizeStored = 8;
+			$scope.pagedFreshDevices = [];
+			$scope.pagedStoredDevices = [];
 			// item filtering
 			$scope.itemFilter = '';
-			$scope.getFilteredDevices = function(query, items, modelName) {
+			$scope.getFilteredDevices = (query, items, modelName) => {
 				$scope.itemFilter = query;
 				if (!modelName) {
 					console.log('unable to sort, invalid modelName: ' + modelName);
@@ -61,31 +67,33 @@ angular.module(
 				$scope.currentPage = 1;
 			};
 			// setup sorting
-			$scope.orderProp = 'name';
-			$scope.reverseSort = false;
-			$scope.sortBy = function(prop, items, modelName = null) {
-				if (prop == $scope.orderProp) {
-					$scope.reverseSort = !$scope.reverseSort;
+			$scope.orderPropFresh = 'name';
+			$scope.reverseSortFresh = false;
+			$scope.orderPropStored = 'name';
+			$scope.reverseSortStored = false;
+			$scope.sortBy = (prop, orderPropName, reversePropName, items, modelName = null) => {
+				if (prop == $scope[orderPropName]) {
+					$scope[reversePropName] = !$scope.reverseSort;
 				} else {
-					$scope.orderProp = prop;
-					$scope.reverseSort = false;
+					$scope[orderPropName] = prop;
+					$scope[reversePropName] = false;
 				}
 				if (!modelName) {
 					console.log('unable to sort, invalid modelName: ' + modelName);
 				}
-				$scope[modelName] = $scope.groupToPages(
-					items, $scope.pageSize,
-					$scope.itemFilter, $scope.orderProp,
-					$scope.reverseSort);
+			//$scope[modelName] = $scope.groupToPages(
+			//	items, $scope.pageSize,
+			//	$scope.itemFilter, $scope.orderProp,
+			//	$scope.reverseSort);
 			};
 			// setup pagination
-			$scope.groupToPages = function(items, itemsPerPage,
-				filterQuery, sortProp, reverseSort) {
+			$scope.groupToPages = (items, itemsPerPage,
+				filterQuery, sortProp, reverseSort, totalItemsPropName) => {
 				let ret = [];
 				// filtering
 				let newList = $filter('filter')(items,
 					filterQuery);
-				$scope.totalItems = newList.length;
+				$scope[totalItemsPropName] = newList.length;
 				// sorting
 				newList = $filter('orderBy')(newList, sortProp,
 					reverseSort);
@@ -100,12 +108,22 @@ angular.module(
 				}
 				return ret;
 			};
-			$scope.pagedFreshDevices = $scope.groupToPages(
-				$scope.freshDevices, $scope.pageSize,
-				$scope.itemFilter, $scope.orderProp,
-				$scope.reverseSort);
+			// device details handler
+			$scope.toggleDeviceDetais = (device) => {
+				device.toggleShowDetails = !device.toggleShowDetails;
+				if (!angular.isDefined(device.caps) || device.caps.length < 1) {
+					let prom = REST_IoT.getDeviceCaps($scope.currentCloudHost.id, 'foobar-sessiontoken', device.id);
+					prom.then((resp) => {
+						if (!angular.isDefined(resp.data)) {
+							device.caps = [];
+						} else {
+							device.caps = resp.data;
+						}
+					});
+				}
+			};
 			// build progress bar feature
-			$scope.buildPBarUI = function(fName) {
+			$scope.buildPBarUI = (fName) => {
 				if (Settings.uiState.uploadStatus.uploading) {
 					$scope.pBarClass = '';
 					$scope.uploadProgress = 100.0
@@ -119,10 +137,9 @@ angular.module(
 				}
 			};
 			$scope.buildPBarUI();
-			$scope.abortUpload = function() {
+			$scope.abortUpload = () => {
 				$upload.abort();
 				Settings.uiState.uploadStatusGCode.uploading = false;
 				$scope.setPBarClass();
 			};
-			$rootScope.setPhantomStatusReady();
 		} ]);
