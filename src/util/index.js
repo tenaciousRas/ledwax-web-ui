@@ -34,7 +34,7 @@ module.exports = {
 	/**
 	 * Generic function calls for exposed particle functions.
 	 */
-	genericParticleFunctionCall : (particle, authToken, deviceId, log, iotFn, arg) => {
+	genericParticleFunctionCall : (particle, authToken, deviceId, iotFn, arg, log) => {
 		const logTag = 'Util#genericParticleFunctionCall#iotFn';
 		let fnProm = particle.callFunction({
 			deviceId : deviceId,
@@ -47,9 +47,9 @@ module.exports = {
 		}
 		fnProm.then(
 			(data) => {
-				log([ 'info', logTag ], 'Device function invoked successfully:', data);
+				log('info', logTag, 'Device function invoked successfully:' + data);
 			}, (err) => {
-				log([ 'info', logTag ], 'An error occurred while invoking function:', err);
+				log('info', logTag, 'An error occurred while invoking function:' + err);
 			});
 		return fnProm;
 	},
@@ -73,16 +73,16 @@ module.exports = {
 		prom.then(
 			(resp) => {
 				let attrs = resp.body;
-				//				log([ 'debug', logTag ],
-				//					'Device attributes retrieved successfully: ' + JSON.stringify(attrs));
+				log('debug', logTag,
+					'Device attributes retrieved successfully: ' + JSON.stringify(attrs));
 				if (!attrs.name || !attrs.name.startsWith('ledwax')) {
 					let err = 'oops - somehow this doesn\'t appear to be a LEDWax device. The device ID is ' + attrs.id;
-					log([ 'error', logTag ], err);
+					log('error', logTag, err);
 					deferred.reject(err);
 				}
 				if (!attrs.variables && !attrs.functions.length < 1) {
 					let err = 'oops - a LEDWax device was discovered with no capabilities. The device ID is ' + attrs.id;
-					log([ 'error', logTag ], err);
+					log('error', logTag, err);
 					deferred.reject(err);
 				}
 				// cache capabilities
@@ -98,7 +98,7 @@ module.exports = {
 				// handle variables with REST calls
 				async.eachOf(attrs.variables, (value, key, callback) => {
 					try {
-						//						log([ 'info', logTag ], 'retrieving device variable ' + key + ' from cloud for device:', attrs.id);
+						log('info', logTag, 'retrieving device variable ' + key + ' from cloud for device:' + attrs.id);
 						let fnProm = particle.getVariable({
 							deviceId : attrs.id,
 							name : key,
@@ -106,7 +106,7 @@ module.exports = {
 						});
 						if (!fnProm) {
 							let errMsg = 'unable to retrieve device variable ' + key + ' from cloud for device:' + attrs.id;
-							//							log([ 'warn', logTag ], errMsg);
+							log('warn', logTag, errMsg);
 							return callback(new Error(errMsg));
 						}
 						fnProm.then((data) => {
@@ -125,7 +125,7 @@ module.exports = {
 					}
 				}, (err) => {
 					if (err) {
-						log([ 'error', logTag ], 'An error occurred while getting device capabilities for device:' + deviceId + ', error was: ', err);
+						log('error', logTag, 'An error occurred while getting device capabilities for device:' + deviceId + ', error was: ' + err);
 						if (caps.vrs.length < 1 && caps.fns.length < 1) {
 							deferred.reject(err);
 						}

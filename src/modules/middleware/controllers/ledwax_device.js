@@ -86,8 +86,8 @@ const LedwaxDeviceController = () => {
 		let particle = request.app.particle.api;
 		let authToken = request.payload.authtoken;
 		let deviceId = request.payload.deviceId;
-		let log = request.server.log;
-		let prom = util.genericParticleFunctionCall(particle, authToken, deviceId, log, iotFn, arg);
+		let logger = util.logDelegateFactory(request);
+		let prom = util.genericParticleFunctionCall(particle, authToken, deviceId, iotFn, arg, logger);
 		return prom;
 	};
 

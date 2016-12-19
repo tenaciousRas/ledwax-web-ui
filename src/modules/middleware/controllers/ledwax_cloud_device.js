@@ -186,17 +186,18 @@ const LedwaxCloudDeviceController = () => {
 						for (let i = 0; i < numStrips; i++) {
 							asyncFunctions.push((callback) => {
 								let arg = 'idx;' + i;
-								let prom = util.genericParticleFunctionCall(particle, authToken, vals.deviceId, request.server.log, iotFn, arg);
+								// logger delegate to pass to loginToCloud so it can be tested without request
+								let logger = util.logDelegateFactory(request);
+								let prom = util.genericParticleFunctionCall(particle, authToken, vals.deviceId, iotFn, arg, logger);
 								prom.then((data) => {
 									// get device capabilities
-									let prom = util.getParticleDeviceCapabilities(particle, authToken, vals.deviceId, request.server.log);
+									let prom = util.getParticleDeviceCapabilities(particle, authToken, vals.deviceId, logger);
 									prom.then((deviceCaps) => {
 										vals = {
 											ledwaxDeviceId : savedDevice.id,
 											deviceId : deviceCaps.dvcId,
 											stripIndex : i
 										};
-										console.log('#####' + JSON.stringify(vals));
 										for (let i = 0; i < deviceCaps.vrs.length; i++) {
 											if (deviceCaps.vrs[i].varname == 'numStrips') {
 												continue;
