@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
 		classMethods : {
 			associate : (models) => {
 				return webuser.belongsToMany(models.particle_cloud, {
-					through : 'webuser_particle_cloud_auth_tokens'
+					through : models.webuser_particle_cloud_auth_tokens
 				});
 			}
 		}

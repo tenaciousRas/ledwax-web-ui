@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 	}, {
 		classMethods : {
 			associate : (models) => {
+				particle_cloud.hasMany(models.ledwax_device);
 				return particle_cloud.belongsToMany(models.webuser, {
 					through : models.webuser_particle_cloud_auth_tokens
 				});

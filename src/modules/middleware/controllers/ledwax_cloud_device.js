@@ -4,6 +4,7 @@
 const boom = require('boom');
 const async = require('async');
 const Q = require('q');
+const _ = require('lodash');
 const util = require('../../../util');
 
 /**
@@ -13,24 +14,34 @@ const LedwaxCloudDeviceController = () => {
 
 	/**
 	 * Returns a list of devices in persistent storage for given cloud id.
-	 * @request.query.particleCloudId | request.payload.particleCloudId required the particleCloudId to query.
+	 * @param request.query.particleCloudId | request.payload.particleCloudId required the particleCloudId to query.
 	 */
 	const retrieveAllStoredDevices = (request, reply) => {
 		let particleCloudId = request.payload ? request.payload.particleCloudId : request.query.particleCloudId;
 		let db = request.getDb('apidb');
 		let ledwaxDevice = db.getModel('ledwax_device');
+		let ledStrip = db.getModel('ledwax_device_ledstrip');
 		try {
 			ledwaxDevice.findAll({
 				where : {
 					particleCloudId : particleCloudId
 				},
+				include : [ {
+					model : ledStrip
+				} ]
 			}).then((devices) => {
 				request.server.log([ 'debug', 'LedwaxCloudDeviceController#retrieveAllStoredDevices' ],
-					'DB call complete - promise success, devices =:' + devices);
+					'DB call complete - promise success, devices =:' + JSON.stringify(devices));
+				let ret = [];
 				if (null == devices) {
-					return reply([]);
+					return reply(ret);
 				}
-				return reply(devices);
+				for (let i = 0; i < devices.length; i++) {
+					let device = JSON.parse(JSON.stringify(devices[i]));
+					device.devTypeFW = 'LEDWax Device';
+					ret.push(device);
+				}
+				return reply(ret);
 			});
 		} catch (e) {
 			return reply(boom.badImplementation('exception while executing find all devices: ', e));
@@ -39,8 +50,8 @@ const LedwaxCloudDeviceController = () => {
 
 	/**
 	 * Find a device in persistent storage.
-	 * @request.query.particleCloudId | request.payload.particleCloudId required the particleCloudId to query.
-	 * @request.query.DeviceId | request.payload.DeviceId required the deviceId to query.
+	 * @param request.query.particleCloudId | request.payload.particleCloudId required the particleCloudId to query.
+	 * @param request.query.DeviceId | request.payload.DeviceId required the deviceId to query.
 	 */
 	const retrieveStoredDevice = (request, reply) => {
 		let particleCloudId = request.payload ? request.payload.particleCloudId : request.query.particleCloudId;
@@ -52,13 +63,15 @@ const LedwaxCloudDeviceController = () => {
 				where : {
 					deviceId : new String(deviceId),
 					particleCloudId : particleCloudId
-				},
+				}
 			}).then((device) => {
 				request.server.log([ 'debug', 'LedwaxCloudDeviceController#retrieveStoredDevice' ],
 					'DB call complete - promise success, devices =:' + device);
 				if (null == device) {
 					return reply({});
 				}
+				device = JSON.parse(JSON.stringify(device));
+				device.devTypeFW = 'LEDWax Device';
 				return reply(device);
 			});
 		} catch (e) {
@@ -68,9 +81,9 @@ const LedwaxCloudDeviceController = () => {
 
 	/**
 	 * Save a device to persistent storage.
-	 * @request.payload.numStrips required the number of connected LED strips.
-	 * @request.payload.particleCloudId required the particle cloud ID to save.
-	 * @request.payload.deviceId required the deviceId to save.
+	 * @param request.payload.numStrips required the number of connected LED strips.
+	 * @param request.payload.particleCloudId required the particle cloud ID to save.
+	 * @param request.payload.deviceId required the deviceId to save.
 	 */
 	const saveDevice = (request, reply) => {
 		let db = request.getDb('apidb');
@@ -79,11 +92,13 @@ const LedwaxCloudDeviceController = () => {
 		let particleCloudId = request.payload ? request.payload.particleCloudId : request.query.particleCloudId;
 		let deviceId = request.payload ? request.payload.deviceId : request.query.deviceId;
 		let numStrips = request.payload ? request.payload.numStrips : request.query.numStrips;
+		let deviceNameFW = request.payload ? request.payload.deviceNameFW : request.query.deviceNameFW;
 		let vals = {
 			id : id,
 			particleCloudId : particleCloudId,
 			deviceId : deviceId,
-			numStrips : numStrips
+			numStrips : numStrips,
+			deviceNameFW : deviceNameFW
 		};
 		// setup to save variable number of fields but all are required here
 		let saveFields = [];
@@ -107,6 +122,8 @@ const LedwaxCloudDeviceController = () => {
 			}).then((storedDevice) => {
 				if (storedDevice == null || typeof storedDevice.id == 'undefined' || !storedDevice.id) {
 					ledwaxDevice.build(vals).save().then((savedDevice) => {
+						savedDevice = JSON.parse(JSON.stringify(savedDevice));
+						savedDevice.devTypeFW = 'LEDWax Device';
 						return reply(savedDevice);
 					});
 				} else {
@@ -117,7 +134,10 @@ const LedwaxCloudDeviceController = () => {
 							id : storedDevice.id
 						}
 					}).then((updatedDevice) => {
-						return reply(updatedDevice);
+						storedDevice = JSON.parse(JSON.stringify(storedDevice));
+						storedDevice = _.merge({}, storedDevice, vals);
+						storedDevice.devTypeFW = 'LEDWax Device';
+						return reply(storedDevice);
 					});
 				}
 			});
@@ -129,10 +149,45 @@ const LedwaxCloudDeviceController = () => {
 	};
 
 	/**
+	 * Delete a device from persistent storage.
+	 * @param request.payload.particleCloudId required the particle cloud ID to save.
+	 * @param request.payload.deviceId required the deviceId to save.
+	 * @return number of deleted rows
+	 */
+	const deleteDevice = (request, reply) => {
+		let db = request.getDb('apidb');
+		let ledwaxDevice = db.getModel('ledwax_device');
+		let ledStrip = db.getModel('ledwax_device_ledstrip');
+		let particleCloudId = request.payload ? request.payload.particleCloudId : request.query.particleCloudId;
+		let deviceId = request.payload ? request.payload.deviceId : request.query.deviceId;
+		ledStrip.destroy({
+			where : {
+				deviceId : {
+					$eq : deviceId
+				}
+			},
+			truncate : false //ignore where and truncate the table instead
+		}).then((affectedRows) => {
+			ledwaxDevice.destroy({
+				where : {
+					deviceId : {
+						$eq : deviceId
+					}
+				},
+				truncate : false //ignore where and truncate the table instead
+			}).then((affectedRows) => {
+				return reply({
+					affectedRows : affectedRows
+				});
+			});
+		});
+	}
+
+	/**
 	 * Save a device to persistent storage.  Then call the paricle API to get all
 	 * LEDStrip data.
-	 * @request.payload.particleCloudId required the particle cloud ID to save.
-	 * @request.payload.deviceId required the deviceId to save.
+	 * @param request.payload.particleCloudId required the particle cloud ID to save.
+	 * @param request.payload.deviceId required the deviceId to save.
 	 */
 	const saveDeviceANDSaveLEDStrips = (request, reply) => {
 		let db = request.getDb('apidb');
@@ -143,12 +198,14 @@ const LedwaxCloudDeviceController = () => {
 		let particleCloudId = request.payload ? request.payload.particleCloudId : request.query.particleCloudId;
 		let deviceId = request.payload ? request.payload.deviceId : request.query.deviceId;
 		let numStrips = request.payload ? request.payload.numStrips : request.query.numStrips;
+		let deviceNameFW = request.payload ? request.payload.deviceNameFW : request.query.deviceNameFW;
 		let authToken = request.payload ? request.payload.authtoken : request.query.authtoken;
 		let vals = {
 			id : id,
 			particleCloudId : particleCloudId,
 			deviceId : deviceId,
-			numStrips : numStrips
+			numStrips : numStrips,
+			deviceNameFW : deviceNameFW
 		};
 		// setup to save variable number of fields but all are required here
 		let saveFields = [];
@@ -172,75 +229,13 @@ const LedwaxCloudDeviceController = () => {
 			}).then((storedDevice) => {
 				if (storedDevice == null || typeof storedDevice.id == 'undefined' || !storedDevice.id) {
 					ledwaxDevice.build(vals).save().then((savedDevice) => {
-						let retJSON = {
-							id : savedDevice.id,
-							particleCloudId : savedDevice.particleCloudId,
-							deviceId : savedDevice.deviceId,
-							numStrips : savedDevice.numStrips,
-							updatedAt : savedDevice.updatedAt,
-							createdAt : savedDevice.createdAt,
-							ledStrips : []
-						};
-						let iotFn = 'setLEDParams';
-						let asyncFunctions = [];
-						for (let i = 0; i < numStrips; i++) {
-							asyncFunctions.push((callback) => {
-								let arg = 'idx;' + i;
-								// logger delegate to pass to loginToCloud so it can be tested without request
-								let logger = util.logDelegateFactory(request);
-								let prom = util.genericParticleFunctionCall(particle, authToken, vals.deviceId, iotFn, arg, logger);
-								prom.then((data) => {
-									// get device capabilities
-									let prom = util.getParticleDeviceCapabilities(particle, authToken, vals.deviceId, logger);
-									prom.then((deviceCaps) => {
-										vals = {
-											ledwaxDeviceId : savedDevice.id,
-											deviceId : deviceCaps.dvcId,
-											stripIndex : i
-										};
-										for (let i = 0; i < deviceCaps.vrs.length; i++) {
-											if (deviceCaps.vrs[i].varname == 'numStrips') {
-												continue;
-											}
-											if (deviceCaps.vrs[i].varname == 'modeColor') {
-												deviceCaps.vrs[i].value = parseInt(deviceCaps.vrs[i].value, 16);
-											}
-											vals[deviceCaps.vrs[i].varname] = deviceCaps.vrs[i].value;
-										}
-										request.server.log([ 'info', 'LedwaxCloudDeviceController#saveDevicesANDSaveLEDStrips' ],
-											'particle call complete - save device =:' + deviceCaps);
-										ledStrip.build(vals).save().then((savedLEDStrip) => {
-											retJSON.ledStrips.push({
-												id : savedLEDStrip.id,
-												ledwaxDeviceId : savedLEDStrip.ledwaxDeviceId,
-												deviceId : savedLEDStrip.deviceId,
-												stripIndex : savedLEDStrip.stripIndex,
-												stripType : savedLEDStrip.stripType,
-												dispMode : savedLEDStrip.dispMode,
-												modeColor : savedLEDStrip.modeColor,
-												modeColorIdx : savedLEDStrip.modeColorIdx,
-												brightness : savedLEDStrip.brightness,
-												fadeMode : savedLEDStrip.fadeMode,
-												fadeTime : savedLEDStrip.fadeTime,
-												colorTime : savedLEDStrip.colorTime,
-												updatedAt : savedLEDStrip.updatedAt,
-												createdAt : savedLEDStrip.createdAt
-											});
-											callback();
-										});
-									}, (err) => {
-										return callback(err);
-									});
-								}, (err) => {
-									return callback(err);
-								});
-							});
-						}
-						async.series(asyncFunctions, (err) => {
-							if (err) {
-								return reply(boom.badImplementation('device saved, but unable to save LED strips', err));
-							}
-							return reply(retJSON);
+						// logger delegate to pass to util so it can be tested without request
+						let logger = util.logDelegateFactory(request);
+						let prom = saveDeviceLEDStripsFromDeviceParams(particle, db, authToken, savedDevice, logger);
+						prom.then((data) => {
+							return reply(data);
+						}, (err) => {
+							return reply(boom.badImplementation('device saved, but unable to save LED strips\n', err));
 						});
 					});
 				} else {
@@ -251,7 +246,7 @@ const LedwaxCloudDeviceController = () => {
 							id : storedDevice.id
 						}
 					}).then((updatedDevice) => {
-						return reply(updatedDevice);
+						return reply(storedDevice);
 					});
 				}
 			});
@@ -263,9 +258,94 @@ const LedwaxCloudDeviceController = () => {
 	};
 
 	/**
+	 * Call the paricle API to get all LEDStrip data.  Then store the LEDStrip data in persisten storage.
+	 * 
+	 * @param request.payload.particleCloudId required the particle cloud ID to save.
+	 * @param request.payload.deviceId required the deviceId to save.
+	 * @return a promise that resolves/rejects when all ledstrips have been stored or an error occurs.
+	 */
+	const saveDeviceLEDStripsFromDeviceParams = (particle, db, authToken, savedDevice, logger) => {
+		let deferred = Q.defer();
+		let ledwaxDevice = db.getModel('ledwax_device');
+		let ledStrip = db.getModel('ledwax_device_ledstrip');
+		let iotFn = 'setLEDParams';
+		let asyncFunctions = [];
+		let retJSON = {
+			id : savedDevice.id,
+			particleCloudId : savedDevice.particleCloudId,
+			deviceId : savedDevice.deviceId,
+			numStrips : savedDevice.numStrips,
+			devTypeFW : 'LEDWax Device',
+			deviceNameFW : savedDevice.deviceNameFW,
+			updatedAt : savedDevice.updatedAt,
+			createdAt : savedDevice.createdAt,
+			ledwax_device_ledstrips : []
+		};
+		for (let i = 0; i < savedDevice.numStrips; i++) {
+			asyncFunctions.push((callback) => {
+				let arg = 'idx;' + i;
+				let prom = util.genericParticleFunctionCall(particle, authToken, savedDevice.deviceId, iotFn, arg, logger);
+				prom.then((data) => {
+					// get device capabilities
+					let prom = util.getParticleDeviceCapabilities(particle, authToken, savedDevice.deviceId, logger);
+					prom.then((deviceCaps) => {
+						let vals = {
+							ledwaxDeviceId : savedDevice.id,
+							deviceId : deviceCaps.dvcId,
+							stripIndex : i
+						};
+						for (let i = 0; i < deviceCaps.vrs.length; i++) {
+							if (deviceCaps.vrs[i].varname == 'numStrips') {
+								continue;
+							}
+							if (deviceCaps.vrs[i].varname == 'modeColor') {
+								deviceCaps.vrs[i].value = parseInt(deviceCaps.vrs[i].value, 16);
+							}
+							vals[deviceCaps.vrs[i].varname] = deviceCaps.vrs[i].value;
+						}
+						logger('info', 'LedwaxCloudDeviceController#saveDeviceLEDStripsFromDeviceParams',
+							'particle call complete - save led strip =:' + JSON.stringify(vals));
+						ledStrip.build(vals).save().then((savedLEDStrip) => {
+							retJSON.ledwax_device_ledstrips.push({
+								id : savedLEDStrip.id,
+								ledwaxDeviceId : savedLEDStrip.ledwaxDeviceId,
+								deviceId : savedLEDStrip.deviceId,
+								stripIndex : savedLEDStrip.stripIndex,
+								stripType : savedLEDStrip.stripType,
+								dispMode : savedLEDStrip.dispMode,
+								modeColor : savedLEDStrip.modeColor,
+								modeColorIdx : savedLEDStrip.modeColorIdx,
+								brightness : savedLEDStrip.brightness,
+								fadeMode : savedLEDStrip.fadeMode,
+								fadeTime : savedLEDStrip.fadeTime,
+								colorTime : savedLEDStrip.colorTime,
+								updatedAt : savedLEDStrip.updatedAt,
+								createdAt : savedLEDStrip.createdAt
+							});
+							callback();
+						});
+					}, (err) => {
+						return callback(err);
+					});
+				}, (err) => {
+					return callback(err);
+				});
+			});
+		}
+		async.series(asyncFunctions, (err) => {
+			if (err) {
+				deferred.reject('device saved, but unable to save LED strips, error =:' + err);
+			} else {
+				deferred.resolve(retJSON);
+			}
+		});
+		return deferred.promise;
+	};
+
+	/**
 	 * Save a device LED strip to persistent storage.
-	 * @request.payload.stripIndex required the strip index to save.
-	 * @request.payload.DeviceId required the deviceId to save.
+	 * @param request.payload.stripIndex required the strip index to save.
+	 * @param request.payload.DeviceId required the deviceId to save.
 	 */
 	const saveDeviceLEDStrip = (request, reply) => {
 		let db = request.getDb('apidb');
@@ -342,6 +422,7 @@ const LedwaxCloudDeviceController = () => {
 		retrieveAllStoredDevices : retrieveAllStoredDevices,
 		retrieveStoredDevice : retrieveStoredDevice,
 		saveDevice : saveDevice,
+		deleteDevice : deleteDevice,
 		saveDeviceANDLEDStrips : saveDeviceANDSaveLEDStrips
 	};
 

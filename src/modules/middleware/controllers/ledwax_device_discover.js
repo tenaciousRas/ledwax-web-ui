@@ -55,6 +55,7 @@ const LedwaxDeviceDiscoverController = () => {
 					"device list from cloud: " + devices);
 				async.eachOf(devices, (value, key, callback) => {
 					let device = value;
+					device.devTypeFW = 'Unknown';
 					if (device.name && device.name.startsWith('ledwax')) {
 						// it's probably a LEDWax device!
 						request.server.log([ 'info', logTag ],
@@ -72,6 +73,7 @@ const LedwaxDeviceDiscoverController = () => {
 								return callback(new Error(errMsg));
 							}
 							fnProm.then((data) => {
+								device.devTypeFW = 'LedWax Device';
 								lwDvList.push(device);
 								callback();
 							}, (err) => {

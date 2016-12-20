@@ -139,16 +139,17 @@ module.exports.ledwaxCloudDevices = {
 			id : Joi.number().integer().optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
-			numStrips : Joi.number().integer().min(0).max(65535).optional(),
-			stripIndex : Joi.number().integer().min(0).max(65535).optional(),
-			stripType : Joi.number().integer().min(0).max(1).optional(),
-			brightness : Joi.number().integer().min(0).max(1024).optional(),
-			dispMode : Joi.number().integer().min(0).max(35).optional(),
-			modeColorIndex : Joi.number().integer().min(0).max(65535).optional(),
-			color24Bit : Joi.number().integer().min(0).max(16777215).optional(),
-			colorHoldTime : Joi.number().integer().min(0).max(65535).optional(),
-			fadeMode : Joi.number().integer().min(0).max(2).optional(),
-			fadeTimeInterval : Joi.number().integer().min(0).max(65535).optional()
+			numStrips : Joi.number().integer().min(0).max(65535).required(),
+			deviceNameFW : Joi.string().trim().min(1).max(100).required()
+		},
+		failAction : failActDelegate('custom')
+	},
+	deleteDevice : {
+		payload : {
+			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			id : Joi.number().integer().optional(),
+			particleCloudId : Joi.number().integer().required(),
+			deviceId : Joi.string().trim().min(3).max(100).required()
 		},
 		failAction : failActDelegate('custom')
 	},
@@ -159,16 +160,8 @@ module.exports.ledwaxCloudDevices = {
 			id : Joi.number().integer().optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
-			numStrips : Joi.number().integer().min(0).max(65535).optional(),
-			stripIndex : Joi.number().integer().min(0).max(65535).optional(),
-			stripType : Joi.number().integer().min(0).max(1).optional(),
-			brightness : Joi.number().integer().min(0).max(1024).optional(),
-			dispMode : Joi.number().integer().min(0).max(35).optional(),
-			modeColorIndex : Joi.number().integer().min(0).max(65535).optional(),
-			color24Bit : Joi.number().integer().min(0).max(16777215).optional(),
-			colorHoldTime : Joi.number().integer().min(0).max(65535).optional(),
-			fadeMode : Joi.number().integer().min(0).max(2).optional(),
-			fadeTimeInterval : Joi.number().integer().min(0).max(65535).optional()
+			numStrips : Joi.number().integer().min(0).max(65535).required(),
+			deviceNameFW : Joi.string().trim().min(1).max(100).required()
 		},
 		failAction : failActDelegate('custom')
 	}

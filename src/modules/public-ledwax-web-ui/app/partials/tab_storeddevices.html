@@ -1,31 +1,71 @@
-<div id="wrap_newdevices">
+<div id="wrap_storeddevices">
 	<div class="wrap-devices-table" class="">
-		<div class="row">
-			<div class="col-sm-12">
-				<table class="devices-table">
-					<thead>
-						<tr>
-							<th scope="col"><a href
-								ng:click="sortBy('name', storedDevices, 'pagedStoredDevices')">Name</a></th>
-							<th scope="col"><a href
-								ng:click="sortBy('type', storedDevices, 'pagedStoredDevices')">Type</a></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng:click=""
-							ng:repeat="device in pagedStoredDevices[currentPageStored - 1] | filter:query">
-							<td>{{device.name}}</td>
-							<td>{{device.type}}</td>
-						</tr>
-					</tbody>
-				</table>
-				<p>
-					<pagination total-items="totalItemsStored" page="currentPageStored"
-						items-per-page="pageSizeStored" class="pagination-sm"
-						boundary-links="true" rotate="false"></pagination>
-				</p>
-				<pre class="pagination-footer">Page: {{currentPageStored}} of {{pagedStoredDevices.length}}</pre>
+		<div class="devices-table">
+			<div class="row">
+				<div class="col-sm-6">
+					<a ng:click="sortBy('name', 'Stored', devicesStored, 'pagedDevicesStored')">Name&nbsp;<span
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
+						style="color: inherit;"></span></a>
+				</div>
+				<div class="col-sm-6">
+					<a ng:click="sortBy('type', 'Stored', devicesStored, 'pagedDevicesStored')">Type&nbsp;<span
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
+						style="color: inherit;"></span></a>
+				</div>
+			</div>
+			<div
+				ng:repeat="device in pagedDevicesStored[currentPageStored - 1] | filter:query">
+				<div class="row" ng:click="toggleDeviceDetailsStored(device)">
+					<div class="col-sm-6">{{device.deviceNameFW}}</div>
+					<div class="col-sm-5">{{device.devTypeFW}}</div>
+					<div class="col-sm-1">
+						<button id="butt_toggle_dev_details_{{device.id}}"
+							ng:click="toggleDeviceDetais(device)"
+							class="btn btn-primary">
+							<span style="color: white;"
+								class="glyphicon glyphicon-collapse-{{device.toggleShowDetails == true ? 'up' : 'down'}}"
+								aria-hidden="true"></span>
+						</button>
+					</div>
+				</div>
+				<div id="dev_details_{{device.id}}"
+					class="row {{device.toggleShowDetails == true ? 'show' : 'hide'}}">
+					<div class="wrap-device-details-vars col-sm-4">
+						<dl>
+							<dt></dt>
+							<dd>
+								<button id="butt_toggle_dev_details_{{device.deviceId}}"
+									ng:click="removeStoredDevice(device)" class="btn btn-primary">
+									<span style="color: white;" class="glyphicon glyphicon-save"
+										aria-hidden="true"></span>&nbsp;Remove Device ({{device.deviceNameFW}})
+								</button>
+							</dd>
+							<dt>Device ID:</dt>
+							<dd>{{device.deviceId}}</dd>
+						</dl>
+					</div>
+					<div class="wrap-device-details-vars col-sm-8">
+						<dl>
+							<dt>
+								<span class="glyphicon glyphicon-flag" aria-hidden="true"></span>&nbsp;LED Strips (total of {{device.numStrips}}):
+							</dt>
+							<dd ng:repeat="ledstrip in device.ledwax_device_ledstrips">
+								<ul class="list-group">
+									<li class="list-group-item">index: {{ledstrip.stripIndex}}</li>
+									<li class="list-group-item">type: {{ledstrip.stripType}}</li>
+									<li class="list-group-item">display mode: {{ledstrip.dispMode}}</li>
+								</ul>
+							</dd>
+						</dl>
+					</div>
+				</div>
 			</div>
 		</div>
+		<p>
+			<pagination total-items="totalItemsStored" page="currentPageStored"
+				items-per-page="pageSizeStored" class="pagination-sm"
+				boundary-links="true" rotate="false"></pagination>
+		</p>
+		<pre class="pagination-footer">Page: {{currentPageStored}} of {{pagedDevicesStored.length}}</pre>
 	</div>
 </div>

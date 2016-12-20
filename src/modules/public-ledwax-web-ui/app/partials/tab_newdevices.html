@@ -3,24 +3,25 @@
 		<div class="devices-table">
 			<div class="row">
 				<div class="col-sm-6">
-					<a ng:click="sortBy('name', freshDevices, 'pagedFreshDevices')">Name&nbsp;<span
+					<a
+						ng:click="sortBy('name', 'Fresh', devicesFresh, 'pagedDevicesFresh')">Name&nbsp;<span
 						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
 						style="color: inherit;"></span></a>
 				</div>
 				<div class="col-sm-6">
-					<a ng:click="sortBy('type', freshDevices, 'pagedFreshDevices')">Type&nbsp;<span
+					<a
+						ng:click="sortBy('type', 'Fresh', devicesFresh, 'pagedDevicesFresh')">Type&nbsp;<span
 						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
 						style="color: inherit;"></span></a>
 				</div>
 			</div>
 			<div
-				ng:repeat="device in pagedFreshDevices[currentPageFresh - 1] | filter:query">
-				<div class="row" ng:click="toggleDeviceDetais(device)">
+				ng:repeat="device in pagedDevicesFresh[currentPageFresh - 1] | filter:query">
+				<div class="row" ng:click="toggleDeviceDetailsFresh(device)">
 					<div class="col-sm-6">{{device.name}}</div>
-					<div class="col-sm-5">{{device.type}}</div>
+					<div class="col-sm-5">{{device.devTypeFW}}</div>
 					<div class="col-sm-1">
 						<button id="butt_toggle_dev_details_{{device.id}}"
-							ng:click="toggleDeviceDetais(device); return false"
 							class="btn btn-primary">
 							<span style="color: white;"
 								class="glyphicon glyphicon-collapse-{{device.toggleShowDetails
@@ -35,8 +36,8 @@
 						<dl>
 							<dt></dt>
 							<dd>
-								<button id="butt_toggle_dev_details_{{device.id}}"
-									ng:click="saveDevice(device)" class="btn btn-primary">
+								<button id="butt_store_device_{{device.id}}"
+									ng:click="saveNewDevice(device)" class="btn btn-primary">
 									<span style="color: white;" class="glyphicon glyphicon-save"
 										aria-hidden="true"></span>&nbsp;Store Device ({{device.name}})
 								</button>
@@ -85,8 +86,6 @@
 				items-per-page="pageSizeFresh" class="pagination-sm"
 				boundary-links="true" rotate="false"></pagination>
 		</p>
-		<pre class="pagination-footer">Page: {{currentPageFresh}} of {{pagedFreshDevices.length}}</pre>
+		<pre class="pagination-footer">Page: {{currentPageFresh}} of {{pagedDevicesFresh.length}}</pre>
 	</div>
-</div>
-</div>
 </div>

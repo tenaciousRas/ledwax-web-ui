@@ -234,13 +234,6 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 						error : false,
 						error_description : null
 					};
-					for (var i = 0; i < ret.data.length; i++) {
-						if (ret.data[i].name.startsWith('ledwax')) {
-							ret.data[i].type = 'LedWax Device';
-						} else {
-							ret.data[i].type = 'Unknown';
-						}
-					}
 				}
 				return ret;
 			};
@@ -263,7 +256,23 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				ret.error_description = "missing param: session token";
 				return ret;
 			}
-			var successCallback = service.defaultSuccessCallback;
+			var successCallback = (response) => {
+				if (angular.isDefined(response.error)) {
+					ret = {
+						code : response.status,
+						error : true,
+						error_description : response.error_description
+					};
+				} else {
+					ret = {
+						code : response.status,
+						data : response.data,
+						error : false,
+						error_description : null
+					};
+				}
+				return ret;
+			};
 			var errorCallback = service.defaultErrorCallback;
 			var config = {
 				method : 'GET',
@@ -315,7 +324,46 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			return $http(config).then(
 				successCallback, errorCallback);
 		};
-		service.storeDevice = function(cloudId, sessionToken, deviceId) {
+		service.storeDeviceANDStrips = function(cloudId, sessionToken, deviceId, numStrips, deviceNameFW) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(numStrips)) {
+				ret.error_description = "missing param: number of strips";
+				return ret;
+			}
+			if (!angular.isDefined(deviceNameFW)) {
+				ret.error_description = "missing param: device name FW";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/saveDeviceANDLEDStrips',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					numStrips : numStrips,
+					authtoken : hcAuthToken,
+					deviceNameFW : deviceNameFW
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.removeStoredDevice = function(cloudId, sessionToken, deviceId) {
 			var ret = service.defaultRESTResp;
 			if (!angular.isDefined(cloudId)) {
 				ret.error_description = "missing param: cloud id";
@@ -332,9 +380,13 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			var successCallback = service.defaultSuccessCallback;
 			var errorCallback = service.defaultErrorCallback;
 			var config = {
-				method : 'GET',
-				url : service.hostURL + '/devices/discoverCaps?particleCloudId=' + cloudId + '&deviceId=' + deviceId
-					+ '&authtoken=' + hcAuthToken
+				method : 'POST',
+				url : service.hostURL + '/devices/deleteDevice',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					sessiontoken : hcAuthToken
+				}
 			};
 			let prom = $http(config).then(
 				successCallback, errorCallback);

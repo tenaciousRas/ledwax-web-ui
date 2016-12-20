@@ -176,6 +176,16 @@ let routeConfig = [
 		}
 	}, {
 		method : 'POST',
+		path : '/devices/deleteDevice',
+		handler : ledwaxCloudDeviceController.deleteDevice,
+		config : {
+			description : 'Remove device from persistent storage.',
+			notes : 'Performs cascading delete.  Returns number of deleted devices (should always be 1).',
+			tags : [ 'api' ],
+			validate : validations.ledwaxCloudDevices.deleteDevice
+		}
+	}, {
+		method : 'POST',
 		path : '/devices/saveDeviceANDLEDStrips',
 		handler : ledwaxCloudDeviceController.saveDeviceANDLEDStrips,
 		config : {
