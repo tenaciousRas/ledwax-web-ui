@@ -49,8 +49,19 @@
 									<li class="list-group-item">index: {{ledstrip.stripIndex}}</li>
 									<li class="list-group-item">type: {{ledstrip.stripType |
 										ledwaxStripType}}</li>
-									<li class="list-group-item">display
-										mode:{{ledstrip.dispMode | ledwaxDisplayMode}}</li>
+									<li class="list-group-item">display mode: <span
+										uib-dropdown><button
+												id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
+												type="button" class="btn btn-primary" uib-dropdown-toggle>
+												{{ledstrip.dispMode | ledwaxDisplayMode}}<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+												aria-labelledby="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}">
+												<li role="menuitem"
+													ng:repeat="dm in LEDWAX_FW_DISP_MODES"><a
+													ng:click="ledstrip.setDispMode(dm)">{{dm}}</a></li>
+											</ul></span>
+									</li>
 									<li class="list-group-item wrap-color-picker">color: <color-picker
 											ng-model="ledstrip.modeColorHex" options="cpOptions"
 											event-api="cpEventAPI"></color-picker></li>
@@ -60,8 +71,20 @@
 									<li class="list-group-item">color hold time:<rzslider
 											rz-slider-options="{floor: 0, ceil: 65535, onEnd: ledstrip.setColorHoldTime}"
 											rz-slider-model="ledstrip.colorTime"></rzslider></li>
-									<li class="list-group-item">fade mode:
-										{{ledstrip.fadeMode | ledwaxFadeMode}}</li>
+									<!-- Single button -->
+									<div class="btn-group" uib-dropdown is-open="status.isopen">
+									</div>
+									<li class="list-group-item">fade mode: <span uib-dropdown><button
+												id="butt_drp_fade_mode_{{device.id}}_{{ledstrip.stripIndex}}"
+												type="button" class="btn btn-primary" uib-dropdown-toggle>
+												{{ledstrip.fadeMode | ledwaxFadeMode}}<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+												aria-labelledby="butt_drp_fade_mode_{{device.id}}_{{ledstrip.stripIndex}}">
+												<li role="menuitem" ng:repeat="fm in LEDWAX_FW_FADE_MODES"><a
+													ng:click="ledstrip.setFadeMode(fm)">{{fm}}</a></li>
+											</ul></span>
+									</li>
 									<li class="list-group-item">fade transition time:<rzslider
 											rz-slider-options="{floor: 0, ceil: 15000, onEnd: ledstrip.setFadeTime}"
 											rz-slider-model="ledstrip.fadeTime"></rzslider></li>

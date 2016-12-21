@@ -548,6 +548,84 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				successCallback, errorCallback);
 			return prom;
 		};
+		service.setFadeMode = function(cloudId, sessionToken, deviceId, ledStripIndex, fadeMode) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(ledStripIndex)) {
+				ret.error_description = "missing param: led strip index";
+				return ret;
+			}
+			if (!angular.isDefined(fadeMode)) {
+				ret.error_description = "missing param: fade mode";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/setLEDFadeMode',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					stripIndex : ledStripIndex,
+					sessiontoken : hcAuthToken,
+					fadeMode : fadeMode
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.setDispMode = function(cloudId, sessionToken, deviceId, ledStripIndex, dispMode) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(ledStripIndex)) {
+				ret.error_description = "missing param: led strip index";
+				return ret;
+			}
+			if (!angular.isDefined(dispMode)) {
+				ret.error_description = "missing param: disp mode";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/setDispMode',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					stripIndex : ledStripIndex,
+					sessiontoken : hcAuthToken,
+					dispMode : dispMode
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
 		return service;
 	} ]);
 

@@ -145,6 +145,16 @@ let routeConfig = [
 			validate : validations.ledwaxDevicesConvenience.setLEDFadeTimeInterval
 		}
 	}, {
+		method : 'POST',
+		path : '/devices/setLEDFadeMode',
+		handler : ledwaxDeviceController.controller.setLEDFadeMode,
+		config : {
+			description : 'Set LED fade mode for current strip being controlled for given device.',
+			notes : 'Returns result of LEDWax device function call, 1 = error, 0 = success.',
+			tags : [ 'api' ],
+			validate : validations.ledwaxDevicesConvenience.setLEDFadeMode
+		}
+	}, {
 		method : 'GET',
 		path : '/devices/retrieveAllStoredDevices',
 		handler : ledwaxCloudDeviceController.retrieveAllStoredDevices,
