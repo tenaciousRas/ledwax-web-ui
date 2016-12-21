@@ -47,20 +47,24 @@
 								ng:repeat="ledstrip in device.ledstripsPagination.pagedLEDStrips[device.ledstripsPagination.currentPage - 1] | filter:query">
 								<ul class="list-group">
 									<li class="list-group-item">index: {{ledstrip.stripIndex}}</li>
-									<li class="list-group-item">type: {{ledstrip.stripType}}</li>
+									<li class="list-group-item">type: {{ledstrip.stripType |
+										ledwaxStripType}}</li>
 									<li class="list-group-item">display
-										mode:{{ledstrip.dispMode}}</li>
+										mode:{{ledstrip.dispMode | ledwaxDisplayMode}}</li>
 									<li class="list-group-item wrap-color-picker">color: <color-picker
 											ng-model="ledstrip.modeColorHex" options="cpOptions"
 											event-api="cpEventAPI"></color-picker></li>
-									<li class="list-group-item">brightness:
-										{{ledstrip.brightness}}</li>
-									<li class="list-group-item">color hold time:
-										{{ledstrip.colorTime}}</li>
+									<li class="list-group-item">brightness:<rzslider
+											rz-slider-options="{floor: 0, ceil: 255, onEnd: ledstrip.setBrightness}"
+											rz-slider-model="ledstrip.brightness"></rzslider></li>
+									<li class="list-group-item">color hold time:<rzslider
+											rz-slider-options="{floor: 0, ceil: 65535, onEnd: ledstrip.setColorHoldTime}"
+											rz-slider-model="ledstrip.colorTime"></rzslider></li>
 									<li class="list-group-item">fade mode:
-										{{ledstrip.fadeMode}}</li>
-									<li class="list-group-item">fade transition time:
-										{{ledstrip.fadeTime}}</li>
+										{{ledstrip.fadeMode | ledwaxFadeMode}}</li>
+									<li class="list-group-item">fade transition time:<rzslider
+											rz-slider-options="{floor: 0, ceil: 15000, onEnd: ledstrip.setFadeTime}"
+											rz-slider-model="ledstrip.fadeTime"></rzslider></li>
 								</ul>
 							</dd>
 						</dl>

@@ -40,6 +40,7 @@
     "html5-boilerplate": "^5.3.0",
     "bootstrap-css": "^3.3.6",
     "ng-bootstrap-alerts": "^1.1.1",
-    "angular-color-picker": "angularjs-color-picker#^2.7.1"
+    "angular-color-picker": "angularjs-color-picker#^2.7.1",
+    "angularjs-slider": "^5.9.0"
   }
 }

@@ -61,6 +61,7 @@ module.exports.ledwaxDevicesConvenience = {
 	setCurrentStrip : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
 			stripIndex : Joi.number().integer().min(0).max(65535).required()
 		},
@@ -69,7 +70,9 @@ module.exports.ledwaxDevicesConvenience = {
 	setBrightness : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
+			stripIndex : Joi.number().integer().min(0).max(65535).required(),
 			brightness : Joi.number().integer().min(0).max(1024).required()
 		},
 		failAction : failActDelegate('custom')
@@ -77,7 +80,9 @@ module.exports.ledwaxDevicesConvenience = {
 	setDispMode : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
+			stripIndex : Joi.number().integer().min(0).max(65535).required(),
 			dispMode : Joi.number().integer().min(0).max(35).required()
 		},
 		failAction : failActDelegate('custom')
@@ -85,8 +90,10 @@ module.exports.ledwaxDevicesConvenience = {
 	setColor : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
 			modeColorIndex : Joi.number().integer().min(0).max(65535).required(),
+			stripIndex : Joi.number().integer().min(0).max(65535).required(),
 			color24Bit : Joi.number().integer().min(0).max(16777215).required()
 		},
 		failAction : failActDelegate('custom')
@@ -94,7 +101,9 @@ module.exports.ledwaxDevicesConvenience = {
 	setMultiColorHoldTime : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
+			stripIndex : Joi.number().integer().min(0).max(65535).required(),
 			holdTime : Joi.number().integer().min(0).max(65535).required()
 		},
 		failAction : failActDelegate('custom')
@@ -102,7 +111,9 @@ module.exports.ledwaxDevicesConvenience = {
 	setLEDFadeMode : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
+			stripIndex : Joi.number().integer().min(0).max(65535).required(),
 			fadeMode : Joi.number().integer().min(0).max(2).required()
 		},
 		failAction : failActDelegate('custom')
@@ -110,7 +121,9 @@ module.exports.ledwaxDevicesConvenience = {
 	setLEDFadeTimeInterval : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
+			stripIndex : Joi.number().integer().min(0).max(65535).required(),
 			fadeTimeInterval : Joi.number().integer().min(0).max(65535).required()
 		},
 		failAction : failActDelegate('custom')

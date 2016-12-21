@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('LEDWAXW3.leds', [ 'LEDWAXW3.services' ])
-	.controller('LEDsCtrl', [ '$rootScope', '$scope', 'REST_IoT', 'PaginationFilteredSorted',
-		function($rootScope, $scope, REST_IoT, PaginationFilteredSorted) {
+	.controller('LEDsCtrl', [ '$rootScope', '$scope', 'REST_IoT', 'PaginationFilteredSorted', '$timeout',
+		function($rootScope, $scope, REST_IoT, PaginationFilteredSorted, $timeout) {
 			$scope.getDeviceList = () => {
 				let prom = REST_IoT.getStoredDevices($scope.currentCloudHost.id, 'foobar-sessiontoken');
 				prom.then((resp) => {
@@ -23,8 +23,21 @@ angular.module('LEDWAXW3.leds', [ 'LEDWAXW3.services' ])
 							el.ledstripsPagination.itemFilter, el.ledstripsPagination.orderProp,
 							el.ledstripsPagination.reverseSort);
 						// set RGB hex colors
+						// wrap REST calls in device for scope of device ID
 						el.ledwax_device_ledstrips.forEach((strip) => {
 							strip.modeColorHex = strip.modeColor.toString(16);;
+							strip.setColor = (sliderId, modelValue, highValue, pointerType) => {
+								REST_IoT.setColor($scope.currentCloudHost.id, 'foobar-sessiontoken', el.deviceId, el.ledstripsPagination.currentPage - 1, modelValue);
+							}
+							strip.setBrightness = (sliderId, modelValue, highValue, pointerType) => {
+								REST_IoT.setBrightness($scope.currentCloudHost.id, 'foobar-sessiontoken', el.deviceId, el.ledstripsPagination.currentPage - 1, modelValue);
+							}
+							strip.setColorHoldTime = (sliderId, modelValue, highValue, pointerType) => {
+								REST_IoT.setColorHoldTime($scope.currentCloudHost.id, 'foobar-sessiontoken', el.deviceId, el.ledstripsPagination.currentPage - 1, modelValue);
+							}
+							strip.setFadeTime = (sliderId, modelValue, highValue, pointerType) => {
+								REST_IoT.setFadeTime($scope.currentCloudHost.id, 'foobar-sessiontoken', el.deviceId, el.ledstripsPagination.currentPage - 1, modelValue);
+							}
 						});
 					});
 					$rootScope.setPhantomStatusReady();
@@ -48,9 +61,19 @@ angular.module('LEDWAXW3.leds', [ 'LEDWAXW3.services' ])
 			$scope.cpOptions = {
 				format : 'rgb'
 			};
+			$scope.refreshSlider = () => {
+			    $timeout(() => {
+			        $scope.$broadcast('rzSliderForceRender');
+			    });
+			};
 			// device details handler
 			$scope.toggleDeviceDetailsStored = (device) => {
 				device.toggleShowDetails = !device.toggleShowDetails;
+				if (device.toggleShowDetails) {
+				    $timeout(() => {
+				    	$scope.refreshSlider();
+				    });
+				}
 				return false;
 			};
 			// bootstrap

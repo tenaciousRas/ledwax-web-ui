@@ -392,6 +392,162 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				successCallback, errorCallback);
 			return prom;
 		};
+		service.setColor = function(cloudId, sessionToken, deviceId, ledStripIndex, color) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(ledStripIndex)) {
+				ret.error_description = "missing param: led strip index";
+				return ret;
+			}
+			if (!angular.isDefined(color)) {
+				ret.error_description = "missing param: color";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/setColor',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					stripIndex : ledStripIndex,
+					sessiontoken : hcAuthToken,
+					color24Bit : color
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.setBrightness = function(cloudId, sessionToken, deviceId, ledStripIndex, brightness) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(ledStripIndex)) {
+				ret.error_description = "missing param: led strip index";
+				return ret;
+			}
+			if (!angular.isDefined(brightness)) {
+				ret.error_description = "missing param: brightness";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/setBrightness',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					stripIndex : ledStripIndex,
+					sessiontoken : hcAuthToken,
+					brightness : brightness
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.setColorHoldTime = function(cloudId, sessionToken, deviceId, ledStripIndex, holdTime) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(ledStripIndex)) {
+				ret.error_description = "missing param: led strip index";
+				return ret;
+			}
+			if (!angular.isDefined(holdTime)) {
+				ret.error_description = "missing param: hold time";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/setMultiColorHoldTime',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					stripIndex : ledStripIndex,
+					sessiontoken : hcAuthToken,
+					holdTime : holdTime
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
+		service.setFadeTime = function(cloudId, sessionToken, deviceId, ledStripIndex, fadeTimeInterval) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = "missing param: cloud id";
+				return ret;
+			}
+			if (!angular.isDefined(sessionToken)) {
+				ret.error_description = "missing param: session token";
+				return ret;
+			}
+			if (!angular.isDefined(deviceId)) {
+				ret.error_description = "missing param: device id";
+				return ret;
+			}
+			if (!angular.isDefined(ledStripIndex)) {
+				ret.error_description = "missing param: led strip index";
+				return ret;
+			}
+			if (!angular.isDefined(fadeTimeInterval)) {
+				ret.error_description = "missing param: fade time";
+				return ret;
+			}
+			var successCallback = service.defaultSuccessCallback;
+			var errorCallback = service.defaultErrorCallback;
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/devices/setLEDFadeTimeInterval',
+				data : {
+					particleCloudId : cloudId,
+					deviceId : deviceId,
+					stripIndex : ledStripIndex,
+					sessiontoken : hcAuthToken,
+					fadeTimeInterval : fadeTimeInterval
+				}
+			};
+			let prom = $http(config).then(
+				successCallback, errorCallback);
+			return prom;
+		};
 		return service;
 	} ]);
 

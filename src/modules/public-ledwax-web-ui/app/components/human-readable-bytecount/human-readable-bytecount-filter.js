@@ -1,5 +1,7 @@
+'use strict';
+
 angular.module('LEDWAXW3.humanReadableByteCount.filter', []).filter('humanReadableByteCount', [ function() {
-	return function(bytes, si) {
+	return (bytes, si) => {
 		var unit = si ? 1000 : 1024;
 		if (bytes < unit) {
 			return bytes + " B";
