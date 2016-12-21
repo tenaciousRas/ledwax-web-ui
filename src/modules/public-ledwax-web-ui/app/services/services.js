@@ -394,3 +394,65 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 		};
 		return service;
 	} ]);
+
+services.factory('PaginationFilteredSorted', [ '$filter',
+	function($filter) {
+		let service = {
+			suffixes : [],
+			pagingVars : {}
+		};
+		service.init = ($scope, suffix) => {
+			service.suffixes.push(suffix);
+			// item paging
+			$scope['totalItems' + suffix] = 0; // rest call is async so start @ 0
+			$scope['currentPage' + suffix] = 1;
+			$scope['pageSize' + suffix] = 8;
+			$scope['pagedItems' + suffix] = [];
+			// item filtering
+			$scope['itemFilter' + suffix] = '';
+			$scope['itemFilterStored' + suffix] = '';
+			// setup sorting
+			$scope['orderPropFresh' + suffix] = 'name';
+			$scope['reverseSortFresh' + suffix] = false;
+			$scope['orderPropStored' + suffix] = 'name';
+			$scope['reverseSortStored' + suffix] = false;
+			// setup methods
+			$scope['sortBy' + suffix] = (prop, items, modelName = null) => {
+				if (prop == $scope['orderProp' + suffix]) {
+					$scope['reverseSort' + suffix] = !$scope['reverseSort' + suffix];
+				} else {
+					$scope['orderProp' + suffix] = prop;
+					$scope['reverseSort' + suffix] = false;
+				}
+				if (!modelName) {
+					console.log('unable to sort, invalid modelName: ' + modelName);
+				}
+				$scope[modelName] = $scope.groupToPages(
+					items, $scope['pageSize' + suffix],
+					$scope['itemFilter' + suffix], $scope['orderProp' + suffix],
+					$scope['reverseSort' + suffix]);
+			};
+			// pagination
+			$scope['groupToPages' + suffix] = (items, itemsPerPage, filterQuery, sortProp, reverseSort) => {
+				let ret = [];
+				// filtering
+				let newList = $filter('filter')(items,
+					filterQuery);
+				$scope['totalItems' + suffix] = newList.length;
+				// sorting
+				newList = $filter('orderBy')(newList, sortProp,
+					reverseSort);
+				// grouping
+				for (let i = 0; i < newList.length; i++) {
+					if (i % itemsPerPage === 0) {
+						ret[Math.floor(i / itemsPerPage)] = [ newList[i] ];
+					} else {
+						ret[Math.floor(i / itemsPerPage)]
+							.push(newList[i]);
+					}
+				}
+				return ret;
+			};
+		};
+		return service;
+	} ]);

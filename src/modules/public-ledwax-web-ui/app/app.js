@@ -8,6 +8,7 @@ var appDependencies = [ 'ngRoute',
 	'ngAnimate',
 	'ui.bootstrap',
 	'pascalprecht.translate',
+	'color.picker',
 	'LEDWAXW3.app',
 	'LEDWAXW3.version',
 	'LEDWAXW3.description',
@@ -33,8 +34,8 @@ var dependencies = (mocks ? mocks : []).concat(appDependencies);
  */
 // Declare app level module which depends on filters, and services
 var ledwaxApp = angular.module('LEDWAXW3', appDependencies);
-ledwaxApp.config([ '$routeProvider', '$translateProvider',
-	function($routeProvider, $translateProvider) {
+ledwaxApp.config([ '$routeProvider', '$translateProvider', '$provide',
+	function($routeProvider, $translateProvider, $provide) {
 		$routeProvider.when('/setup', {
 			templateUrl : 'partials/setup.html',
 			controller : 'SetupCtrl'
@@ -64,6 +65,13 @@ ledwaxApp.config([ '$routeProvider', '$translateProvider',
 		});
 		$translateProvider.preferredLanguage('en_US');
 		$translateProvider.useCookieStorage();
+		$provide.decorator('ColorPickerOptions', ($delegate) => {
+			var options = angular.copy($delegate);
+			options.round = true;
+			options.alpha = false;
+			options.format = 'rgb';
+			return options;
+		});
 	} ]);
 /**
  * Start of block required for e2e tests
