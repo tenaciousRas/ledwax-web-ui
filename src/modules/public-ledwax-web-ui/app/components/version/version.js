@@ -9,4 +9,4 @@ angular
 	.module('LEDWAXW3.description', [])
 	.value(
 		'description',
-		'LEDWax is an application for LED control of multiple strips using a single MCU');
+		'LEDWax is an application for LED control of multiple strips using a single IoT MCU.');
