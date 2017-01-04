@@ -1,11 +1,11 @@
 /* app css stylesheet */
 * {
 	color : #222222;
-	font-family: 'Russo', 'Verdana', sans-serif;
+	font-family: 'Asap', 'Verdana', sans-serif;
 }
 
 body {
-	font-family: 'Russo', 'Verdana', sans-serif;
+	font-family: 'Asap', 'Verdana', sans-serif;
 	background: url(../img/tile_bg.png);
 	background-repeat: repeat;
 }
@@ -54,11 +54,11 @@ ul {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Marmelad', 'Verdana', sans-serif;
+	font-family: 'Goudy Bookletter 1911', 'Verdana', sans-serif;
 }
 
 h1.app-title {
-	font-family: 'Audiowide', 'Arial', cursive;
+	font-family: 'Goudy Bookletter 1911', 'Arial', cursive;
 	float: left;
 	color: #232323;
 	text-shadow: -1px -1px 5px rgba(50, 50, 50, 1);

@@ -28,6 +28,9 @@
 <link rel="stylesheet"
 	href="bower_components/angular-color-picker/dist/angularjs-color-picker.min.css" />
 <!-- only include when using bootstrap -->
+<link
+	href="https://fonts.googleapis.com/css?family=Crete+Round|Fenix|Asap|Goudy+Bookletter+1911"
+	rel="stylesheet">
 <link rel="stylesheet"
 	href="bower_components/angular-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css" />
 <!-- endbower -->
@@ -51,37 +54,41 @@
 			</div>
 			<h1 class="app-title" translate>APP_TITLE</h1>
 			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="wrap-navbar collapse navbar-collapse"
+			<div class="wrap-navbar" style="float: right;"
 				ng-class="langNavCollapsed && 'in'"
 				ng-click="langNavCollapsed = !langNavCollapsed">
-				<ul class="nav navbar-nav navbar-right utilnav">
-					<span uib-dropdown><button id="butt_drp_lang" type="button"
-							class="btn btn-primary" uib-dropdown-toggle>
-							<span translate>LANGUAGE</span><span class="caret"></span>
+				<div class="utilnav">
+					<span uib-dropdown="uib-dropdown">
+						<button id="butt_drp_lang" type="button" class="btn btn-primary"
+							uib-dropdown-toggle="uib-dropdown-toggle">
+							<span style="color: #fff;" translate>LANGUAGE</span><span
+								class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" uib-dropdown-menu role="menu"
 							aria-labelledby="butt_drp_lang">
 							<li role="menuitem"><a
 								ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
-						</ul></span>
-				</ul>
+						</ul>
+					</span>
+				</div>
 			</div>
 			<!-- /.navbar-collapse -->
 		</nav>
-		<nav class="navbar navbar-default" role="navigation">
+		<nav class="clearfix navbar navbar-default" role="navigation">
 			<!-- toggle nav for mobile display -->
 			<div class="navbar-header">
 				<span style="font-weight: 900; margin-right: 0.65em;">Cloud</span><span
-						uib-dropdown><button
-							id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
-							type="button" class="btn btn-primary" uib-dropdown-toggle>
-							{{currentCloudHost.name}}<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" uib-dropdown-menu role="menu"
-							aria-labelledby="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}">
-							<li role="menuitem" ng:repeat="o in cloudHosts"><a
-								ng:click="currentCloudHost = o">{{o.name}}</a></li>
-						</ul></span>
+					uib-dropdown="uib-dropdown"><button
+						id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
+						type="button" class="btn btn-primary"
+						uib-dropdown-toggle="uib-dropdown-toggle">
+						{{currentCloudHost.name}}<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+						aria-labelledby="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}">
+						<li role="menuitem" ng:repeat="o in cloudHosts"><a
+							ng:click="currentCloudHost = o">{{o.name}}</a></li>
+					</ul></span>
 				</form>
 				<button type="button" class="navbar-toggle"
 					ng-init="navCollapsed = true"
@@ -105,7 +112,7 @@
 		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 		<![endif]-->
 		<div id="wrap_alerts"
-			style="position: absolute; top: 0; right: 0; width: 50%; height: 25%; padding: 0.8em;">
+			style="position: absolute; top: 0; right: 100px; width: 50%; height: 25%; padding: 0.8em;">
 			<alert ng-repeat="alert in appAlerts" type="alert.type"
 				close="closeAlert($index)" ng-bind="alert.msg"></alert>
 		</div>
@@ -129,8 +136,7 @@
 		src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
 	<script src="bower_components/angular-cookies/angular-cookies.js"></script>
 	<script src="bower_components/angular-aria/angular-aria.min.js"></script>
-	<script
-		src="bower_components/angular-messages/angular-messages.min.js"></script>
+	<script src="bower_components/angular-messages/angular-messages.min.js"></script>
 	<!-- <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script> -->
 	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 	<script src="bower_components/html5-boilerplate/dist/js/main.js"></script>
