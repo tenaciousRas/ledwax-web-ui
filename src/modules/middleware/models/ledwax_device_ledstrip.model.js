@@ -5,9 +5,11 @@ module.exports = (sequelize, DataTypes) => {
 	let ledwax_device_ledstrip = sequelize.define('ledwax_device_ledstrip', {
 		deviceId : DataTypes.STRING,
 		stripIndex : DataTypes.INTEGER,
+		numPixels : DataTypes.INTEGER,
+		numPixColors : DataTypes.INTEGER,
 		stripType : DataTypes.INTEGER,
 		dispMode : DataTypes.INTEGER,
-		modeColor : DataTypes.INTEGER,
+		modeColor : DataTypes.STRING,
 		modeColorIdx : DataTypes.INTEGER,
 		brightness : DataTypes.INTEGER,
 		fadeMode : DataTypes.INTEGER,

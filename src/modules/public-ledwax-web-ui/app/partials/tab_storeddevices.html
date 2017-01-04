@@ -34,7 +34,7 @@
 							<dt></dt>
 							<dd>
 								<button id="butt_toggle_dev_details_{{device.deviceId}}"
-									ng:click="removeStoredDevice(device)" class="btn btn-primary">
+									ng:click="removeStoredDevice(device)" class="btn btn-primary btn-lg">
 									<span style="color: white;" class="glyphicon glyphicon-save"
 										aria-hidden="true"></span>&nbsp;Remove Device ({{device.deviceNameFW}})
 								</button>
@@ -52,6 +52,8 @@
 								<ul class="list-group">
 									<li class="list-group-item">index: {{ledstrip.stripIndex}}</li>
 									<li class="list-group-item">type: {{ledstrip.stripType}}</li>
+									<li class="list-group-item">number of pixels: {{ledstrip.numPixels}}</li>
+									<li class="list-group-item">colors per pixel: {{ledstrip.numPixColors}}</li>
 									<li class="list-group-item">display mode: {{ledstrip.dispMode}}</li>
 								</ul>
 							</dd>

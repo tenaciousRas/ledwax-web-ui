@@ -42,24 +42,19 @@ var ledwaxApp = angular.module('LEDWAXW3', appDependencies);
 ledwaxApp.config([ '$routeProvider', '$translateProvider', '$provide',
 	function($routeProvider, $translateProvider, $provide) {
 		$routeProvider.when('/setup', {
-			templateUrl : 'partials/setup.html',
-			controller : 'SetupCtrl'
+			templateUrl : 'partials/setup.html'
 		});
 		$routeProvider.when('/about', {
-			templateUrl : 'partials/about.html',
-			controller : 'AboutCtrl'
+			templateUrl : 'partials/about.html'
 		});
 		$routeProvider.when('/devicedetail/:deviceId', {
-			templateUrl : 'partials/devicedetail.html',
-			controller : 'LEDsCtrl'
+			templateUrl : 'partials/devicedetail.html'
 		});
 		$routeProvider.when('/login', {
-			templateUrl : 'partials/login.html',
-			controller : 'LoginCtrl'
+			templateUrl : 'partials/login.html'
 		});
 		$routeProvider.when('/leds', {
-			templateUrl : 'partials/leds.html',
-			controller : 'LEDsCtrl'
+			templateUrl : 'partials/leds.html'
 		});
 		$routeProvider.otherwise({
 			redirectTo : '/login'

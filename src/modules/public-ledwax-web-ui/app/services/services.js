@@ -392,7 +392,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				successCallback, errorCallback);
 			return prom;
 		};
-		service.setColor = function(cloudId, sessionToken, deviceId, ledStripIndex, color) {
+		service.setColor = function(cloudId, sessionToken, deviceId, ledStripIndex, modeColorIndex, color) {
 			var ret = service.defaultRESTResp;
 			if (!angular.isDefined(cloudId)) {
 				ret.error_description = "missing param: cloud id";
@@ -410,9 +410,17 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				ret.error_description = "missing param: led strip index";
 				return ret;
 			}
+			if (!angular.isDefined(modeColorIndex)) {
+				ret.error_description = "missing param: mode color index";
+				return ret;
+			}
 			if (!angular.isDefined(color)) {
 				ret.error_description = "missing param: color";
 				return ret;
+			}
+			if (color.substr(0, 1) == '#') {
+				color = color.substr(1, color.length - 1);
+				color = parseInt(color, 16);
 			}
 			var successCallback = service.defaultSuccessCallback;
 			var errorCallback = service.defaultErrorCallback;
@@ -423,6 +431,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
+					modeColorIndex : modeColorIndex,
 					sessiontoken : hcAuthToken,
 					color24Bit : color
 				}

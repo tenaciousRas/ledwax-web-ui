@@ -23,13 +23,13 @@
 	href="bower_components/bootstrap-css/css/bootstrap-theme.css">
 <link rel="stylesheet"
 	href="bower_components/angular-bootstrap/ui-bootstrap-csp.css">
-<link rel="stylesheet"
-	href="bower_components/angular-color-picker/dist/angularjs-color-picker.min.css" />
-<!-- only include if you use bootstrap -->
-<link rel="stylesheet"
-	href="bower_components/angular-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css" />
 <link rel="stylesheet" type="text/css"
 	href="bower_components/angularjs-slider/dist/rzslider.css" />
+<link rel="stylesheet"
+	href="bower_components/angular-color-picker/dist/angularjs-color-picker.min.css" />
+<!-- only include when using bootstrap -->
+<link rel="stylesheet"
+	href="bower_components/angular-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css" />
 <!-- endbower -->
 <!-- endbuild -->
 <!-- build:css(.tmp,app) css/main.css -->
@@ -42,7 +42,7 @@
 <!-- endbower -->
 <!-- endbuild -->
 </head>
-<body>
+<body ng-cloak="ng-cloak">
 	<div class="wrap_phantom" ng-controller="AppCtrl" data-status="">
 		<nav class="navbar navbar-default {{headerBgClass}}"
 			id="header_util_nav">
@@ -55,11 +55,15 @@
 				ng-class="langNavCollapsed && 'in'"
 				ng-click="langNavCollapsed = !langNavCollapsed">
 				<ul class="nav navbar-nav navbar-right utilnav">
-					<li class="dropdown"><a class="dropdown-toggle"><em
-							class="icon-align-justify"></em>&nbsp;<span translate>LANGUAGE</span></a>
-						<ul class="dropdown-menu">
-							<li><a ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
-						</ul></li>
+					<span uib-dropdown><button id="butt_drp_lang" type="button"
+							class="btn btn-primary" uib-dropdown-toggle>
+							<span translate>LANGUAGE</span><span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+							aria-labelledby="butt_drp_lang">
+							<li role="menuitem"><a
+								ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
+						</ul></span>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -67,8 +71,8 @@
 		<nav class="navbar navbar-default" role="navigation">
 			<!-- toggle nav for mobile display -->
 			<div class="navbar-header">
-				<form>
-					<label for="cloud_id" style="margin-right: 0.65em;">Cloud</label><span uib-dropdown><button
+				<span style="font-weight: 900; margin-right: 0.65em;">Cloud</span><span
+						uib-dropdown><button
 							id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
 							type="button" class="btn btn-primary" uib-dropdown-toggle>
 							{{currentCloudHost.name}}<span class="caret"></span>
@@ -98,8 +102,8 @@
 			<!-- /.navbar-collapse -->
 		</nav>
 		<!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
+		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
 		<div id="wrap_alerts"
 			style="position: absolute; top: 0; right: 0; width: 50%; height: 25%; padding: 0.8em;">
 			<alert ng-repeat="alert in appAlerts" type="alert.type"
@@ -109,54 +113,58 @@
 		<div>
 			LEDWax Web UI v<span app-version></span>
 		</div>
-		<!-- build:js(.) js/vendor.js -->
-		<!-- bower:js -->
-		<script src="bower_components/angular/angular.js"></script>
-		<script src="bower_components/angular-route/angular-route.js"></script>
-		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-		<script src="bower_components/angular-loader/angular-loader.js"></script>
-		<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-		<script src="bower_components/angular-animate/angular-animate.js"></script>
-		<script src="bower_components/angular-translate/angular-translate.js"></script>
-		<script
-			src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
-		<script
-			src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
-		<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-		<!-- <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script> -->
-		<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-		<script src="bower_components/html5-boilerplate/dist/js/main.js"></script>
-		<script src="bower_components/ng-bootstrap-alerts/dist/index.js"></script>
-		<script src="bower_components/tinycolor/dist/tinycolor-min.js"></script>
-		<script
-			src="bower_components/angular-color-picker/dist/angularjs-color-picker.min.js"></script>
-		<script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
-		<!-- endbower -->
-		<!-- endbuild -->
-		<!-- build:js({.tmp,app}) js/app.js -->
-		<script src="app.js"></script>
-		<script src="services/services.js"></script>
-		<script src="controllers/ledwaxapp.js"></script>
-		<script src="controllers/login.js"></script>
-		<script src="controllers/leds.js"></script>
-		<script src="controllers/setup.js"></script>
-		<script src="controllers/about.js"></script>
-		<script src="components/characters/characters.js"></script>
-		<script src="components/characters/characters-filter.js"></script>
-		<script
-			src="components/human-readable-bytecount/human-readable-bytecount.js"></script>
-		<script
-			src="components/human-readable-bytecount/human-readable-bytecount-filter.js"></script>
-		<script src="components/version/version.js"></script>
-		<script src="components/version/version-directive.js"></script>
-		<script src="components/version/interpolate-filter.js"></script>
-		<script src="components/ledwax-striptype/ledwax-striptype.js"></script>
-		<script src="components/ledwax-striptype/ledwax-striptype-filter.js"></script>
-		<script src="components/ledwax-displaymode/ledwax-displaymode.js"></script>
-		<script
-			src="components/ledwax-displaymode/ledwax-displaymode-filter.js"></script>
-		<script src="components/ledwax-fademode/ledwax-fademode.js"></script>
-		<script src="components/ledwax-fademode/ledwax-fademode-filter.js"></script>
-		<!-- endbuild -->
+	</div>
+	<!-- build:js(.) js/vendor.js -->
+	<!-- bower:js -->
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/angular-route/angular-route.js"></script>
+	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+	<script src="bower_components/angular-loader/angular-loader.js"></script>
+	<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+	<script src="bower_components/angular-animate/angular-animate.js"></script>
+	<script src="bower_components/angular-translate/angular-translate.js"></script>
+	<script
+		src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+	<script
+		src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+	<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+	<script src="bower_components/angular-aria/angular-aria.min.js"></script>
+	<script
+		src="bower_components/angular-messages/angular-messages.min.js"></script>
+	<!-- <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script> -->
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+	<script src="bower_components/html5-boilerplate/dist/js/main.js"></script>
+	<script src="bower_components/ng-bootstrap-alerts/dist/index.js"></script>
+	<script src="bower_components/tinycolor/dist/tinycolor-min.js"></script>
+	<script
+		src="bower_components/angular-color-picker/dist/angularjs-color-picker.min.js"></script>
+	<script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
+	<!-- endbower -->
+	<!-- endbuild -->
+	<!-- build:js({.tmp,app}) js/app.js -->
+	<script src="app.js"></script>
+	<script src="services/services.js"></script>
+	<script src="controllers/ledwaxapp.js"></script>
+	<script src="controllers/login.js"></script>
+	<script src="controllers/leds.js"></script>
+	<script src="controllers/setup.js"></script>
+	<script src="controllers/about.js"></script>
+	<script src="components/characters/characters.js"></script>
+	<script src="components/characters/characters-filter.js"></script>
+	<script
+		src="components/human-readable-bytecount/human-readable-bytecount.js"></script>
+	<script
+		src="components/human-readable-bytecount/human-readable-bytecount-filter.js"></script>
+	<script src="components/version/version.js"></script>
+	<script src="components/version/version-directive.js"></script>
+	<script src="components/version/interpolate-filter.js"></script>
+	<script src="components/ledwax-striptype/ledwax-striptype.js"></script>
+	<script src="components/ledwax-striptype/ledwax-striptype-filter.js"></script>
+	<script src="components/ledwax-displaymode/ledwax-displaymode.js"></script>
+	<script
+		src="components/ledwax-displaymode/ledwax-displaymode-filter.js"></script>
+	<script src="components/ledwax-fademode/ledwax-fademode.js"></script>
+	<script src="components/ledwax-fademode/ledwax-fademode-filter.js"></script>
+	<!-- endbuild -->
 </body>
 </html>

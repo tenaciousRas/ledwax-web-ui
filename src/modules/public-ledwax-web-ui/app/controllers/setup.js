@@ -1,11 +1,18 @@
 'use strict';
 
+// FIXME use translate keys
+const ERR_MSG_RETR_STORED_DEV_1 = "Unable to retrieve stored devices - response code from server: ";
+const ERR_MSG_RETR_NEW_DEV_1 = "Unable to retrieve new devices - response code from server: ";
+const ERR_MSG_SAVE_DEV_1 = "Unable to store device - response code from server: ";
+const ERR_MSG_REMOVE_DEV_1 = "Unable to remove stored device - response code from server: ";
+const SUCC_MSG_SAVE_DEV_1 = "Device successfully stored";
+const SUCC_MSG_REMOVE_DEV_1 = "Device successfully removed";
+
 angular.module(
 	'LEDWAXW3.setup',
 	[ 'ngCookies', 'ngSanitize', 'pascalprecht.translate', 'LEDWAXW3.services' ])
 	.controller('SetupTabsCtrl', [ '$rootScope', '$scope', function($rootScope, $scope) {
 		$scope.tabs = $scope.setupTabs;
-		$scope.getDeviceList(); // invoked twice if placed in SetupCtrl
 	} ]).controller(
 	'SetupCtrl',
 	[ '$rootScope',
@@ -22,34 +29,44 @@ angular.module(
 				let prom = REST_IoT
 					.discoverDevices($scope.currentCloudHost.id, $scope.userSession.auth_token);
 				prom.then((resp) => {
-					for (var i = 0; i < resp.data.length; i++) {
-						resp.data[i].toggleShowDetails = false;
-					}
-					$scope.devicesFresh = resp.data;
-					prom = REST_IoT.getStoredDevices($scope.currentCloudHost.id, 'foobar-sessiontoken');
-					prom.then((resp) => {
-						$scope.devicesStored = resp.data;
-						for (let i = 0; i < $scope.devicesStored.length; i++) {
-							for (let j = 0; j < $scope.devicesFresh.length; j++) {
-								if ($scope.devicesStored[i].deviceId == $scope.devicesFresh[j].id) {
-									$scope.devicesFresh.splice(j, 1);
-								}
-							}
+					if (resp.data) {
+						for (var i = 0; i < resp.data.length; i++) {
+							resp.data[i].toggleShowDetails = false;
 						}
-						$scope.pagedDevicesFresh = $scope.groupToPages(
-							$scope.devicesFresh, $scope.pageSizeFresh,
-							$scope.itemFilterFresh, $scope.orderPropFresh,
-							$scope.reverseSortFresh, 'totalItemsFresh');
-						$scope.pagedDevicesStored = $scope.groupToPages(
-							$scope.devicesStored, $scope.pageSizeStored,
-							$scope.itemFilterStored, $scope.orderPropStored,
-							$scope.reverseSortStored, 'totalItemsStored');
-						$rootScope.setPhantomStatusReady();
-					}, (err) => {
-						$rootScope.setPhantomStatusReady();
-					});
+						$scope.devicesFresh = resp.data;
+						prom = REST_IoT.getStoredDevices($scope.currentCloudHost.id, 'foobar-sessiontoken');
+						prom.then((resp) => {
+							if (resp.data) {
+								$scope.devicesStored = resp.data;
+								for (let i = 0; i < $scope.devicesStored.length; i++) {
+									for (let j = 0; j < $scope.devicesFresh.length; j++) {
+										if ($scope.devicesStored[i].deviceId == $scope.devicesFresh[j].id) {
+											$scope.devicesFresh.splice(j, 1);
+										}
+									}
+								}
+								$scope.pagedDevicesFresh = $scope.groupToPages(
+									$scope.devicesFresh, $scope.pageSizeFresh,
+									$scope.itemFilterFresh, $scope.orderPropFresh,
+									$scope.reverseSortFresh, 'totalItemsFresh');
+								$scope.pagedDevicesStored = $scope.groupToPages(
+									$scope.devicesStored, $scope.pageSizeStored,
+									$scope.itemFilterStored, $scope.orderPropStored,
+									$scope.reverseSortStored, 'totalItemsStored');
+								$rootScope.setPhantomStatusReady();
+							} else {
+								$scope.alertUser(ERR_MSG_RETR_STORED_DEV_1 + resp.code);
+							}
+						}, (err) => {
+							$rootScope.setPhantomStatusReady();
+							$scope.alertUser(ERR_MSG_RETR_STORED_DEV_1 + resp.code);
+						});
+					} else {
+						$scope.alertUser(ERR_MSG_RETR_NEW_DEV_1 + resp.code);
+					}
 				}, (err) => {
 					$rootScope.setPhantomStatusReady();
+					$scope.alertUser(ERR_MSG_RETR_NEW_DEV_1 + resp.code);
 				});
 			};
 			$scope.saveNewDevice = (device) => {
@@ -63,27 +80,34 @@ angular.module(
 					device.numStrips,
 					device.name);
 				prom.then((resp) => {
-					let savedDevice = resp.data;
-					// remove from new devices list
-					for (let i = 0; i < $scope.devicesFresh.length; i++) {
-						if ($scope.devicesFresh[i].id == device.id) {
-							$scope.devicesFresh.splice(i, 1);
-							break;
+					if (resp.data) {
+						let savedDevice = resp.data;
+						// remove from new devices list
+						for (let i = 0; i < $scope.devicesFresh.length; i++) {
+							if ($scope.devicesFresh[i].id == device.id) {
+								$scope.devicesFresh.splice(i, 1);
+								break;
+							}
 						}
+						$scope.pagedDevicesFresh = $scope.groupToPages(
+							$scope.devicesFresh, $scope.pageSizeFresh,
+							$scope.itemFilterFresh, $scope.orderPropFresh,
+							$scope.reverseSortFresh, 'totalItemsFresh');
+						// add to stored devices list
+						savedDevice.deviceNameFW = device.name;
+						savedDevice.toggleShowDetails = false;
+						delete savedDevice['name'];
+						$scope.devicesStored.push(savedDevice);
+						$scope.pagedDevicesStored = $scope.groupToPages(
+							$scope.devicesStored, $scope.pageSizeStored,
+							$scope.itemFilterStored, $scope.orderPropStored,
+							$scope.reverseSortStored, 'totalItemsStored');
+						$scope.informUser(SUCC_MSG_SAVE_DEV_1);
+					} else {
+						$scope.alertUser(ERR_MSG_SAVE_DEV_1 + resp.code);
 					}
-					$scope.pagedDevicesFresh = $scope.groupToPages(
-						$scope.devicesFresh, $scope.pageSizeFresh,
-						$scope.itemFilterFresh, $scope.orderPropFresh,
-						$scope.reverseSortFresh, 'totalItemsFresh');
-					// add to stored devices list
-					savedDevice.deviceNameFW = device.name;
-					savedDevice.toggleShowDetails = false;
-					delete savedDevice['name'];
-					$scope.devicesStored.push(savedDevice);
-					$scope.pagedDevicesStored = $scope.groupToPages(
-						$scope.devicesStored, $scope.pageSizeStored,
-						$scope.itemFilterStored, $scope.orderPropStored,
-						$scope.reverseSortStored, 'totalItemsStored');
+				}, (err) => {
+					$scope.alertUser(ERR_MSG_SAVE_DEV_1 + resp.code);
 				});
 			};
 			$scope.removeStoredDevice = (device) => {
@@ -95,38 +119,45 @@ angular.module(
 					'foobar-sessiontoken',
 					device.deviceId);
 				prom.then((resp) => {
-					// remove from stored devices list
-					let deletedDevice = device;
-					for (let i = 0; i < $scope.devicesStored.length; i++) {
-						if ($scope.devicesStored[i].id == device.id) {
-							deletedDevice = $scope.devicesStored.splice(i, 1);
-							break;
+					// validate response
+					if (resp.data && resp.data.affectedRows) {
+						// remove from stored devices list
+						let deletedDevice = device;
+						for (let i = 0; i < $scope.devicesStored.length; i++) {
+							if ($scope.devicesStored[i].id == device.id) {
+								deletedDevice = $scope.devicesStored.splice(i, 1);
+								break;
+							}
 						}
+						$scope.pagedDevicesStored = $scope.groupToPages(
+							$scope.devicesStored, $scope.pageSizeStored,
+							$scope.itemFilterStored, $scope.orderPropStored,
+							$scope.reverseSortStored, 'totalItemsStored');
+						// add to new devices list
+						deletedDevice.id = device.deviceId;
+						deletedDevice.name = device.deviceNameFW;
+						deletedDevice.devTypeFW = 'LEDWax Device';
+						deletedDevice.toggleShowDetails = false;
+						delete deletedDevice['deviceId'];
+						delete deletedDevice['deviceNameFW'];
+						$scope.devicesFresh.push(deletedDevice);
+						$scope.pagedDevicesFresh = $scope.groupToPages(
+							$scope.devicesFresh, $scope.pageSizeFresh,
+							$scope.itemFilterFresh, $scope.orderPropFresh,
+							$scope.reverseSortFresh, 'totalItemsFresh');
+						$scope.alertUser(SUCC_MSG_REMOVE_DEV_1);
 					}
-					$scope.pagedDevicesStored = $scope.groupToPages(
-						$scope.devicesStored, $scope.pageSizeStored,
-						$scope.itemFilterStored, $scope.orderPropStored,
-						$scope.reverseSortStored, 'totalItemsStored');
-					// add to new devices list
-					deletedDevice.id = device.deviceId;
-					deletedDevice.name = device.deviceNameFW;
-					deletedDevice.toggleShowDetails = false;
-					delete deletedDevice['deviceId'];
-					delete deletedDevice['deviceNameFW'];
-					$scope.devicesFresh.push(deletedDevice);
-					$scope.pagedDevicesFresh = $scope.groupToPages(
-						$scope.devicesFresh, $scope.pageSizeFresh,
-						$scope.itemFilterFresh, $scope.orderPropFresh,
-						$scope.reverseSortFresh, 'totalItemsFresh');
+				}, (err) => {
+					$scope.alertUser(ERR_MSG_REMOVE_DEV_1 + resp.code);
 				});
 			};
 			// setup pagination 
 			$scope.totalItemsFresh = 0; // rest call is async
 			$scope.currentPageFresh = 1;
-			$scope.pageSizeFresh = 8;
+			$scope.pageSizeFresh = 4;
 			$scope.totalItemsStored = 0; // rest call is async
 			$scope.currentPageStored = 1;
-			$scope.pageSizeStored = 8;
+			$scope.pageSizeStored = 4;
 			$scope.pagedDevicesFresh = [];
 			$scope.pagedDevicesStored = [];
 			// item filtering
@@ -223,10 +254,11 @@ angular.module(
 					$scope.uploadFileName = '';
 				}
 			};
-			$scope.buildPBarUI();
 			$scope.abortUpload = () => {
 				$upload.abort();
 				Settings.uiState.uploadStatusGCode.uploading = false;
 				$scope.setPBarClass();
 			};
+			$scope.buildPBarUI();
+			$scope.getDeviceList();
 		} ]);

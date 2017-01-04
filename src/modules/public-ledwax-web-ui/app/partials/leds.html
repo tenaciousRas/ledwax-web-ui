@@ -1,25 +1,35 @@
 <div ng-controller="LEDsCtrl">
 	<div class="wrap-devices-table" class="">
 		<div class="devices-table">
-			<div class="row">
-				<div class="col-sm-6">
+			<div class="row"
+				style="margin : 10px; padding: 0 10px;">
+				<div class="col-sm-4">
 					<a
 						ng:click="sortBy('name', 'Stored', devicesStored, 'pagedDevicesStored')">Name&nbsp;<span
 						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
 						style="color: inherit;"></span></a>
 				</div>
-				<div class="col-sm-6">
+				<div class="col-sm-4">
 					<a
 						ng:click="sortBy('type', 'Stored', devicesStored, 'pagedDevicesStored')">Type&nbsp;<span
 						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
 						style="color: inherit;"></span></a>
 				</div>
+				<div class="col-sm-4">
+					<a
+						ng:click="sortBy('numStrips', 'Stored', devicesStored, 'pagedDevicesStored')">Total LED Strips&nbsp;<span
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
+						style="color: inherit;"></span></a>
+				</div>
 			</div>
-			<div
+			<div style="border: 2px solid #62c2cb; background: #e4f5f6; border-radius: 10px;"
 				ng:repeat="device in pagedItemsStored[currentPageStored - 1] | filter:query">
-				<div class="row" ng:click="toggleDeviceDetailsStored(device)">
-					<div class="col-sm-6">{{device.deviceNameFW}}</div>
-					<div class="col-sm-5">{{device.devTypeFW}}</div>
+				<div class="row"
+					style="border-radius: 10px; margin : 10px; padding: 10px;"
+					ng:click="toggleDeviceDetailsStored(device)">
+					<div class="col-sm-4" style="margin-top: 8px;">{{device.deviceNameFW}}</div>
+					<div class="col-sm-4" style="margin-top: 8px;">{{device.devTypeFW}}</div>
+					<div class="col-sm-3" style="margin-top: 8px;">{{device.numStrips}}</div>
 					<div class="col-sm-1">
 						<button id="butt_toggle_dev_details_{{device.id}}"
 							class="btn btn-primary">
@@ -31,24 +41,25 @@
 				</div>
 				<div id="dev_details_{{device.id}}"
 					class="row {{device.toggleShowDetails == true ? 'show' : 'hide'}}">
-					<div class="wrap-device-details-vars col-sm-12">
-						<pre class="pagination-footer">LED Strips: {{device.ledstripsPagination.currentPage}} of {{device.ledstripsPagination.pagedLEDStrips.length}}</pre>
-						<ul uib-pagination
-							total-items="device.ledstripsPagination.totalItems"
-							ng-model="device.ledstripsPagination.currentPage"
-							items-per-page="device.ledstripsPagination.pageSize"
-							class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul>
+					<div class="col-sm-3"></div>
+					<div class="wrap-device-details col-sm-6">
+						<div><span style="position: relative; top: -30px;">LED Strips: </span>
+							<ul uib-pagination
+								total-items="device.ledstripsPagination.totalItems"
+								ng-model="device.ledstripsPagination.currentPage"
+								items-per-page="device.ledstripsPagination.pageSize"
+								class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul></div>
 						<dl>
-							<dt>
-								<span class="glyphicon glyphicon-flag" aria-hidden="true"></span>&nbsp;LED
-								Strips (total of {{device.numStrips}}):
+							<dt><h4><span 
+								class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>&nbsp;Settings:</h4>
 							</dt>
 							<dd
 								ng:repeat="ledstrip in device.ledstripsPagination.pagedLEDStrips[device.ledstripsPagination.currentPage - 1] | filter:query">
 								<ul class="list-group">
-									<li class="list-group-item">index: {{ledstrip.stripIndex}}</li>
-									<li class="list-group-item">type: {{ledstrip.stripType |
-										ledwaxStripType}}</li>
+									<li class="list-group-item">index #&nbsp;/&nbsp;type:
+										{{ledstrip.stripIndex}}&nbsp;/&nbsp;{{ledstrip.stripType | ledwaxStripType}}</li>
+									<li class="list-group-item">number of pixels&nbsp;/&nbsp;colors per pixel:
+										{{ledstrip.numPixels}}&nbsp;/&nbsp;{{ledstrip.numPixColors}}</li>
 									<li class="list-group-item">display mode: <span
 										uib-dropdown><button
 												id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
@@ -62,18 +73,42 @@
 													ng:click="ledstrip.setDispMode(dm)">{{dm}}</a></li>
 											</ul></span>
 									</li>
-									<li class="list-group-item wrap-color-picker">color: <color-picker
-											ng-model="ledstrip.modeColorHex" options="cpOptions"
-											event-api="cpEventAPI"></color-picker></li>
+									<li class="list-group-item wrap-color-picker">color<span
+											ng-if="ledstrip.numModeColors &gt; 1">s</span>:
+											<div class="row"
+												ng-if="ledstrip.numPixColors &gt; 1">
+												<div class="col-md-12"
+													ng-if="ledstrip.modeColorArray.length == 1"
+													ng-repeat="mc in ledstrip.modeColorArray track by $index">mode color #{{$index + 1}}<br />
+													<color-picker
+														ng-model="mc.hex"
+														options="mc.cpOptions"
+														event-api="mc.cpEventAPI"></color-picker>
+												</div>
+												<div class="col-md-6"
+													ng-if="ledstrip.modeColorArray.length == 2"
+													ng-repeat="mc in ledstrip.modeColorArray track by $index">mode color #{{$index + 1}}<br />
+													<color-picker
+														ng-model="mc.hex"
+														options="mc.cpOptions"
+														event-api="mc.cpEventAPI"></color-picker>
+												</div>
+												<div class="col-md-4"
+													ng-if="ledstrip.modeColorArray.length &gt; 2"
+													ng-repeat="mc in ledstrip.modeColorArray track by $index">mode color #{{$index + 1}}<br />
+													<color-picker
+														ng-model="mc.hex"
+														options="mc.cpOptions"
+														event-api="mc.cpEventAPI"></color-picker>
+												</div>
+											</div><p 
+											ng-if="ledstrip.numPixColors == 1">Fixed - One Color</p></li>
 									<li class="list-group-item">brightness:<rzslider
 											rz-slider-options="{floor: 0, ceil: 255, onEnd: ledstrip.setBrightness}"
 											rz-slider-model="ledstrip.brightness"></rzslider></li>
 									<li class="list-group-item">color hold time:<rzslider
 											rz-slider-options="{floor: 0, ceil: 65535, onEnd: ledstrip.setColorHoldTime}"
 											rz-slider-model="ledstrip.colorTime"></rzslider></li>
-									<!-- Single button -->
-									<div class="btn-group" uib-dropdown is-open="status.isopen">
-									</div>
 									<li class="list-group-item">fade mode: <span uib-dropdown><button
 												id="butt_drp_fade_mode_{{device.id}}_{{ledstrip.stripIndex}}"
 												type="button" class="btn btn-primary" uib-dropdown-toggle>
@@ -91,19 +126,19 @@
 								</ul>
 							</dd>
 						</dl>
-						<ul uib-pagination
-							total-items="device.ledstripsPagination.totalItems"
-							ng-model="device.ledstripsPagination.currentPage"
-							items-per-page="device.ledstripsPagination.pageSize"
-							class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul>
-						<pre class="pagination-footer">LED Strips: {{device.ledstripsPagination.currentPage}} of {{device.ledstripsPagination.pagedLEDStrips.length}}</pre>
+						<div><span style="position: relative; top: -30px;">LED Strips: </span>
+							<ul uib-pagination
+								total-items="device.ledstripsPagination.totalItems"
+								ng-model="device.ledstripsPagination.currentPage"
+								items-per-page="device.ledstripsPagination.pageSize"
+								class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul></div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<ul uib-pagination total-items="items-per-page"
-			ng-model="pagedItemsStored" max-size="pageSizeStored"
-			class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul>
-		<pre class="pagination-footer">Devices Page: {{currentPageStored}} of {{pagedItemsStored.length}}</pre>
+		<div><span style="position: relative; top: -30px;">Devices: </span>
+			<ul uib-pagination total-items="items-per-page"
+				ng-model="pagedItemsStored" max-size="pageSizeStored"
+				class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul></div>
 	</div>
 </div>

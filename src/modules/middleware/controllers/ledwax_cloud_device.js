@@ -299,7 +299,14 @@ const LedwaxCloudDeviceController = () => {
 								continue;
 							}
 							if (deviceCaps.vrs[i].varname == 'modeColor') {
-								deviceCaps.vrs[i].value = parseInt(deviceCaps.vrs[i].value, 16);
+								// sanitize json
+								let val = deviceCaps.vrs[i].value;
+								let sanitizedColors = [];
+								let invalidColors = val.substring(1).substring(0, val.length - 2);
+								invalidColors = invalidColors.split(',').forEach((item) => {
+									sanitizedColors.push('#' + item + '');
+								});
+								deviceCaps.vrs[i].value = JSON.stringify(sanitizedColors);
 							}
 							vals[deviceCaps.vrs[i].varname] = deviceCaps.vrs[i].value;
 						}
@@ -312,6 +319,8 @@ const LedwaxCloudDeviceController = () => {
 								deviceId : savedLEDStrip.deviceId,
 								stripIndex : savedLEDStrip.stripIndex,
 								stripType : savedLEDStrip.stripType,
+								numPixels : savedLEDStrip.numPixels,
+								numPixColors : savedLEDStrip.numPixColors,
 								dispMode : savedLEDStrip.dispMode,
 								modeColor : savedLEDStrip.modeColor,
 								modeColorIdx : savedLEDStrip.modeColorIdx,
@@ -354,6 +363,8 @@ const LedwaxCloudDeviceController = () => {
 		let deviceId = request.payload ? request.payload.deviceId : request.query.deviceId;
 		let stripIndex = request.payload ? request.payload.stripIndex : request.query.stripIndex;
 		let stripType = request.payload ? request.payload.stripType : request.query.stripType;
+		let numPixels = request.payload ? request.payload.numPixels : request.query.numPixels;
+		let numPixColors = request.payload ? request.payload.numPixColors : request.query.numPixColors;
 		let dispMode = request.payload ? request.payload.dispMode : request.query.dispMode;
 		let color24Bit = request.payload ? request.payload.color24Bit : request.query.color24Bit;
 		let modeColorIndex = request.payload ? request.payload.modeColorIndex : request.query.modeColorIndex;
@@ -366,8 +377,10 @@ const LedwaxCloudDeviceController = () => {
 			deviceId : deviceId,
 			stripIndex : stripIndex,
 			stripType : stripType,
-			brightness : brightness,
+			numPixels : numPixels,
+			numPixColors : numPixColors,
 			dispMode : dispMode,
+			brightness : brightness,
 			modeColor : color24Bit,
 			modeColorIdx : modeColorIndex,
 			colorTime : colorHoldTime,

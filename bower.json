@@ -34,6 +34,8 @@
     "angular-cookies": "^1.5.5",
     "angular-sanitize": "^1.5.5",
     "angular-animate": "^1.5.5",
+    "angular-aria": "^1.5.5",
+    "angular-messages": "^1.5.5",
     "angular-translate": "^2.11.0",
     "angular-translate-loader-static-files": "^2.11.0",
     "angular-translate-storage-cookie": "^2.11.0",
@@ -41,6 +43,7 @@
     "bootstrap-css": "^3.3.6",
     "ng-bootstrap-alerts": "^1.1.1",
     "angular-color-picker": "angularjs-color-picker#^2.7.1",
-    "angularjs-slider": "^5.9.0"
+    "angularjs-slider": "^5.9.0",
+    "tinycolor": "^1.4.1"
   }
 }

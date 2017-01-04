@@ -58,6 +58,7 @@ const LedwaxDeviceDiscoverController = () => {
 					device.devTypeFW = 'Unknown';
 					if (device.name && device.name.startsWith('ledwax')) {
 						// it's probably a LEDWax device!
+						// check one 'signature' particle var
 						request.server.log([ 'info', logTag ],
 							'retrieving device variable from cloud for device:', device.id);
 						try {
@@ -73,7 +74,7 @@ const LedwaxDeviceDiscoverController = () => {
 								return callback(new Error(errMsg));
 							}
 							fnProm.then((data) => {
-								device.devTypeFW = 'LedWax Device';
+								device.devTypeFW = 'LEDWax Device';
 								lwDvList.push(device);
 								callback();
 							}, (err) => {
@@ -109,7 +110,7 @@ const LedwaxDeviceDiscoverController = () => {
 	 * separate REST calls.
 	 */
 	const discoverLEDWaxDeviceCaps = (request, reply) => {
-		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDeviceCapabilities';
+		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDeviceCaps';
 		let authToken = request.query.authtoken;
 		let deviceId = request.query.deviceId;
 		let particle = request.app.particle.api;

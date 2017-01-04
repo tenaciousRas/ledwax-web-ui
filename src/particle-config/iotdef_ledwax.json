@@ -2,6 +2,8 @@
 	"particleDeviceVariableNames": {
 		"numStrips": "getNumStrips",
 		"stripIndex": "getStripIndex",
+		"numPixels": "getNumPixels",
+		"numPixColors": "getNumPixColors",
 		"stripType": "getStripType",
 		"dispMode": "getDispMode",
 		"modeColor": "getModeColor",
