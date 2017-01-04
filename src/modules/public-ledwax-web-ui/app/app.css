@@ -14,7 +14,7 @@ html body * {
 
 html body {
 	font-family: 'Asap', 'Verdana', sans-serif;
-	background: #d3ff37;
+	background: #ff5044;
 	font-size: 2.35em;
 }
 
@@ -189,17 +189,22 @@ h1.app-title {
 	color: #000;
 }
 
-footer {
+body footer {
 	margin-top: 0;
 	margin-bottom: 11px;
-	font-size: 0.95em;
-	color: #fff;
-	border-top: 1px dashed #ff5044;
-	background: #d3ff37;
+	padding: 5px 9px;
+	border-top: 4px dashed #d3ff37;
+	background: #ff5044;
+	font-size: 0.65em;
+	font-weight: 900;
+	font-family: 'Crete Round', 'Arial', sans-serif;
+	color: #efefef;
 }
 
-footer p,footer address {
-	margin: 0 0 5px 0;
+body footer * {
+	color: #efefef;
+	font-weight: 900;
+	font-family: 'Crete Round', 'Arial', sans-serif;
 }
 
 .loaderError, .loaderoverlay {
@@ -276,7 +281,7 @@ footer p,footer address {
 
 .dev-list-wrap-toggle {
 	border: 2px solid #1fa1ff;
-	background: #ead4fc;
+	background: #fefefe;
 	border-radius: 10px;
 	color: #efefef;
 }
