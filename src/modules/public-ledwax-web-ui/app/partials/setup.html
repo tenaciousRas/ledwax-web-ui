@@ -1,6 +1,6 @@
 <div ng-controller="SetupCtrl">
 	<div id="wrap_devices" class="">
-		<div class="row">
+		<div class="row" style="display: none;">
 			<div class="row-sm-12">
 				<progressbar class="progress-striped active {{pBarClass}}"
 					value="uploadProgress" type="info"> <span
@@ -11,12 +11,10 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div ng-controller="SetupTabsCtrl">
-					<uib-tabset> <uib-tab ng-repeat="tab in tabs"
+					<uib-tabset style="margin-top: 0;"><uib-tab ng-repeat="tab in tabs"
 						heading="{{tab.title}}" active="tab.active"
 						disabled="tab.disabled">
-					<div ng-include="tab.include"></div>
-					</tab>
-					</tabset>
+					<div ng-include="tab.include"></div></uib-tab></uib-tabset>
 				</div>
 			</div>
 		</div>

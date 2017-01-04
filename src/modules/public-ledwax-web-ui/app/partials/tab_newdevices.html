@@ -5,27 +5,24 @@
 				<div class="col-sm-6">
 					<a
 						ng:click="sortBy('name', 'Fresh', devicesFresh, 'pagedDevicesFresh')">Name&nbsp;<span
-						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
-						style="color: inherit;"></span></a>
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
 				</div>
 				<div class="col-sm-6">
 					<a
 						ng:click="sortBy('type', 'Fresh', devicesFresh, 'pagedDevicesFresh')">Type&nbsp;<span
-						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
-						style="color: inherit;"></span></a>
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
 				</div>
 			</div>
-			<div
+			<div class="dev-list-wrap-toggle"
 				ng:repeat="device in pagedDevicesFresh[currentPageFresh - 1] | filter:query">
 				<div class="row" ng:click="toggleDeviceDetailsFresh(device)">
-					<div class="col-sm-6">{{device.name}}</div>
-					<div class="col-sm-5">{{device.devTypeFW}}</div>
-					<div class="col-sm-1">
+					<div class="col-sm-6 dev-list-header">{{device.name}}</div>
+					<div class="col-sm-5 dev-list-header">{{device.devTypeFW}}</div>
+					<div class="col-sm-1 dev-list-header">
 						<button id="butt_toggle_dev_details_{{device.id}}"
 							class="btn btn-primary">
-							<span style="color: white;"
-								class="glyphicon glyphicon-collapse-{{device.toggleShowDetails
-							== true ? 'up' : 'down'}}"
+							<span class="glyphicon glyphicon-collapse-{{device.toggleShowDetails
+								== true ? 'up' : 'down'}}"
 								aria-hidden="true"></span>
 						</button>
 					</div>
@@ -38,7 +35,7 @@
 							<dd>
 								<button id="butt_store_device_{{device.id}}"
 									ng:click="saveNewDevice(device)" class="btn btn-primary btn-lg">
-									<span style="color: white;" class="glyphicon glyphicon-save"
+									<span class="glyphicon glyphicon-save"
 										aria-hidden="true"></span>&nbsp;Store Device ({{device.name}})
 								</button>
 							</dd>

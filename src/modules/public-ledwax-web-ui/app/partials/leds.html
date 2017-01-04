@@ -1,40 +1,34 @@
 <div ng-controller="LEDsCtrl">
 	<div class="wrap-devices-table" class="">
 		<div class="devices-table">
-			<div class="row"
-				style="margin : 10px; padding: 0 10px;">
+			<div class="row">
 				<div class="col-sm-4">
 					<a
 						ng:click="sortBy('name', 'Stored', devicesStored, 'pagedDevicesStored')">Name&nbsp;<span
-						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
-						style="color: inherit;"></span></a>
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
 				</div>
 				<div class="col-sm-4">
 					<a
 						ng:click="sortBy('type', 'Stored', devicesStored, 'pagedDevicesStored')">Type&nbsp;<span
-						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
-						style="color: inherit;"></span></a>
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
 				</div>
 				<div class="col-sm-4">
 					<a
 						ng:click="sortBy('numStrips', 'Stored', devicesStored, 'pagedDevicesStored')">Total LED Strips&nbsp;<span
-						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"
-						style="color: inherit;"></span></a>
+						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
 				</div>
 			</div>
-			<div style="border: 2px solid #62c2cb; background: #e4f5f6; border-radius: 10px;"
+			<div class="dev-list-wrap-toggle"
 				ng:repeat="device in pagedItemsStored[currentPageStored - 1] | filter:query">
 				<div class="row"
-					style="border-radius: 10px; margin : 10px; padding: 10px;"
 					ng:click="toggleDeviceDetailsStored(device)">
-					<div class="col-sm-4" style="margin-top: 8px;">{{device.deviceNameFW}}</div>
-					<div class="col-sm-4" style="margin-top: 8px;">{{device.devTypeFW}}</div>
-					<div class="col-sm-3" style="margin-top: 8px;">{{device.numStrips}}</div>
-					<div class="col-sm-1">
+					<div class="col-sm-4 dev-list-header">{{device.deviceNameFW}}</div>
+					<div class="col-sm-4 dev-list-header">{{device.devTypeFW}}</div>
+					<div class="col-sm-3 dev-list-header">{{device.numStrips}}</div>
+					<div class="col-sm-1 dev-list-header">
 						<button id="butt_toggle_dev_details_{{device.id}}"
 							class="btn btn-primary">
-							<span style="color: white;"
-								class="glyphicon glyphicon-collapse-{{device.toggleShowDetails == true ? 'up' : 'down'}}"
+							<span class="glyphicon glyphicon-collapse-{{device.toggleShowDetails == true ? 'up' : 'down'}}"
 								aria-hidden="true"></span>
 						</button>
 					</div>
@@ -43,7 +37,7 @@
 					class="row {{device.toggleShowDetails == true ? 'show' : 'hide'}}">
 					<div class="col-sm-3"></div>
 					<div class="wrap-device-details col-sm-6">
-						<div><span style="position: relative; top: -30px;">LED Strips: </span>
+						<div><span class="inline-pg-label">LED Strips: </span>
 							<ul uib-pagination
 								total-items="device.ledstripsPagination.totalItems"
 								ng-model="device.ledstripsPagination.currentPage"
@@ -126,7 +120,7 @@
 								</ul>
 							</dd>
 						</dl>
-						<div><span style="position: relative; top: -30px;">LED Strips: </span>
+						<div><span class="inline-pg-label">LED Strips: </span>
 							<ul uib-pagination
 								total-items="device.ledstripsPagination.totalItems"
 								ng-model="device.ledstripsPagination.currentPage"
@@ -136,7 +130,7 @@
 				</div>
 			</div>
 		</div>
-		<div><span style="position: relative; top: -30px;">Devices: </span>
+		<div><span class="inline-pg-label">Devices: </span>
 			<ul uib-pagination total-items="items-per-page"
 				ng-model="pagedItemsStored" max-size="pageSizeStored"
 				class="pagination-sm" boundary-link-numbers="true" rotate="false"></ul></div>

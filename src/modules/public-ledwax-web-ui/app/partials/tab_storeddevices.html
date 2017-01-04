@@ -13,12 +13,12 @@
 						style="color: inherit;"></span></a>
 				</div>
 			</div>
-			<div
+			<div class="dev-list-wrap-toggle"
 				ng:repeat="device in pagedDevicesStored[currentPageStored - 1] | filter:query">
 				<div class="row" ng:click="toggleDeviceDetailsStored(device)">
-					<div class="col-sm-6">{{device.deviceNameFW}}</div>
-					<div class="col-sm-5">{{device.devTypeFW}}</div>
-					<div class="col-sm-1">
+					<div class="col-sm-6 dev-list-header">{{device.deviceNameFW}}</div>
+					<div class="col-sm-5 dev-list-header">{{device.devTypeFW}}</div>
+					<div class="col-sm-1 dev-list-header">
 						<button id="butt_toggle_dev_details_{{device.id}}"
 							class="btn btn-primary">
 							<span style="color: white;"

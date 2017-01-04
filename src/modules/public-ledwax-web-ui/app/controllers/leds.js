@@ -78,7 +78,7 @@ angular.module('LEDWAXW3.leds', [ 'LEDWAXW3.services' ])
 								strip.modeColorArray = [];
 								for (let i = 0; i < strip.numModeColors; i++) {
 									let c = {
-										hex : '#000001'
+										hex : '#000000'
 									};
 									if (strip.modeColor[i]) {
 										c.hex = strip.modeColor[i];

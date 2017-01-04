@@ -49,9 +49,6 @@
 	<div class="wrap_phantom" ng-controller="AppCtrl" data-status="">
 		<nav class="navbar navbar-default {{headerBgClass}}"
 			id="header_util_nav">
-			<div class="logo">
-				<a href="" ng-click="goToNav('/');"><img ng-src="{{logoSrc}}"></a>
-			</div>
 			<h1 class="app-title" translate>APP_TITLE</h1>
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="wrap-navbar" style="float: right;"
@@ -72,12 +69,11 @@
 					</span>
 				</div>
 			</div>
-			<!-- /.navbar-collapse -->
 		</nav>
 		<nav class="clearfix navbar navbar-default" role="navigation">
 			<!-- toggle nav for mobile display -->
 			<div class="navbar-header">
-				<span style="font-weight: 900; margin-right: 0.65em;">Cloud</span><span
+				<div class="wrap-cloud-dropdown">Cloud&nbsp;<span
 					uib-dropdown="uib-dropdown"><button
 						id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
 						type="button" class="btn btn-primary"
@@ -89,7 +85,7 @@
 						<li role="menuitem" ng:repeat="o in cloudHosts"><a
 							ng:click="currentCloudHost = o">{{o.name}}</a></li>
 					</ul></span>
-				</form>
+				</div>
 				<button type="button" class="navbar-toggle"
 					ng-init="navCollapsed = true"
 					ng-click="navCollapsed = !navCollapsed">
@@ -111,15 +107,14 @@
 		<!--[if lt IE 7]>
 		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 		<![endif]-->
-		<div id="wrap_alerts"
-			style="position: absolute; top: 0; right: 100px; width: 50%; height: 25%; padding: 0.8em;">
+		<div id="wrap_alerts">
 			<alert ng-repeat="alert in appAlerts" type="alert.type"
 				close="closeAlert($index)" ng-bind="alert.msg"></alert>
 		</div>
-		<div ng-view></div>
-		<div>
+		<div class="content-main" ng-view="ng-view"></div>
+		<footer>
 			LEDWax Web UI v<span app-version></span>
-		</div>
+		</footer>
 	</div>
 	<!-- build:js(.) js/vendor.js -->
 	<!-- bower:js -->
