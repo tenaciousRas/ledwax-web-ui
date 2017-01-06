@@ -47,45 +47,37 @@
 </head>
 <body ng-cloak="ng-cloak">
 	<div class="wrap_phantom" ng-controller="AppCtrl" data-status="">
-		<nav class="navbar navbar-default {{headerBgClass}}"
-			id="header_util_nav">
+		<div id="header_util_nav">
 			<h1 class="app-title" translate>APP_TITLE</h1>
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="wrap-navbar" style="float: right;"
-				ng-class="langNavCollapsed && 'in'"
-				ng-click="langNavCollapsed = !langNavCollapsed">
-				<div class="utilnav">
-					<span uib-dropdown="uib-dropdown">
-						<button id="butt_drp_lang" type="button" class="btn btn-primary"
-							uib-dropdown-toggle="uib-dropdown-toggle">
-							<span style="color: #fff;" translate>LANGUAGE</span><span
-								class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" uib-dropdown-menu role="menu"
-							aria-labelledby="butt_drp_lang">
-							<li role="menuitem"><a
-								ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
-						</ul>
-					</span>
-				</div>
+			<div style="float: right;">
+			<div class="btn-group" uib-dropdown is-open="status.isopen">
+				<span uib-dropdown-toggle="uib-dropdown-toggle">Cloud
+				<button id="single-button" type="button" class="btn btn-primary"
+					ng-disabled="disabled">
+					{{currentCloudHost.name}}<span class="caret"></span>
+				</button></span>
+				<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+					aria-labelledby="single-button">
+					<li role="menuitem" ng:repeat="o in cloudHosts"><a
+						ng:click="currentCloudHost = o">{{o.name}}</a></li>
+				</ul>
 			</div>
-		</nav>
+			<div class="btn-group" uib-dropdown>
+				<button id="btn-cloud" type="button" class="btn btn-danger"
+					uib-dropdown-toggle ng-disabled="disabled">
+					Language <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+					aria-labelledby="btn-cloud">
+					<li role="menuitem"><a
+						ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
+				</ul>
+			</div>
+			</div>
+		</div>
 		<nav class="clearfix navbar navbar-default" role="navigation">
 			<!-- toggle nav for mobile display -->
 			<div class="navbar-header">
-				<div class="wrap-cloud-dropdown">Cloud&nbsp;<span
-					uib-dropdown="uib-dropdown"><button
-						id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
-						type="button" class="btn btn-primary"
-						uib-dropdown-toggle="uib-dropdown-toggle">
-						{{currentCloudHost.name}}<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" uib-dropdown-menu role="menu"
-						aria-labelledby="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}">
-						<li role="menuitem" ng:repeat="o in cloudHosts"><a
-							ng:click="currentCloudHost = o">{{o.name}}</a></li>
-					</ul></span>
-				</div>
 				<button type="button" class="navbar-toggle"
 					ng-init="navCollapsed = true"
 					ng-click="navCollapsed = !navCollapsed">
@@ -95,8 +87,9 @@
 			</div>
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse"
-				ng-class="!navCollapsed && 'in'" ng-click="navCollapsed = true">
-				<ul class="nav navbar-nav navbar-right topnav">
+				ng-class="!navCollapsed && 'in'" 
+				ng-click="navCollapsed = true">
+				<ul class="nav navbar-nav navbar-left topnav">
 					<li ng-repeat="nav in topnav"
 						class="{{nav.active && 'active' || ''}}"><a
 						ng-click="goToNav(nav.path)" ng-bind="nav.label | translate"></a></li>

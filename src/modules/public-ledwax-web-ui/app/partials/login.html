@@ -1,41 +1,44 @@
 <div ng-controller="LoginCtrl">
 	<div class="row">
-		<div class="col-md-3"></div>
-		<div class="col-md-6">
+		<div class="col-sm-3"></div>
+		<div class="col-sm-6">
 			<form name="loginForm" id="login_form" class="app-form" novalidate>
+				<p class="smaller">Login using the credentials you setup with your Particle cloud.</p>
 				<fieldset class="">
 					<legend accesskey="l">LEDWax Login</legend>
-					<div id="" class="">
-						<button id="btn_clear" class="btn btn-primary"
+					<div id="wrap_login_formbtns" class="row">
+						<button id="btn_clear" class="col-sm-6 btn btn-primary"
 							ng-click="forms.login.clear()">Clear</button>
-						<button id="btn_reset" class="btn btn-primary"
+						<button id="btn_reset" class="col-sm-6 btn btn-primary"
 							ng-click="forms.login.reset()">Reset</button>
 					</div>
-					<div class="">
-						<div id="" class="">
+					<div class="row">
+						<div id="" class="col-sm-4">
 							<label for="userName">User&nbsp;Name:&nbsp;</label>
 						</div>
-						<div id="" class="">
+						<div id="" class="col-sm-8">
 							<input type="text" name="username" id="userName"
 								ng-model="userSession.username" required="required">
 						</div>
 					</div>
-					<div class="">
-						<div id="" class="">
+					<div class="row">
+						<div id="" class="col-sm-4">
 							<label for="userpass">Password:&nbsp;</label>
 						</div>
-						<div id="" class="">
+						<div id="" class="col-sm-8">
 							<input type="password" name="userpass" id="userpass"
 								ng-model="userSession.password" required="required">
 						</div>
 					</div>
-					<div id="" class="">
-						<button id="btn_login" class="btn btn-primary btn-lg"
+					<div id="wrap_login_btn" class="row">
+						<button id="btn_login" class="btn btn-primary btn-lg col-sm-12"
 							ng-click="forms.login.login(userSession)">Login</button>
-						<div id="" class="">
+					</div>
+					<div id="" class="row">
+						<div id="" class="col-sm-4">
 							<label for="persist">Remember&nbsp;Me&nbsp;</label>
 						</div>
-						<div id="" class="">
+						<div id="" class="co-sm-8">
 							<input type="checkbox" name="persist" id="persist"
 								ng-model="userSession.persist">
 						</div>

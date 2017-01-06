@@ -1,6 +1,32 @@
-<p>{{ 'LEDWax version v%VERSION%.' | appVersion }}</p>
-<p app-description></p>
-<p>To login use the username/password you already created on your Particle server.</p>
-<p>Setup and store LEDWax devices on the 'Setup' screen.  Devices must be already registered on the Particle cloud.</p>
-<p>Devices only need to be setup once.</p>
-<p>Once LEDWax devices are stored, they can be driven from the LEDs screen.  You can set mode, color, brightness, fade mode, and more.</p>
+<div ng-controller="AboutCtrl">
+	<p>{{ 'LEDWax version v%VERSION%.' | appVersion }}</p>
+	<p app-description></p>
+	<p>A brief overview of the setup for this application:</p>
+	<ul>
+		<li>Setup a particle cloud (or register your user on the public
+			cloud).</li>
+		<li>Register the Particle Photon IoT devices <a target="_blank" class="ext"
+			href="https://docs.particle.io/guide/getting-started/intro/photon/">on
+				the Particle cloud</a>.
+		</li>
+		<li><a target="_blank" class="ext"
+			href="https://docs.particle.io/guide/tools-and-features/firmware-manager/photon/">Flash
+				Photon devices with the LEDWax firmware</a>.</li>
+		<li>Setup this application (middleware API) with the IP address
+			and client credentials of the cloud host.</li>
+	</ul>
+	<p>LEDWax is intended primarily for a private Particle cloud but
+		can also function with the public Particle cloud. To configure cloud
+		hosts add records to the LEDWax API (middleware) database. Currently
+		this must be done manually.</p>
+	<p>To use the application:</p>
+	<ul>
+		<li>To Login use the username/password already created on your
+			Particle cloud server.</li>
+		<li>Setup and store LEDWax devices on the 'Setup' screen. Devices
+			only need to be setup once.</li>
+		<li>Once LEDWax devices are stored, they can be driven from the
+			LEDs screen. You can set mode, color, brightness, fade mode, and
+			more.</li>
+	</ul>
+</div>

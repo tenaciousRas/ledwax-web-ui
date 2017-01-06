@@ -3,7 +3,7 @@
 		<div class="devices-table">
 			<div class="row">
 				<div class="col-sm-4">
-					<a
+					<a 
 						ng:click="sortBy('name', 'Stored', devicesStored, 'pagedDevicesStored')">Name&nbsp;<span
 						class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a>
 				</div>
@@ -37,7 +37,7 @@
 					class="row {{device.toggleShowDetails == true ? 'show' : 'hide'}}">
 					<div class="col-sm-3"></div>
 					<div class="wrap-device-details col-sm-6">
-						<div><span class="inline-pg-label">LED Strips: </span>
+						<div><span class="inline-pg-label">LED Strips:&nbsp;</span>
 							<ul uib-pagination
 								total-items="device.ledstripsPagination.totalItems"
 								ng-model="device.ledstripsPagination.currentPage"
@@ -51,9 +51,9 @@
 								ng:repeat="ledstrip in device.ledstripsPagination.pagedLEDStrips[device.ledstripsPagination.currentPage - 1] | filter:query">
 								<ul class="list-group">
 									<li class="list-group-item">index #&nbsp;/&nbsp;type:
-										{{ledstrip.stripIndex}}&nbsp;/&nbsp;{{ledstrip.stripType | ledwaxStripType}}</li>
+										<strong>{{ledstrip.stripIndex}}&nbsp;/&nbsp;{{ledstrip.stripType | ledwaxStripType}}</strong></li>
 									<li class="list-group-item">number of pixels&nbsp;/&nbsp;colors per pixel:
-										{{ledstrip.numPixels}}&nbsp;/&nbsp;{{ledstrip.numPixColors}}</li>
+										<strong>{{ledstrip.numPixels}}&nbsp;/&nbsp;{{ledstrip.numPixColors}}</strong></li>
 									<li class="list-group-item">display mode: <span
 										uib-dropdown><button
 												id="butt_drp_disp_mode_{{device.id}}_{{ledstrip.stripIndex}}"
@@ -96,7 +96,7 @@
 														event-api="mc.cpEventAPI"></color-picker>
 												</div>
 											</div><p 
-											ng-if="ledstrip.numPixColors == 1">Fixed - One Color</p></li>
+											ng-if="ledstrip.numPixColors == 1"><strong>Fixed - One Color</strong></p></li>
 									<li class="list-group-item">brightness:<rzslider
 											rz-slider-options="{floor: 0, ceil: 255, onEnd: ledstrip.setBrightness}"
 											rz-slider-model="ledstrip.brightness"></rzslider></li>
@@ -120,7 +120,7 @@
 								</ul>
 							</dd>
 						</dl>
-						<div><span class="inline-pg-label">LED Strips: </span>
+						<div><span class="inline-pg-label">LED Strips:&nbsp;</span>
 							<ul uib-pagination
 								total-items="device.ledstripsPagination.totalItems"
 								ng-model="device.ledstripsPagination.currentPage"
