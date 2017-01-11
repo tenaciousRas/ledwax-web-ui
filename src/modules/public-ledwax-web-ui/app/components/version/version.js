@@ -3,7 +3,7 @@
 angular.module('LEDWAXW3.version', [
 	'LEDWAXW3.version.interpolate-filter',
 	'LEDWAXW3.version.version-directive'
-]).value('version', '0.1');
+]).value('version', '0.9.0');
 
 angular
 	.module('LEDWAXW3.description', [])
