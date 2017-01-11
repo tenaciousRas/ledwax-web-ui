@@ -71,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
 h1.app-title {
 	font-family: 'Crete Round', 'Arial', cursive;
 	float: left;
-	color: #ff5044;
+	color: #1fa1ff;
 	text-shadow: -1px -1px 5px #9332e8;
 	-webkit-text-shadow: -1px -1px 5px #9332e8;
 	-moz-text-shadow: -1px -1px 5px #9332e8;
@@ -81,10 +81,10 @@ h1.app-title {
 	-webkit-text-stroke-color: #fefefe;
 	-moz-text-stroke-width: 1px;
 	-moz-text-stroke-color: #fefefe;
-	font-size: 3.15em;
+	font-size: 1.95em;
 	margin-top: 0;
 	margin-bottom: 0;
-	margin-left: 8px;
+	margin-left: 0;
 }
 
 .navbar {
@@ -149,9 +149,11 @@ h1.app-title {
 
 #header_util_nav {
 	margin-bottom: 0;
-	height: 4.35em;
+	height: 2.15em;
 	background-image: none;
-	background-color: #e8a732;
+	background-color: transparent;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 #utilnav {
@@ -175,13 +177,16 @@ body footer {
 	padding: 5px 9px;
 	border-top: 4px dashed #d3ff37;
 	background: #ff5044;
+}
+
+body footer p {
+	color: #efefef;
 	font-size: 0.65em;
 	font-weight: 900;
 	font-family: 'Crete Round', 'Arial', sans-serif;
-	color: #efefef;
 }
 
-body footer * {
+body footer p, body footer p span {
 	color: #efefef;
 	font-weight: 900;
 	font-family: 'Crete Round', 'Arial', sans-serif;
@@ -241,7 +246,7 @@ body footer * {
 
 #wrap_alerts {
 	position: absolute;
-	top: 4.35em;
+	top: 10px;
 	right: 0;
 	width: 50%;
 	height: 3em;

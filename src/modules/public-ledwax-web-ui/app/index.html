@@ -47,34 +47,6 @@
 </head>
 <body ng-cloak="ng-cloak">
 	<div class="wrap_phantom" ng-controller="AppCtrl" data-status="">
-		<div id="header_util_nav">
-			<h1 class="app-title" translate>APP_TITLE</h1>
-			<div style="float: right;">
-			<div class="btn-group" uib-dropdown is-open="status.isopen">
-				<span uib-dropdown-toggle="uib-dropdown-toggle">Cloud
-				<button id="single-button" type="button" class="btn btn-primary"
-					ng-disabled="disabled">
-					{{currentCloudHost.name}}<span class="caret"></span>
-				</button></span>
-				<ul class="dropdown-menu" uib-dropdown-menu role="menu"
-					aria-labelledby="single-button">
-					<li role="menuitem" ng:repeat="o in cloudHosts"><a
-						ng:click="currentCloudHost = o">{{o.name}}</a></li>
-				</ul>
-			</div>
-			<div class="btn-group" uib-dropdown>
-				<button id="btn-cloud" type="button" class="btn btn-danger"
-					uib-dropdown-toggle ng-disabled="disabled">
-					Language <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" uib-dropdown-menu role="menu"
-					aria-labelledby="btn-cloud">
-					<li role="menuitem"><a
-						ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
-				</ul>
-			</div>
-			</div>
-		</div>
 		<nav class="clearfix navbar navbar-default" role="navigation">
 			<!-- toggle nav for mobile display -->
 			<div class="navbar-header">
@@ -106,7 +78,35 @@
 		</div>
 		<div class="content-main" ng-view="ng-view"></div>
 		<footer>
-			LEDWax Web UI v<span app-version></span>
+			<div id="header_util_nav">
+				<h1 class="app-title" translate>APP_TITLE</h1>
+				<div style="float: right;">
+				<div class="btn-group" uib-dropdown is-open="status.isopen">
+					<span uib-dropdown-toggle="uib-dropdown-toggle">Cloud
+					<button id="single-button" type="button" class="btn btn-primary"
+						ng-disabled="disabled">
+						{{currentCloudHost.name}}<span class="caret"></span>
+					</button></span>
+					<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+						aria-labelledby="single-button">
+						<li role="menuitem" ng:repeat="o in cloudHosts"><a
+							ng:click="currentCloudHost = o">{{o.name}}</a></li>
+					</ul>
+				</div>
+				<div class="btn-group" uib-dropdown>
+					<button id="btn-cloud" type="button" class="btn btn-danger"
+						uib-dropdown-toggle ng-disabled="disabled">
+						Language <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" uib-dropdown-menu role="menu"
+						aria-labelledby="btn-cloud">
+						<li role="menuitem"><a
+							ng-click="setPreferredLanguage('en_US');" translate>ENGLISH</a></li>
+					</ul>
+				</div>
+				</div>
+			</div>
+			<p>LEDWax Web UI v<span app-version></span></p>
 		</footer>
 	</div>
 	<!-- build:js(.) js/vendor.js -->
