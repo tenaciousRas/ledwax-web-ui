@@ -127,14 +127,15 @@ const ledwaxAuthScheme = (server, options) => {
 			}).then((user) => {
 				request.server.log([ 'debug', 'user.contoller' ],
 					'DB call complete - promise success, user =:' + user);
-				if (null == user) {
+				if (null == user || typeof user.dataValues == 'undefined') {
 					invalidAuth = true;
+				} else {
+					result.credentials = {
+						userid : user.dataValues.id,
+						sessiontoken : user.dataValues.sessiontoken,
+						authtoken : user.dataValues.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken
+					};
 				}
-				result.credentials = {
-					userid : user.dataValues.id,
-					sessiontoken : user.dataValues.sessiontoken,
-					authtoken : user.dataValues.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken
-				};
 				if (invalidAuth) {
 					let err = 'unable to find user by session token';
 					reply(boom.unauthorized(err), null, result);
@@ -177,9 +178,11 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 	});
 	server.auth.scheme('custom', ledwaxAuthScheme);
 	server.auth.strategy('default', 'custom');
-	server.auth.default('default');
+	server.auth.default({
+		strategy : 'default'
+	});
 	server.start(() => {
-		let connects = ' running at: ';
+		let connects = 'listening at: ';
 		for (let i = 0; i < server.connections.length; i++) {
 			connects += server.connections[i].info.uri;
 			if (i < server.connections.length - 1) {
@@ -188,7 +191,7 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 		}
 		console.log('LEDWax running in ' + rt_ctx_env
 			+ ' mode; using [hapi] server v' + server.version
-			+ connects);
+			+ '\n\t' + connects);
 	});
 	// export the server for testing
 	module.exports.server = server;
