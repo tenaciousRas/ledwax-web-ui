@@ -20,9 +20,9 @@ angular.module(
 			'AppAlerts',
 			'Settings',
 			'REST_IoT',
-			function($rootScope, $scope, $route, $window, $location,
+			($rootScope, $scope, $route, $window, $location,
 				$routeParams, $cookies, $filter, $sanitize, $translate,
-				AppAlerts, Settings, REST_IoT) {
+				AppAlerts, Settings, REST_IoT) => {
 				$scope.topnav = [ {
 					active : false,
 					path : '/leds',
@@ -36,13 +36,7 @@ angular.module(
 					path : '/about',
 					label : 'NAV_ABOUT'
 				} ];
-				$scope.goToNav = function(path) {
-					$location.url(path);
-				};
-				$scope.setLangPref = function(langKey) {
-					$translate.use(langKey);
-				};
-				$scope.updateNavState = function(currentContext) {
+				$scope.updateNavState = (currentContext) => {
 					$scope.topNavClasses = [];
 					var i = 0;
 					// console.log(currentContext[1]);
@@ -56,18 +50,15 @@ angular.module(
 						}
 					}
 				};
-				$rootScope.$on('$routeChangeSuccess', function() {
-					$scope.updateNavState($location.url().split("/")[1]);
-				});
 				// app alerts
-				$scope.informUser = function(msg) {
+				$scope.informUser = (msg) => {
 					AppAlerts.addAlert('success', msg);
 				};
-				$scope.alertUser = function(msg) {
+				$scope.alertUser = (msg) => {
 					AppAlerts.addAlert('danger', msg);
 				};
 				var p = Settings.retrieveAppConfig();
-				p.then(function() {
+				p.then(() => {
 					$scope.appConfig = Settings.appConfig;
 					Settings.uiState.httpConnected = true;
 					if (!angular.isDefined($scope.appConfig.cloudHosts) || $scope.appConfig.cloudHosts.length < 1) {
@@ -80,17 +71,17 @@ angular.module(
 					}
 				});
 				/* unused */
-				$scope.randomLogo = function() {
+				$scope.randomLogo = () => {
 					$scope.logoSrc = 'img/ledwax_logo_'
 						+ Math.floor(Math.random() * 4) + '.png';
 				};
-				$scope.randomHeaderBg = function() {
+				$scope.randomHeaderBg = () => {
 					$scope.headerBgClass = 'navbar-bg-'
 					+ Math.floor(Math.random() * 5);
 				};
 				$scope.randomHeaderBg();
 				$scope.randomLogo();
-				$rootScope.setPhantomStatusReady = function() {
+				$rootScope.setPhantomStatusReady = () => {
 					$rootScope.phantom_status = 'ready';
 				};
 				/* end unused */
@@ -122,8 +113,17 @@ angular.module(
 						path : '/login',
 						label : 'NAV_LOGIN'
 					});
-					$scope.goToNav('/login');
 				}
+				$scope.goToNav = (path) => {
+					$location.url(path);
+				};
+				$rootScope.$on('$routeChangeSuccess', () => {
+					let route = $location.url().split("/")[1];
+					$scope.updateNavState(route);
+				});
+				$scope.setLangPref = (langKey) => {
+					$translate.use(langKey);
+				};
 				// persist tabs in views
 				$scope.setupTabs = [ {
 					title : 'New Devices',

@@ -27,6 +27,13 @@ module.exports.auth = {
 			password : Joi.string().trim().min(2).max(35).required()
 		},
 		failAction : failActDelegate('custom')
+	},
+	logout : {
+		payload : {
+			particleCloudId : Joi.number().integer().min(0).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional()
+		},
+		failAction : failActDelegate('custom')
 	}
 };
 

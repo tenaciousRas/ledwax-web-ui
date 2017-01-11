@@ -18,10 +18,7 @@ angular
 			'REST_IoT',
 			function($rootScope, $scope, $cookies, $location, $sanitize,
 				$translate, REST_IoT) {
-				if (angular.isDefined($rootScope.userSession)) {
-					$rootScope.userSession.cookietoken = null;
-					$rootScope.userSession.persist = false;
-				}
+				REST_IoT.serverLogout($scope.currentCloudHost.id, $scope.userSession.sessiontoken);
 				if (angular.isDefined($scope.userSession)) {
 					$scope.userSession.cookietoken = null;
 					$scope.userSession.persist = false;

@@ -6,18 +6,18 @@ var services = angular.module('LEDWAXW3.services', []);
 services.value('version', '1.0');
 
 services.factory('AppAlerts', [ '$rootScope', '$timeout',
-	function($rootScope, $timeout) {
+	($rootScope, $timeout) => {
 		$rootScope.appAlerts = [];
-		$rootScope.addAlert = function(type, msg) {
+		$rootScope.addAlert = (type, msg) => {
 			$rootScope.appAlerts.push({
 				type : type,
 				msg : msg
 			});
-			$timeout(function() {
+			$timeout(() => {
 				$rootScope.closeAlert($rootScope.appAlerts.length - 1);
 			}, 1250, false);
 		};
-		$rootScope.closeAlert = function(index) {
+		$rootScope.closeAlert = (index) => {
 			$rootScope.appAlerts.splice(index, 1);
 		// console.log('closed alert, remaining = '
 		// + $rootScope.appAlerts.length);
@@ -25,7 +25,23 @@ services.factory('AppAlerts', [ '$rootScope', '$timeout',
 		return $rootScope;
 	} ]);
 
-services.factory('Settings', [ '$http', function($http) {
+services.factory('AuthCheck', [ '$location', ($location) => {
+	let service = {
+		doCheck : ($scope) => {
+			let route = $location.url().split("/")[1];
+			if (!$scope.userSession.sessiontoken &&
+				(!route || (route != 'login' && route != 'about'))) {
+				$scope.goToNav('/login');
+				return false;
+			} else {
+				return true;
+			}
+		}
+	};
+	return service;
+} ]);
+
+services.factory('Settings', [ '$http', ($http) => {
 	var service = {
 		dateFormat : 'M/d/yy h:mm:ss a',
 		appConfig : {
@@ -196,17 +212,55 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				};
 				return ret;
 			};
-			$http.defaults.headers.post = {
-				particleCloudId : cloudId,
-				username : username,
-				password : password
-			};
 			var config = {
 				method : 'POST',
 				url : service.hostURL + '/user/login',
 				data : {
 					username : username,
 					password : password,
+					particleCloudId : cloudId
+				}
+			};
+			return $http(config).then(
+				successCallback, errorCallback);
+		};
+		service.serverLogout = function(cloudId, sessiontoken) {
+			var ret = service.defaultRESTResp;
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = 'missing param: cloud id';
+				return ret;
+			}
+			if (!angular.isDefined(sessiontoken)) {
+				ret.error_description = 'missing param: session token';
+				return ret;
+			}
+			var successCallback = function(response) {
+				if (angular.isDefined(response.error)) {
+					ret = {
+						code : response.code,
+						error : true,
+						error_description : response.error.message
+					};
+				} else {
+					ret = {
+						code : 200,
+						error : false
+					};
+				}
+				return ret;
+			};
+			var errorCallback = function(response) {
+				ret = {
+					code : 511,
+					error : true
+				};
+				return ret;
+			};
+			var config = {
+				method : 'POST',
+				url : service.hostURL + '/user/logout',
+				data : {
+					sessiontoken : sessiontoken,
 					particleCloudId : cloudId
 				}
 			};
@@ -696,7 +750,7 @@ services.factory('PaginationFilteredSorted', [ '$filter',
 					}
 				} else {
 					$scope['totalItems' + suffix] = 0;
-					ret = [[]];
+					ret = [ [] ];
 				}
 				return ret;
 			};

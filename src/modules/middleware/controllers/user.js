@@ -177,11 +177,12 @@ const UserController = () => {
 				log('debug', 'user.contoller#update',
 					'DB call complete - find promise success, user =:' + user);
 				user.sessiontoken = sessiontoken;
+				user.last_login = new Date();
 				user.addParticle_cloud([ cloudInstance ], {
 					authtoken : authtoken
 				});
 				return user.save({
-					fields : [ 'sessiontoken' ]
+					fields : [ 'sessiontoken', 'last_login' ]
 				});
 			}).then((result) => {
 				log('debug', 'user.contoller#update',

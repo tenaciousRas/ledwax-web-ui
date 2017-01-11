@@ -63,6 +63,17 @@ let routeConfig = [
 			validate : validations.auth.loginPost
 		}
 	}, {
+		method : 'POST',
+		path : '/user/logout',
+		handler : authController.logout,
+		config : {
+			auth : false,
+			description : 'Destroy a user login session.',
+			notes : 'Returns HTTP status code and message.',
+			tags : [ 'api' ],
+			validate : validations.auth.logout
+		}
+	}, {
 		method : 'GET',
 		path : '/users/find',
 		handler : userController.find,

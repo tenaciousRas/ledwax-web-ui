@@ -1,8 +1,25 @@
 'use strict';
 
 angular.module('LEDWAXW3.leds', [ 'LEDWAXW3.services' ])
-	.controller('LEDsCtrl', [ '$rootScope', '$scope', 'REST_IoT', 'PaginationFilteredSorted', '$timeout',
-		function($rootScope, $scope, REST_IoT, PaginationFilteredSorted, $timeout) {
+	.controller('LEDsCtrl', 
+			[ 
+				'$rootScope', 
+				'$scope', 
+				'$location', 
+				'AuthCheck',
+				'REST_IoT', 
+				'PaginationFilteredSorted', 
+				'$timeout',
+		function($rootScope, 
+				$scope, 
+				$location, 
+				AuthCheck,
+				REST_IoT, 
+				PaginationFilteredSorted, 
+				$timeout) {
+			if (!AuthCheck.doCheck($scope)) {
+				return;
+			}
 			$scope.LEDWAX_FW_FADE_MODES = []; // from ledwax-fademode-filter
 			$scope.LEDWAX_FW_DISP_MODES = []; // from ledwax-dispmode-filter
 			for (let obj in LEDWAX_FW_FADE_MODES) {
@@ -113,20 +130,20 @@ angular.module('LEDWAXW3.leds', [ 'LEDWAXW3.services' ])
 											},
 										};
 										c.cpOptions = {
-												"case" : "lower",
-												"alpha" : true,
-												"lightness" : true,
-												"inline" : false,
-												"swatch" : true,
-												"swatchOnly" : false,
-												"close" : {
-													"show" : false
-												},
-												"reset" : {
-													"show" : false
-												},
-												"placeholder" : c.hex
-											};
+											"case" : "lower",
+											"alpha" : true,
+											"lightness" : true,
+											"inline" : false,
+											"swatch" : true,
+											"swatchOnly" : false,
+											"close" : {
+												"show" : false
+											},
+											"reset" : {
+												"show" : false
+											},
+											"placeholder" : c.hex
+										};
 										if (strip.numPixColors == 3) {
 											c.cpOptions.format = 'hex';
 										}

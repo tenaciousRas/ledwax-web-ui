@@ -18,13 +18,18 @@ angular.module(
 	[ '$rootScope',
 		'$scope',
 		'$cookies',
+		'$location',
 		'$sanitize',
 		'$translate',
 		'$filter',
 		'Settings',
+		'AuthCheck',
 		'REST_IoT',
-		function($rootScope, $scope, $cookies, $sanitize, $translate, $filter,
-			Settings, REST_IoT) {
+		function($rootScope, $scope, $cookies, $location, $sanitize, $translate, $filter,
+			Settings, AuthCheck, REST_IoT) {
+			if (!AuthCheck.doCheck($scope)) {
+				return;
+			}
 			$scope.getDeviceList = () => {
 				let prom = REST_IoT
 					.discoverDevices($scope.currentCloudHost.id, $scope.userSession.sessiontoken);
