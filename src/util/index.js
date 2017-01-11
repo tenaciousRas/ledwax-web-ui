@@ -43,7 +43,7 @@ module.exports = {
 			auth : authToken
 		});
 		if (!fnProm) {
-			deferred.reject('unable to call particle function - unknown error');
+			throw new Error('unable to call particle function - unknown error');
 		}
 		fnProm.then(
 			(data) => {

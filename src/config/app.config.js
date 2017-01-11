@@ -22,6 +22,7 @@ module.exports = {
 					labels : [ 'web' ],
 					routes : {
 						log : true,
+						auth : false,
 						files : {
 							// serves static content files from this directory
 							relativeTo : Path.join(__dirname,

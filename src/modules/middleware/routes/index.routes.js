@@ -15,12 +15,18 @@ let routeConfig = [
 		handler : (request, reply) => {
 			// return heartbeat
 			return reply('LEDWAX REST API running at ' + request.server.uri + '!');
+		},
+		config : {
+			auth : false,
+			description : 'app heartbeat.',
+			notes : 'Returns HTTP status code 200 and non-secure info.'
 		}
 	}, {
 		method : [ 'POST', 'GET' ],
 		path : '/config',
 		handler : configController.getConfig,
 		config : {
+			auth : false,
 			description : 'Retrieve application configuration.',
 			notes : 'Returns HTTP status code 200 and json config object.',
 			tags : [ 'api' ]
@@ -39,6 +45,7 @@ let routeConfig = [
 		path : '/user/login',
 		handler : authController.login,
 		config : {
+			auth : false,
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
 			tags : [ 'api' ],
@@ -49,6 +56,7 @@ let routeConfig = [
 		path : '/user/login',
 		handler : authController.login,
 		config : {
+			auth : false,
 			description : 'Authenticate a user.',
 			notes : 'Returns HTTP status code and message.',
 			tags : [ 'api' ],
@@ -255,9 +263,9 @@ const buildDynamicRoutesForController = () => {
 		}
 	};
 	// routes for iot vars
-	fn.apply(this, ['GET', 'Returns a ledwax return value.', ledwaxDeviceController.dynamicFuncNames.iotVars]);
+	fn.apply(this, [ 'GET', 'Returns a ledwax return value.', ledwaxDeviceController.dynamicFuncNames.iotVars ]);
 	// routes for iot FNs
-	fn.apply(this, ['POST', 'Returns a ledwax return function.', ledwaxDeviceController.dynamicFuncNames.iotFns]);
+	fn.apply(this, [ 'POST', 'Returns a ledwax return function.', ledwaxDeviceController.dynamicFuncNames.iotFns ]);
 };
 buildDynamicRoutesForController();
 

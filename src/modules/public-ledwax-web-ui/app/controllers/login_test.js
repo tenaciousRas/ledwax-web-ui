@@ -22,7 +22,7 @@ describe('LEDWAXW3.login module', function() {
 		scope.userSession = {
 			username : null,
 			password : null,
-			auth_token : 'febbc032-48230-4',
+			sessiontoken : 'febbc032-48230-4',
 			persist : false,
 			from_login : false
 		};
@@ -44,7 +44,7 @@ describe('LEDWAXW3.login module', function() {
 			restService;
 
 		it('should load controller ...', inject(function($controller,
-			$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
+			$rootScope, $cookies, $location, $sanitize, $translate, Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;
@@ -52,6 +52,7 @@ describe('LEDWAXW3.login module', function() {
 				$rootScope : $rootScope,
 				$scope : scope,
 				$cookies : $cookies,
+				$location : $location,
 				$sanitize : $sanitize,
 				$translate : $translate,
 				Config : configService,
@@ -61,7 +62,7 @@ describe('LEDWAXW3.login module', function() {
 		}));
 
 		it('should reset and clear scope and form cache vars', inject(function($controller,
-			$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
+			$rootScope, $cookies, $location, $sanitize, $translate, Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;
@@ -69,6 +70,7 @@ describe('LEDWAXW3.login module', function() {
 				$rootScope : $rootScope,
 				$scope : scope,
 				$cookies : $cookies,
+				$location : $location,
 				$sanitize : $sanitize,
 				$translate : $translate,
 				Config : configService,
@@ -77,7 +79,7 @@ describe('LEDWAXW3.login module', function() {
 			scope.userSession.username = 'foo';
 			scope.userSession.password = 'bar';
 			scope.forms.login.clear();
-			expect(scope.userSession.auth_token).toEqual('febbc032-48230-4');
+			expect(scope.userSession.sessiontoken).toEqual('febbc032-48230-4');
 			expect(scope.userSession.from_login).toEqual(false);
 			expect(scope.userSession.persist).toEqual(false);
 			expect(scope.userSession.username).toEqual('');
@@ -88,7 +90,7 @@ describe('LEDWAXW3.login module', function() {
 			scope.forms.login.cache.username = 'baz';
 			scope.forms.login.cache.password = 'quux';
 			scope.forms.login.reset();
-			expect(scope.userSession.auth_token).toEqual('febbc032-48230-4');
+			expect(scope.userSession.sessiontoken).toEqual('febbc032-48230-4');
 			expect(scope.userSession.from_login).toEqual(false);
 			expect(scope.userSession.persist).toEqual(false);
 			expect(scope.userSession.username).toEqual('baz');
@@ -105,7 +107,7 @@ describe('LEDWAXW3.login module', function() {
 				ret.serverLogin = function() {
 					return {
 						error : true,
-						auth_token : null
+						sessiontoken : null
 					};
 				};
 				ret.getDevices = function() {
@@ -121,7 +123,7 @@ describe('LEDWAXW3.login module', function() {
 			restService;
 
 		it('should not set user session and clear cookies', inject(function(
-			$controller, $rootScope, $cookies, $sanitize, $translate,
+			$controller, $rootScope, $cookies, $location, $sanitize, $translate,
 			Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
@@ -130,6 +132,7 @@ describe('LEDWAXW3.login module', function() {
 				$rootScope : $rootScope,
 				$scope : scope,
 				$cookies : $cookies,
+				$location : $location,
 				$sanitize : $sanitize,
 				$translate : $translate,
 				Config : configService,
@@ -140,10 +143,10 @@ describe('LEDWAXW3.login module', function() {
 				password : 'bar',
 				persist : true
 			});
-			expect(scope.userSession.auth_token).toEqual(null);
+			expect(scope.userSession.sessiontoken).toEqual(null);
 			expect(scope.userSession.persist).toEqual(false);
 			expect(scope.userSession.from_login).toEqual(true);
-			expect($cookies.get('auth_token')).toEqual('');
+			expect($cookies.get('sessiontoken')).toEqual('');
 		}));
 
 	});
@@ -156,7 +159,7 @@ describe('LEDWAXW3.login module', function() {
 				ret.serverLogin = function() {
 					return {
 						error : false,
-						auth_token : 'foo_bar_baz'
+						sessiontoken : 'foo_bar_baz'
 					};
 				};
 				ret.getDevices = function() {
@@ -172,7 +175,7 @@ describe('LEDWAXW3.login module', function() {
 			restService;
 
 		it('should set user session and cookie', inject(function($controller,
-			$rootScope, $cookies, $sanitize, $translate, Config, REST_IoT) {
+			$rootScope, $cookies, $location, $sanitize, $translate, Config, REST_IoT) {
 			scope = initScope($rootScope);
 			configService = Config;
 			restService = REST_IoT;
@@ -180,6 +183,7 @@ describe('LEDWAXW3.login module', function() {
 				$rootScope : $rootScope,
 				$scope : scope,
 				$cookies : $cookies,
+				$location : $location,
 				$sanitize : $sanitize,
 				$translate : $translate,
 				Config : configService,
@@ -190,10 +194,10 @@ describe('LEDWAXW3.login module', function() {
 				password : 'password',
 				persist : true
 			});
-			expect(scope.userSession.auth_token).toEqual('foo_bar_baz');
+			expect(scope.userSession.sessiontoken).toEqual('foo_bar_baz');
 			expect(scope.userSession.persist).toEqual(true);
 			expect(scope.userSession.from_login).toEqual(true);
-			expect($cookies.get('auth_token')).toEqual('foo_bar_baz');
+			expect($cookies.get('sessiontoken')).toEqual('foo_bar_baz');
 		}));
 
 	});

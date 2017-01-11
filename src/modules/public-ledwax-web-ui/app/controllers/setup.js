@@ -27,14 +27,14 @@ angular.module(
 			Settings, REST_IoT) {
 			$scope.getDeviceList = () => {
 				let prom = REST_IoT
-					.discoverDevices($scope.currentCloudHost.id, $scope.userSession.auth_token);
+					.discoverDevices($scope.currentCloudHost.id, $scope.userSession.sessiontoken);
 				prom.then((resp) => {
 					if (resp.data) {
 						for (var i = 0; i < resp.data.length; i++) {
 							resp.data[i].toggleShowDetails = false;
 						}
 						$scope.devicesFresh = resp.data;
-						prom = REST_IoT.getStoredDevices($scope.currentCloudHost.id, 'foobar-sessiontoken');
+						prom = REST_IoT.getStoredDevices($scope.currentCloudHost.id, $scope.userSession.sessiontoken);
 						prom.then((resp) => {
 							if (resp.data) {
 								$scope.devicesStored = resp.data;
@@ -75,7 +75,7 @@ angular.module(
 					return;
 				}
 				let prom = REST_IoT.storeDeviceANDStrips($scope.currentCloudHost.id,
-					'foobar-sessiontoken',
+					$scope.userSession.sessiontoken,
 					device.id,
 					device.numStrips,
 					device.name);
@@ -116,7 +116,7 @@ angular.module(
 					return;
 				}
 				let prom = REST_IoT.removeStoredDevice($scope.currentCloudHost.id,
-					'foobar-sessiontoken',
+					$scope.userSession.sessiontoken,
 					device.deviceId);
 				prom.then((resp) => {
 					// validate response
@@ -219,7 +219,7 @@ angular.module(
 			$scope.toggleDeviceDetailsFresh = (device) => {
 				device.toggleShowDetails = !device.toggleShowDetails;
 				if (!angular.isDefined(device.caps) || device.caps.length < 1) {
-					let prom = REST_IoT.getDeviceCaps($scope.currentCloudHost.id, 'foobar-sessiontoken', device.id);
+					let prom = REST_IoT.getDeviceCaps($scope.currentCloudHost.id, $scope.userSession.sessiontoken, device.id);
 					prom.then((resp) => {
 						if (!angular.isDefined(resp.data)) {
 							device.caps = [];

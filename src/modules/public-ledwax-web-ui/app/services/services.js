@@ -2,7 +2,6 @@ const DEFAULT_REST_HOST_NAME = '127.0.0.1';
 const DEFAULT_REST_HOST_PORT = '3000';
 
 var services = angular.module('LEDWAXW3.services', []);
-const hcAuthToken = '254406f79c1999af65a7df4388971354f85cfee9';
 
 services.value('version', '1.0');
 
@@ -159,7 +158,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			};
 			return ret;
 		};
-		service.serverLogin = function(cloudid, username, password) {
+		service.serverLogin = function(cloudId, username, password) {
 			var ret = service.defaultRESTResp;
 			if (!angular.isDefined(userName)) {
 				ret.error_description = 'missing param: username';
@@ -169,22 +168,22 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				ret.error_description = 'missing param: password';
 				return ret;
 			}
-			if (!angular.isDefined(cloudid)) {
-				ret.error_description = 'missing param: cloudid';
+			if (!angular.isDefined(cloudId)) {
+				ret.error_description = 'missing param: cloud id';
 				return ret;
 			}
 			var successCallback = function(response) {
-				if (angular.isDefined(response.body.error)) {
+				if (angular.isDefined(response.error)) {
 					ret = {
-						code : response.body.code,
+						code : response.code,
 						error : true,
-						error_description : response.body.error_description
+						error_description : response.error.message
 					};
 				} else {
 					ret = {
 						code : 200,
 						error : false,
-						cookietoken : response.body.data.cookietoken
+						sessiontoken : response.data.sessiontoken
 					};
 				}
 				return ret;
@@ -193,12 +192,12 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				ret = {
 					code : 511,
 					error : true,
-					cookietoken : null
+					sessiontoken : null
 				};
 				return ret;
 			};
 			$http.defaults.headers.post = {
-				particleCloudId : cloudid,
+				particleCloudId : cloudId,
 				username : username,
 				password : password
 			};
@@ -208,13 +207,13 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				data : {
 					username : username,
 					password : password,
-					particleCloudId : cloudid
+					particleCloudId : cloudId
 				}
 			};
 			return $http(config).then(
 				successCallback, errorCallback);
 		};
-		service.discoverDevices = function(cloudId, authToken) {
+		service.discoverDevices = function(cloudId, sessiontoken) {
 			var ret = service.defaultRESTResp;
 			if (!angular.isDefined(cloudId)) {
 				ret.error_description = "missing param: cloudid";
@@ -241,7 +240,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			var config = {
 				method : 'GET',
 				url : service.hostURL + '/devices/discoverDevices?particleCloudId=' + cloudId
-					+ '&authtoken=' + hcAuthToken
+					+ '&sessiontoken=' + sessiontoken
 			};
 			let prom = $http(config).then(successCallback, errorCallback);
 			return prom;
@@ -277,7 +276,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			var config = {
 				method : 'GET',
 				url : service.hostURL + '/devices/retrieveAllStoredDevices?particleCloudId=' + cloudId
-					+ '&sessiontoken=' + hcAuthToken
+					+ '&sessiontoken=' + sessionToken
 			};
 			let prom = $http(config).then(
 				successCallback, errorCallback);
@@ -302,13 +301,13 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			var config = {
 				method : 'GET',
 				url : service.hostURL + '/devices/discoverCaps?particleCloudId=' + cloudId + '&deviceId=' + deviceId
-					+ '&authtoken=' + hcAuthToken
+					+ '&sessiontoken=' + sessionToken
 			};
 			let prom = $http(config).then(
 				successCallback, errorCallback);
 			return prom;
 		};
-		service.getNumberOfStrips = function(authToken, deviceId) {
+		service.getNumberOfStrips = function(sessiontoken, deviceId) {
 			var ret = service.defaultRESTResp;
 			if (!angular.isDefined(deviceId)) {
 				ret.error_description = "missing param: device id";
@@ -319,7 +318,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 			var config = {
 				method : 'GET',
 				url : service.hostURL + '/devices/getNumStrips?particleCloudId=' + cloudId + '&deviceId=' + deviceId
-					+ '&authtoken=' + hcAuthToken
+					+ '&sessiontoken=' + sessionToken
 			};
 			return $http(config).then(
 				successCallback, errorCallback);
@@ -355,7 +354,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					numStrips : numStrips,
-					authtoken : hcAuthToken,
+					sessionToken : sessionToken,
 					deviceNameFW : deviceNameFW
 				}
 			};
@@ -385,7 +384,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 				data : {
 					particleCloudId : cloudId,
 					deviceId : deviceId,
-					sessiontoken : hcAuthToken
+					sessiontoken : sessiontoken
 				}
 			};
 			let prom = $http(config).then(
@@ -432,7 +431,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
 					modeColorIndex : modeColorIndex,
-					sessiontoken : hcAuthToken,
+					sessiontoken : sessiontoken,
 					color24Bit : color
 				}
 			};
@@ -471,7 +470,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
-					sessiontoken : hcAuthToken,
+					sessiontoken : sessiontoken,
 					brightness : brightness
 				}
 			};
@@ -510,7 +509,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
-					sessiontoken : hcAuthToken,
+					sessiontoken : sessiontoken,
 					holdTime : holdTime
 				}
 			};
@@ -549,7 +548,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
-					sessiontoken : hcAuthToken,
+					sessiontoken : sessiontoken,
 					fadeTimeInterval : fadeTimeInterval
 				}
 			};
@@ -588,7 +587,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
-					sessiontoken : hcAuthToken,
+					sessiontoken : sessiontoken,
 					fadeMode : fadeMode
 				}
 			};
@@ -627,7 +626,7 @@ services.factory('REST_IoT', [ '$http', 'Settings',
 					particleCloudId : cloudId,
 					deviceId : deviceId,
 					stripIndex : ledStripIndex,
-					sessiontoken : hcAuthToken,
+					sessiontoken : sessiontoken,
 					dispMode : dispMode
 				}
 			};
@@ -681,18 +680,23 @@ services.factory('PaginationFilteredSorted', [ '$filter',
 				// filtering
 				let newList = $filter('filter')(items,
 					filterQuery);
-				$scope['totalItems' + suffix] = newList.length;
-				// sorting
-				newList = $filter('orderBy')(newList, sortProp,
-					reverseSort);
-				// grouping
-				for (let i = 0; i < newList.length; i++) {
-					if (i % itemsPerPage === 0) {
-						ret[Math.floor(i / itemsPerPage)] = [ newList[i] ];
-					} else {
-						ret[Math.floor(i / itemsPerPage)]
-							.push(newList[i]);
+				if (newList && newList.length) {
+					$scope['totalItems' + suffix] = newList.length;
+					// sorting
+					newList = $filter('orderBy')(newList, sortProp,
+						reverseSort);
+					// grouping
+					for (let i = 0; i < newList.length; i++) {
+						if (i % itemsPerPage === 0) {
+							ret[Math.floor(i / itemsPerPage)] = [ newList[i] ];
+						} else {
+							ret[Math.floor(i / itemsPerPage)]
+								.push(newList[i]);
+						}
 					}
+				} else {
+					$scope['totalItems' + suffix] = 0;
+					ret = [[]];
 				}
 				return ret;
 			};

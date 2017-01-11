@@ -44,7 +44,7 @@ describe('api', function() {
 				url : '/user/login',
 				payload : {
 					username : 'bar',
-					cloudid : 1
+					particleCloudId : 1
 				}
 			};
 
@@ -66,7 +66,7 @@ describe('api', function() {
 				url : '/user/login',
 				payload : {
 					password : 'foo',
-					cloudid : 1
+					particleCloudId : 1
 				}
 			};
 
@@ -111,7 +111,7 @@ describe('api', function() {
 				payload : {
 					username : 'foo',
 					password : 'bar',
-					cloudid : 1
+					particleCloudId : 1
 				}
 			};
 
@@ -137,7 +137,7 @@ describe('api', function() {
 				payload : {
 					username : 'user',
 					password : 'password',
-					cloudid : 1
+					particleCloudId : 1
 				}
 			};
 

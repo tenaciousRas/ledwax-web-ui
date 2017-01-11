@@ -5,12 +5,8 @@ const assert = require('assert');
 const boom = require('boom');
 const particlewrap = require('particle-api-js');
 const util = require('../../../util');
-
-const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
-const particle_config = require('../../../particle-config').attributes[rt_ctx_env];
-let particle = new particlewrap(particle_config);
-
 const secure_random = require('secure-random');
+const UserController = require('./user');
 
 const DEFAULT_SESSION_TOKEN_LENGTH = 16;
 
@@ -35,8 +31,9 @@ const AuthController = () => {
 	/**
 	 * Login to particle cloud via Particle api.
 	 */
-	const loginToCloud = (username, password, log) => {
-		log('info', 'AuthController#loginToCloud', 'particle call w/config : ' + particle_config);
+	const loginToCloud = (username, password, particle, log) => {
+		log('info', 'AuthController#loginToCloud', 'particle call w/config : '
+			+ JSON.stringify(particle));
 		let promise = particle.login({
 			username : username,
 			password : password
@@ -51,21 +48,24 @@ const AuthController = () => {
 	 */
 	const login = (request, reply) => {
 		let un = request.payload.username;
-		let cid = request.payload.cloudid;
-		let prom;
+		let cid = request.payload.particleCloudId;
+		let particle = request.app.particle.api;
+		let db = request.getDb('apidb');
 		// logger delegate to pass to loginToCloud so it can be tested without request
 		let logger = util.logDelegateFactory(request);
+		// def promise outside try
+		let prom;
 		try {
 			// get promise back
-			prom = loginToCloud(un, request.payload.password, logger);
+			prom = loginToCloud(un, request.payload.password, particle, logger);
 		} catch (e) {
 			// error
 			request.server.log([ 'error', 'auth.contoller#login' ],
 				'DB call complete - particle cloud login, exception =:' + reply.error);
-			return reply(boom.badImplementation('unable to authenticate user against particle cloud', e));
+			return reply(boom.badImplementation('unable to authenticate user against particle cloud', e)).unstate('cookietoken');
 		}
 		if (!prom) {
-			return reply(boom.expectationFailed('unable to authenticate user agsinst particle cloud'));
+			return reply(boom.expectationFailed('unable to authenticate user agsinst particle cloud')).unstate('cookietoken');
 		}
 		// handle particle login promise
 		prom.then(
@@ -76,55 +76,46 @@ const AuthController = () => {
 					let sessToken = generateSessionToken();
 					sessToken = sessToken.join("");
 					// attempt update
-					let options = {
-						method : 'POST',
-						url : '/users/update',
-						payload : {
-							username : un,
-							sessiontoken : sessToken,
-							authtoken : data.body.access_token,
-							cloudid : cid
-						}
-					};
-					request.server.inject(options, (response) => {
-						switch (response.statusCode) {
-						case 404:
-							// create new user
-							options.url = '/users/create';
-							request.server.inject(options, (response) => {
-								console.log(response.statusCode);
-								if (response.statusCode == 200) {
-									return reply({
-										"userid" : JSON.parse(response.payload).id,
-										"sessiontoken" : sessToken
-									});
-								} else {
+					let prom = UserController.updateDBUser(cid, un, sessToken, sessToken, db, logger);
+					prom.then((user) => {
+						if (null == user) {
+							let prom = UserController.createDBUser(cid, un, sessToken, sessToken, db);
+							prom.then(function(user) {
+								request.server.log([ 'debug', 'auth.contoller#login' ],
+									'response from createDBUser =:' + user);
+								if (null == user) {
 									// error
 									request.server.log([ 'error', 'auth.contoller#login' ],
 										'DB call complete - create user error, exception =:' + reply.error);
-									return reply(boom.badImplementation('unable to create user post-login', e));
+									return reply(boom.badImplementation('unable to create user post-login', e)).unstate('cookietoken');
+								} else {
+									let result = {
+										"userid" : user.id,
+										"sessiontoken" : sessToken
+									};
+									return reply(result);
 								}
+							}, function(err) {
+								return reply(boom.badImplementation('unable to create user post-login', err)).unstate('cookietoken');
 							});
-							break;
-						case 200:
-							return reply({
-								"userid" : JSON.parse(response.payload).id,
+						} else {
+							let result = {
+								"userid" : user.id,
 								"sessiontoken" : sessToken
-							});
-							break;
-						default:
-							return reply(boom.badImplementation('successful cloud login but unable to update/create user record to login'));
-							break;
+							};
+							return reply(result);
 						}
+					}, (err) => {
+						return reply(boom.unauthorized('unable to create user post-login', err)).unstate('cookietoken');
 					});
 				} catch (e) {
-					return reply(boom.badImplementation('there was an unexpected error', e));
+					return reply(boom.unauthorized('there was an unexpected error', e)).unstate('cookietoken');
 				}
 			},
 			(err) => {
 				request.server.log([ 'error', 'auth.contoller' ],
 					'API call complete - promise error:\n' + err);
-				return reply(boom.expectationFailed(err));
+				return reply(boom.unauthorized(err)).unstate('sessiontoken');
 			}
 		);
 	};

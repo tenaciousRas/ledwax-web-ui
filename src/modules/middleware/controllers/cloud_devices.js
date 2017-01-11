@@ -12,10 +12,10 @@ function ParticleDevicesController() {
 	 * Returns a list of devices registered with the particle cloud.
 	 */
 	const cloudDeviceList = (request, reply) => {
-		let token = request.payload.token;
+		let authToken = request.auth.credentials.authtoken;
 		let particle = request.app.particle.api;
 		let devicesPr = particle.listDevices({
-			auth : token
+			auth : authToken
 		});
 		devicesPr.then(
 			(devices) => {
@@ -35,14 +35,14 @@ function ParticleDevicesController() {
 	const cloudDeviceFunction = (request, reply) => {
 		let deviceId = request.payload.deviceId,
 			fn = request.payload.fn,
-			token = request.payload.token,
 			arg = request.payload.arg;
+		let authToken = request.auth.credentials.authtoken;
 		let particle = request.app.particle.api;
 		let fnPr = particle.callFunction({
 			deviceId : deviceId,
 			name : fn,
 			argument : arg,
-			auth : token
+			auth : authToken
 		});
 		fnPr.then(
 			(data) => {
@@ -59,12 +59,12 @@ function ParticleDevicesController() {
 	 * Returns a list of attributes for a given device.
 	 */
 	const cloudDeviceAttrs = (request, reply) => {
-		let deviceId = request.payload.deviceId,
-			token = request.payload.token;
+		let deviceId = request.payload.deviceId;
+		let authToken = request.auth.credentials.authtoken;
 		let particle = request.app.particle.api;
 		let devicesPr = particle.getDevice({
 			deviceId : deviceId,
-			auth : token
+			auth : authToken
 		});
 		devicesPr.then(
 			(data) => {
@@ -83,13 +83,13 @@ function ParticleDevicesController() {
 	 */
 	const cloudDeviceVar = (request, reply) => {
 		let deviceId = request.payload.deviceId,
-			varname = request.payload.varname,
-			token = request.payload.token;
+			varname = request.payload.varname;
+		let authToken = request.auth.credentials.authtoken;
 		let particle = request.app.particle.api;
 		particle.getVariable({
 			deviceId : deviceId,
 			name : varname,
-			auth : token
+			auth : authToken
 		}).then(
 			(data) => {
 				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device variable retrieved successfully:', data);
@@ -105,13 +105,13 @@ function ParticleDevicesController() {
 	 */
 	const signalDevice = (request, reply) => {
 		let deviceId = request.payload.deviceId,
-			signalOn = request.payload.signal,
-			token = request.payload.token;
+			signalOn = request.payload.signal;
+		let authToken = request.auth.credentials.authtoken;
 		let particle = request.app.particle.api;
 		particle.signalDevice({
 			deviceId : deviceId,
 			signal : signalOn,
-			auth : token
+			auth : authToken
 		}).then(
 			(data) => {
 				request.server.log([ 'info', 'ParticleDevicesController#deviceList' ], 'Device is' + (signalOn ? '' : ' not') + ' shouting rainbows:', data);

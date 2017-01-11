@@ -25,7 +25,7 @@ const LedwaxDeviceController = () => {
 	for (let varName in particleDeviceVariableNames) {
 		dynamicControllerFunctions[particleDeviceVariableNames[varName]] = (request, reply) => {
 			// particle variables are GET routes
-			let authToken = request.query.authtoken;
+			let authToken = request.auth.credentials.authtoken;
 			let deviceId = request.query.deviceId;
 			let particle = request.app.particle.api;
 			let fnProm = particle.getVariable({
@@ -55,7 +55,7 @@ const LedwaxDeviceController = () => {
 		dynamicControllerFunctions[particleDeviceFunctionNames[funcName]] = (request, reply) => {
 			let particle = request.app.particle.api;
 			// particle variables are GET routes
-			let authToken = request.payload.authtoken;
+			let authToken = request.auth.credentials.authtoken;
 			let deviceId = request.payload.deviceId;
 			let arg = request.payload.arg;
 			let iotFn = funcName;
@@ -84,8 +84,7 @@ const LedwaxDeviceController = () => {
 	 */
 	const doGenericParticleFunctionCall = (request, iotFn, arg) => {
 		let particle = request.app.particle.api;
-		// FIXME hack sessiontoken/authtoken
-		let authToken = request.payload.authtoken || request.payload.sessiontoken;
+		let authToken = request.auth.credentials.authtoken;
 		let deviceId = request.payload.deviceId;
 		let logger = util.logDelegateFactory(request);
 		let prom = util.genericParticleFunctionCall(particle, authToken, deviceId, iotFn, arg, logger);

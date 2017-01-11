@@ -5,6 +5,7 @@ const Hapi = require('hapi'),
 	Glue = require('glue'),
 	Inert = require('inert'),
 	Path = require('path');
+const boom = require('boom');
 
 const particlewrap = require('particle-api-js');
 const rt_ctx_env = process.env.LEDWAX_ENVIRO || 'dev';
@@ -30,7 +31,6 @@ const addCorsHeaders = (request, reply) => {
 	if (request.method !== 'options') {
 		return reply.continue();
 	}
-
 	response.statusCode = 200
 	response.headers['access-control-expose-headers'] = 'content-type, content-length, etag'
 	response.headers['access-control-max-age'] = 60 * 10 // 10 minutes
@@ -80,10 +80,79 @@ const buildParticleConfigFromDB = (request, reply) => {
 		} catch (e) {
 			errCb(e);
 		}
-	}
+	};
 	return prom;
 };
 
+const ledwaxAuthScheme = (server, options) => {
+	const authFunc = (request, reply) => {
+		let result = {
+			credentials : null
+		};
+		let invalidAuth = false;
+		let ct = request.state['sessiontoken'];
+		if (!ct) {
+			if (request.query) {
+				ct = request.query.sessiontoken;
+			}
+			if (!ct && request.payload) {
+				ct = request.payload.sessiontoken;
+			}
+		}
+		let cloudid = null;
+		if (!cloudid) {
+			if (request.query) {
+				cloudid = request.query.particleCloudId;
+			}
+			if (!cloudid && request.payload) {
+				cloudid = request.payload.particleCloudId;
+			}
+		}
+		let db = request.getDb('apidb');
+		let webuser = db.getModel('webuser');
+		let particleCloud = db.getModel('particle_cloud');
+		try {
+			webuser.findOne({
+				where : {
+					sessiontoken : ct
+				},
+				include : [
+					{
+						model : particleCloud,
+						where : {
+							id : cloudid
+						}
+					}
+				]
+			}).then((user) => {
+				request.server.log([ 'debug', 'user.contoller' ],
+					'DB call complete - promise success, user =:' + user);
+				if (null == user) {
+					invalidAuth = true;
+				}
+				result.credentials = {
+					userid : user.dataValues.id,
+					sessiontoken : user.dataValues.sessiontoken,
+					authtoken : user.dataValues.particle_clouds[0].webuser_particle_cloud_auth_tokens.authtoken
+				};
+				if (invalidAuth) {
+					let err = 'unable to find user by session token';
+					reply(boom.unauthorized(err), null, result);
+				} else {
+					reply.continue(result);
+				}
+			});
+		} catch (e) {
+			reply.continue(e);
+		}
+	};
+	return {
+		authenticate : authFunc,
+		options : {
+			payload : false
+		}
+	};
+};
 
 // glue uses a manifest to configure and run hapi for us
 Glue.compose(hapiConfig.application, options, (err, server) => {
@@ -106,6 +175,9 @@ Glue.compose(hapiConfig.application, options, (err, server) => {
 				"there was an error getting particle api: " + e);
 		});
 	});
+	server.auth.scheme('custom', ledwaxAuthScheme);
+	server.auth.strategy('default', 'custom');
+	server.auth.default('default');
 	server.start(() => {
 		let connects = ' running at: ';
 		for (let i = 0; i < server.connections.length; i++) {

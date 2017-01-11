@@ -15,7 +15,7 @@ module.exports.auth = {
 	loginPost : {
 		payload : {
 			username : Joi.string().trim().min(3).max(100).required(),
-			cloudid : Joi.number().integer().min(0).required(),
+			particleCloudId : Joi.number().integer().min(0).required(),
 			password : Joi.string().trim().min(2).max(35).required()
 		},
 		failAction : failActDelegate('custom')
@@ -23,7 +23,7 @@ module.exports.auth = {
 	loginGet : {
 		query : {
 			username : Joi.string().trim().min(3).max(100).required(),
-			cloudid : Joi.number().integer().min(0).required(),
+			particleCloudId : Joi.number().integer().min(0).required(),
 			password : Joi.string().trim().min(2).max(35).required()
 		},
 		failAction : failActDelegate('custom')
@@ -33,25 +33,23 @@ module.exports.auth = {
 module.exports.user = {
 	find : {
 		query : {
-			sessiontoken : Joi.string().trim().min(3).max(100).required()
+			sessiontoken : Joi.string().trim().min(3).max(100).optional()
 		},
 		failAction : failActDelegate('custom')
 	},
 	insert : {
 		payload : {
 			username : Joi.string().trim().min(3).max(100).required(),
-			cloudid : Joi.number().integer().min(0).required(),
-			authtoken : Joi.string().trim().min(3).max(100).required(),
-			sessiontoken : Joi.string().trim().min(3).max(100).required()
+			particleCloudId : Joi.number().integer().min(0).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional()
 		},
 		failAction : failActDelegate('custom')
 	},
 	update : {
 		payload : {
 			username : Joi.string().trim().min(3).max(100),
-			cloudid : Joi.number().integer().min(0).required(),
-			authtoken : Joi.string().trim().min(3).max(100).required(),
-			sessiontoken : Joi.string().trim().min(3).max(100).required()
+			particleCloudId : Joi.number().integer().min(0).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional()
 		},
 		failAction : failActDelegate('custom')
 	}
@@ -60,7 +58,7 @@ module.exports.user = {
 module.exports.ledwaxDevicesConvenience = {
 	setCurrentStrip : {
 		payload : {
-			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
 			stripIndex : Joi.number().integer().min(0).max(65535).required()
@@ -69,7 +67,7 @@ module.exports.ledwaxDevicesConvenience = {
 	},
 	setBrightness : {
 		payload : {
-			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
 			stripIndex : Joi.number().integer().min(0).max(65535).required(),
@@ -79,7 +77,7 @@ module.exports.ledwaxDevicesConvenience = {
 	},
 	setDispMode : {
 		payload : {
-			sessiontoken : Joi.string().trim().min(3).max(100).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
 			stripIndex : Joi.number().integer().min(0).max(65535).required(),
@@ -169,7 +167,6 @@ module.exports.ledwaxCloudDevices = {
 	saveDeviceANDLEDStrips : {
 		payload : {
 			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
-			authtoken : Joi.string().trim().min(3).max(100).optional(),
 			id : Joi.number().integer().optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required(),
@@ -183,14 +180,14 @@ module.exports.ledwaxCloudDevices = {
 module.exports.ledwaxCloudDeviceDiscover = {
 	discoverDevices : {
 		query : {
-			authtoken : Joi.string().trim().min(3).max(100).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 			particleCloudId : Joi.number().integer().required()
 		},
 		failAction : failActDelegate('custom')
 	},
 	discoverCaps : {
 		query : {
-			authtoken : Joi.string().trim().min(3).max(100).required(),
+			sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 			particleCloudId : Joi.number().integer().required(),
 			deviceId : Joi.string().trim().min(3).max(100).required()
 		},
@@ -206,7 +203,7 @@ const buildDynamicValidationsForController = () => {
 		let key = dynFuncNames[i].handlerFuncName;
 		dynamic_ledwax_devices[key] = {
 			query : {
-				authtoken : Joi.string().trim().min(3).max(100).required(),
+				sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 				particleCloudId : Joi.number().integer().required(),
 				deviceId : Joi.string().trim().min(3).max(50).required()
 			},
@@ -219,7 +216,7 @@ const buildDynamicValidationsForController = () => {
 		let key = dynFuncNames[i].handlerFuncName;
 		dynamic_ledwax_devices[key] = {
 			payload : {
-				authtoken : Joi.string().trim().min(3).max(100).required(),
+				sessiontoken : Joi.string().trim().min(3).max(100).optional(),
 				particleCloudId : Joi.number().integer().required(),
 				deviceId : Joi.string().trim().min(3).max(50).required(),
 				args : Joi.any().optional()

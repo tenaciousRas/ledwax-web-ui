@@ -188,7 +188,7 @@ describe('api', () => {
 							url : '/users/create',
 							payload : {
 								username : 'foo',
-								cloudid : newCloud.id,
+								particleCloudId : newCloud.id,
 								authtoken : 'authtoken_foobar',
 								sessiontoken : 'quux'
 							}
@@ -294,7 +294,7 @@ describe('api', () => {
 					particleCloud.build(vals).save().then((newCloud) => {
 						let vals = {
 							username : 'foofoo',
-							cloudid : newCloud.id,
+							particleCloudId : newCloud.id,
 							sessiontoken : 'qux'
 						};
 						webuser = webuser.build(vals);
@@ -308,7 +308,7 @@ describe('api', () => {
 								url : '/users/update',
 								payload : {
 									username : 'foofoo',
-									cloudid : newCloud.id,
+									particleCloudId : newCloud.id,
 									authtoken : 'authtoken_barbaz',
 									sessiontoken : 'corge'
 								}

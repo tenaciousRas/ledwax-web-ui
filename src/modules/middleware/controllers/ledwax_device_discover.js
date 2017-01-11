@@ -35,7 +35,7 @@ const LedwaxDeviceDiscoverController = () => {
 	 */
 	const discoverLEDWaxDevices = (request, reply) => {
 		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDevices';
-		let authToken = request.query.authtoken;
+		let authToken = request.auth.credentials.authtoken;
 		let cloudId = request.query.particleCloudId;
 		let particle = request.app.particle.api;
 		request.server.log([ 'info', logTag ],
@@ -111,7 +111,7 @@ const LedwaxDeviceDiscoverController = () => {
 	 */
 	const discoverLEDWaxDeviceCaps = (request, reply) => {
 		const logTag = 'LedwaxDeviceDiscoverController#discoverLEDWaxDeviceCaps';
-		let authToken = request.query.authtoken;
+		let authToken = request.auth.credentials.authtoken;
 		let deviceId = request.query.deviceId;
 		let particle = request.app.particle.api;
 		const prom = particle.getDevice({

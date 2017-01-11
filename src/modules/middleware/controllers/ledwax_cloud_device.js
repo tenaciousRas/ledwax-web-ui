@@ -199,7 +199,7 @@ const LedwaxCloudDeviceController = () => {
 		let deviceId = request.payload ? request.payload.deviceId : request.query.deviceId;
 		let numStrips = request.payload ? request.payload.numStrips : request.query.numStrips;
 		let deviceNameFW = request.payload ? request.payload.deviceNameFW : request.query.deviceNameFW;
-		let authToken = request.payload ? request.payload.authtoken : request.query.authtoken;
+		let authToken = request.auth.credentials.authtoken;
 		let vals = {
 			id : id,
 			particleCloudId : particleCloudId,

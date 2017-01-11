@@ -14,6 +14,7 @@ var appDependencies = [ 'ngRoute',
 	'LEDWAXW3.version',
 	'LEDWAXW3.description',
 	'LEDWAXW3.login',
+	'LEDWAXW3.logout',
 	'LEDWAXW3.leds',
 	'LEDWAXW3.setup',
 	'LEDWAXW3.about',
@@ -55,6 +56,10 @@ ledwaxApp.config([ '$routeProvider', '$translateProvider', '$provide',
 		});
 		$routeProvider.when('/leds', {
 			templateUrl : 'partials/leds.html'
+		});
+		$routeProvider.when('/logout', {
+			controller : 'LogoutCtrl',
+			templateUrl : 'partials/login.html'
 		});
 		$routeProvider.otherwise({
 			redirectTo : '/login'

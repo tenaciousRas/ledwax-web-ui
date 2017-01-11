@@ -3,6 +3,8 @@
 
 const assert = require('assert');
 const boom = require('boom');
+const Q = require('q');
+const util = require('../../../util')
 
 /**
  * User controller to manage locally stored users.
@@ -86,28 +88,38 @@ const UserController = () => {
 		let un = request.payload.username;
 		let cid = request.payload.cloudid;
 		let db = request.getDb('apidb');
-		let webuser = db.getModel('webuser');
-		let particleCloud = db.getModel('particle_cloud');
-		let vals = {
-			username : request.payload.username,
-			sessiontoken : ct
-		};
 		try {
-			particleCloud = particleCloud.build({
-				id : cid
-			});
-			webuser = webuser.build(vals);
-			webuser.addParticle_cloud([ particleCloud ], {
-				authtoken : at
-			});
-			webuser.save().then((user) => {
+			let prom = createDBUser(cid, un, ct, at, db);
+			prom.then((user) => {
 				return reply(user);
+			}, (err) => {
+				throw new Error(err);
 			});
 		} catch (e) {
 			request.server.log([ 'error', 'user.contoller#create' ],
 				'DB call complete - create user error, exception =:' + e);
 			return reply(boom.badImplementation('unable to create user', e));
 		}
+	};
+
+	/**
+	 * Create a new user in DB.
+	 */
+	const createDBUser = (cloudid, username, sessiontoken, authtoken, db) => {
+		let webuser = db.getModel('webuser');
+		let particleCloud = db.getModel('particle_cloud');
+		let vals = {
+			username : username,
+			sessiontoken : sessiontoken
+		};
+		particleCloud = particleCloud.build({
+			id : cloudid
+		});
+		webuser = webuser.build(vals);
+		webuser.addParticle_cloud([ particleCloud ], {
+			authtoken : authtoken
+		});
+		return webuser.save();
 	};
 
 	/**
@@ -119,54 +131,76 @@ const UserController = () => {
 		let un = request.payload.username;
 		let cid = request.payload.cloudid;
 		let db = request.getDb('apidb');
-		let webuser = db.getModel('webuser');
-		let particleCloud = db.getModel('particle_cloud');
+		let log = util.logDelegateFactory(request);
 		try {
-			let cloudInstance = particleCloud.build({
-				id : cid
-			});
-			webuser.findOne({
-				where : {
-					username : un
-				},
-				include : [
-					{
-						model : particleCloud,
-						where : {
-							id : cid
-						}
-					}
-				]
-			}).then((user) => {
+			let prom = updateDBUser(cid, un, ct, at, db, log);
+			prom.then((user) => {
 				if (null == user) {
 					return reply(boom.notFound(at));
 				}
-				user.sequelize.transaction((t) => {
-					request.server.log([ 'debug', 'user.contoller#update' ],
-						'DB call complete - find promise success, user =:' + user);
-					user.sessiontoken = ct;
-					user.addParticle_cloud([ cloudInstance ], {
-						authtoken : at
-					});
-					return user.save({
-						fields : [ 'sessiontoken' ]
-					});
-				}).then((result) => {
-					request.server.log([ 'debug', 'user.contoller#update' ],
-						'DB call complete - update promise success, user =:' + result);
-					return reply(result);
-				});
+				return reply(user);
+			}, (err) => {
+				throw new Error(err);
 			});
 		} catch (e) {
 			return reply(boom.badImplementation('unable to update user', e));
 		}
 	};
 
+	/**
+	 * Update user in DB.
+	 */
+	const updateDBUser = (cloudid, username, sessiontoken, authtoken, db, log) => {
+		let deferred = Q.defer();
+		let webuser = db.getModel('webuser');
+		let particleCloud = db.getModel('particle_cloud');
+		let cloudInstance = particleCloud.build({
+			id : cloudid
+		});
+		webuser.findOne({
+			where : {
+				username : username
+			},
+			include : [
+				{
+					model : particleCloud,
+					where : {
+						id : cloudid
+					}
+				}
+			]
+		}).then((user) => {
+			if (null == user) {
+				return deferred.resolve(null);
+			}
+			user.sequelize.transaction((t) => {
+				log('debug', 'user.contoller#update',
+					'DB call complete - find promise success, user =:' + user);
+				user.sessiontoken = sessiontoken;
+				user.addParticle_cloud([ cloudInstance ], {
+					authtoken : authtoken
+				});
+				return user.save({
+					fields : [ 'sessiontoken' ]
+				});
+			}).then((result) => {
+				log('debug', 'user.contoller#update',
+					'DB call complete - update promise success, user =:' + result);
+				deferred.resolve(result);
+			}, (err) => {
+				deferred.reject(err);
+			});
+		});
+		return deferred.promise;
+	}
+
 	return {
 		findAuth : retrieveByAuthToken,
 		find : retrieveBySession,
 		create : create,
-		update : update
+		createDBUser : createDBUser,
+		update : update,
+		updateDBUser : updateDBUser,
 	};
 
 };

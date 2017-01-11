@@ -73,7 +73,7 @@ describe(
 				expect(scope.userSession).toEqual({
 					username : null,
 					password : null,
-					auth_token : null,
+					sessiontoken : null,
 					from_login : false,
 					persist : false
 				});
@@ -152,7 +152,7 @@ describe(
 							});
 						});
 						expect(ctrl).toBeDefined();
-						expect(scope.userSession.auth_token)
+						expect(scope.userSession.sessiontoken)
 							.toEqual(null);
 						expect(scope.userSession.persist).toEqual(
 							false);
@@ -168,7 +168,7 @@ describe(
 						var scope = $rootScope.$new(),
 							settingsService = Settings,
 							restService = REST_IoT;
-						$cookies.put('auth_token', 'foo_bar_baz');
+						$cookies.put('sessiontoken', 'foo_bar_baz');
 						inject(function(Settings, REST_IoT) {
 							ctrl = $controller('AppCtrl', {
 								$rootScope : $rootScope,
@@ -186,7 +186,7 @@ describe(
 							});
 						});
 						expect(ctrl).toBeDefined();
-						expect(scope.userSession.auth_token)
+						expect(scope.userSession.sessiontoken)
 							.toEqual('foo_bar_baz');
 						expect(scope.userSession.persist).toEqual(
 							true);

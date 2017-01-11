@@ -79,6 +79,7 @@ angular.module(
 						$scope.currentCloudHost = $scope.cloudHosts[0];
 					}
 				});
+				/* unused */
 				$scope.randomLogo = function() {
 					$scope.logoSrc = 'img/ledwax_logo_'
 						+ Math.floor(Math.random() * 4) + '.png';
@@ -89,15 +90,14 @@ angular.module(
 				};
 				$scope.randomHeaderBg();
 				$scope.randomLogo();
-				// $scope.updateNavState();
 				$rootScope.setPhantomStatusReady = function() {
 					$rootScope.phantom_status = 'ready';
 				};
+				/* end unused */
 				$scope.config = Settings.appConfig;
 				$scope.userSession = {
 					username : null,
-					password : null,
-					cookietoken : null,
+					sessiontoken : null,
 					from_login : false,
 					persist : false
 				};
@@ -106,11 +106,11 @@ angular.module(
 						cache : {}
 					}
 				};
-				let cookAuthToken = $cookies.get('cookietoken');
-				if (cookAuthToken) {
-					$scope.userSession.cookietoken = cookAuthToken;
-					$scope.userSession.persist = true;
+				let cookSessToken = $cookies.get('sessiontoken');
+				if (cookSessToken && !cookSessToken == '') {
+					$scope.userSession.sessiontoken = cookSessToken;
 					$scope.userSession.from_login = false;
+					$scope.userSession.persist = true;
 					$scope.topnav.push({
 						active : false,
 						path : '/logout',
@@ -122,7 +122,7 @@ angular.module(
 						path : '/login',
 						label : 'NAV_LOGIN'
 					});
-				// $scope.goToNav('/');
+					$scope.goToNav('/login');
 				}
 				// persist tabs in views
 				$scope.setupTabs = [ {
