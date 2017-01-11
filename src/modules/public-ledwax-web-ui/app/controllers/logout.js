@@ -20,7 +20,8 @@ angular
 				$translate, REST_IoT) {
 				REST_IoT.serverLogout($scope.currentCloudHost.id, $scope.userSession.sessiontoken);
 				if (angular.isDefined($scope.userSession)) {
-					$scope.userSession.cookietoken = null;
+					$scope.userSession.username = null;
+					$scope.userSession.sessiontoken = null;
 					$scope.userSession.persist = false;
 				}
 				var expiry = new Date();
