@@ -1,6 +1,8 @@
 # LEDWax Web UI
 A web-based controller for LEDWax IoT hardware.  Controls LED lighting strips connected to Particle Photon IoT hardware.
 
+![LED control screenshot from Particle Forums](https://community.particle.io/uploads/default/original/2X/4/4d7149100814355296f19e0d60b6b966cdba18d4.png)](https://community.particle.io/uploads/default/original/2X/4/4d7149100814355296f19e0d60b6b966cdba18d4.png)
+
 LEDWax-Web-UI is software that provides two websites (modules):  the Web UI (web-ui) and REST API (middleware).  The Web UI module is a website served on port 8000.  The REST API module is a REST API (website) served on port 3000.
 
 This project runs on NodeJS and comes with a built-in webserver.  This makes it easier to run the application from a RaspberryPi (RPi) that hosts a private particle cloud because it already has NodeJS installed.  LEDWax-Web-UI does NOT need to be run on a RPi.  It can run on any machine (that meets system requirements), including VMs, and be configured to point at a private (local) cloud server, or the Particle public cloud.
